@@ -2,33 +2,25 @@
 #define FUNCTION_DISASSEMBLY
 
 #include "function.hpp"
-#include <bitset>
+#include "commands.hpp"
 
 void Analyze(uint8_t* tab, size_t size)
 {
     size_t pos = 0;
+    Command_t* cmd = nullptr;
     while(pos < size) {
         if(CheckPattern(tab, size - pos, "1011")) {
-            printf("mov\n");
-            // 1101 w(1) reg(3)  data(8/16)
-            union {
-                uint8_t raw[3];
-                struct {
-                    uint8_t reg : 3;
-                    uint8_t w : 1;
-                    uint8_t : 4;
-                    uint8_t data[2];
-                } decoded;
-            } frame;
-            frame.raw[0] = *tab;
-            frame.raw[1] = *(tab + 1);
-            frame.raw[2] = *(tab + 2);
-            
-            std::cout << std::bitset<8>(frame.decoded.w) << std::endl;
-            std::cout << std::bitset<8>(frame.decoded.reg) << std::endl;
-            std::cout << std::bitset<8>(frame.decoded.data[0]) << std::endl;
+            cmd = new MOV_I2R();
         }
-        printf("%02X ", *tab);
+        else {
+            pos++, tab++;
+            continue;
+        }
+
+        cmd->Read(tab);
+        cmd->PrintCommand();
+        delete cmd;
+
         pos++, tab++;
     }
 }
