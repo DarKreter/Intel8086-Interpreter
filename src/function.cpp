@@ -12,6 +12,12 @@ void Analyze(uint8_t* tab, size_t size)
         if(CheckPattern(tab, size - pos, "1011")) {
             cmd = new MOV_I2R();
         }
+        else if(CheckPattern(tab, size - pos, "11001101")) {
+            cmd = new INT();
+        }
+        else if(CheckPattern(tab, size - pos, "000000")) {
+            cmd = new ADD_RMwR();
+        }
         else {
             pos++, tab++;
             continue;
@@ -19,9 +25,8 @@ void Analyze(uint8_t* tab, size_t size)
 
         cmd->Read(tab);
         cmd->PrintCommand(pos);
+        pos += cmd->GetFrameLength(), tab += cmd->GetFrameLength();
         delete cmd;
-
-        pos++, tab++;
     }
 }
 

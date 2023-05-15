@@ -4,12 +4,37 @@
 #include "commands.hpp"
 #include <bitset>
 
+void ADD_RMwR::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    [[maybe_unused]] uint8_t disp;
+    std::cout << "add [";
+
+    if(frame.decoded.mod == 0)
+        disp = 0;
+    if(frame.decoded.rm == 0)
+        std::cout << "bx+si";
+    std::cout << "], "
+              << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                       : regs_16[frame.decoded.reg])
+              << std::endl;
+}
+
+void INT::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "int " << std::hex << (int)frame.raw[1] << std::endl;
+}
+
 void MOV_I2R::PrintCommand(size_t pos)
 {
-    printf("%04lX: ", pos);
-    for(uint8_t i = 0; i < frame_length; i++)
-        printf("%02X", frame.raw[i]);
-    std::cout << "\t\tmov " << regs_16[frame.decoded.reg] << ", ";
+    Command_t::PrintCommand(pos);
+
+    std::cout << "mov "
+              << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                       : regs_16[frame.decoded.reg])
+              << ", ";
 
     printf("%02X", frame.decoded.data[1]);
     if(frame.decoded.w == 1)
@@ -19,6 +44,14 @@ void MOV_I2R::PrintCommand(size_t pos)
 }
 
 Command_t::Command_t(uint8_t fl) : frame_length{fl} {}
+
+void Command_t::PrintCommand(size_t pos)
+{
+    printf("%04lX: ", pos);
+    for(uint8_t i = 0; i < frame_length; i++)
+        printf("%02X", GetFramePart(i));
+    printf("\t\t");
+}
 
 void Command_t::Read(uint8_t* tab)
 {
