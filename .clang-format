@@ -109,7 +109,7 @@ PenaltyBreakString: 1000
 PenaltyBreakTemplateDeclaration: 10
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
-ColumnLimit: 70
+ColumnLimit: 80
 PointerAlignment: Left
 ReflowComments: true
 SortIncludes: true

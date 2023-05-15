@@ -1,7 +1,7 @@
 #ifndef FUNCTION_DISASSEMBLY
 #define FUNCTION_DISASSEMBLY
 
-#include "function.h"
+#include "function.hpp"
 
 unsigned char* ReadFile(char* fileName)
 {
@@ -17,8 +17,8 @@ unsigned char* ReadFile(char* fileName)
     // printf("%d\n", sz);
     fseek(fptr, 0L, SEEK_SET);
 
-    unsigned char* tab = malloc(sz * sizeof(unsigned char));
-    fread(tab, sizeof(unsigned char) * sz, 1, fptr);
+    unsigned char* tab = reinterpret_cast<unsigned char*>(malloc(sz * sizeof(unsigned char)));
+    (void)! fread(tab, sizeof(unsigned char) * sz, 1, fptr);
 
     fclose(fptr);
 
