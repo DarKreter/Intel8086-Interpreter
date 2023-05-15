@@ -5,11 +5,10 @@
 
 unsigned char* ReadFile(char* fileName)
 {
-    FILE *fptr;
+    FILE* fptr;
 
     // printf("Reading file %s\n", argv[1]);
-    if ((fptr = fopen(fileName,"rb")) == NULL)
-    {
+    if((fptr = fopen(fileName, "rb")) == NULL) {
         printf("Cannot open file!");
         exit(3);
     }
@@ -19,7 +18,7 @@ unsigned char* ReadFile(char* fileName)
     fseek(fptr, 0L, SEEK_SET);
 
     unsigned char* tab = malloc(sz * sizeof(unsigned char));
-    fread(tab,sizeof(unsigned char) * sz, 1, fptr);
+    fread(tab, sizeof(unsigned char) * sz, 1, fptr);
 
     fclose(fptr);
 
@@ -27,4 +26,4 @@ unsigned char* ReadFile(char* fileName)
     return tab;
 }
 
-#endif //FUNCTION_DISASSEMBLY
+#endif // FUNCTION_DISASSEMBLY
