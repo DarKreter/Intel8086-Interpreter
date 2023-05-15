@@ -1,19 +1,10 @@
 #include <iostream>
+#include <map>
 #include <stdio.h>
 #include <stdlib.h>
 
-class Command_t {
-protected:
-    const uint8_t frame_length;
-    Command_t(uint8_t fl);
-
-    virtual uint8_t& GetFramePart(uint8_t) = 0;
-
-public:
-    virtual void Read(uint8_t*);
-    virtual void PrintCommand() = 0;
-    virtual ~Command_t() = default;
-};
+extern std::map<uint8_t, std::string> regs_8;
+extern std::map<uint8_t, std::string> regs_16;
 
 class MOV_I2R : public Command_t {
 protected:
@@ -33,6 +24,19 @@ protected:
 public:
     MOV_I2R() : Command_t(3) { ; }
 
-    void PrintCommand() override;
+    void PrintCommand(size_t) override;
     ~MOV_I2R() = default;
+};
+
+class Command_t {
+protected:
+    const uint8_t frame_length;
+    Command_t(uint8_t fl);
+
+    virtual uint8_t& GetFramePart(uint8_t) = 0;
+
+public:
+    virtual void Read(uint8_t*);
+    virtual void PrintCommand(size_t) = 0;
+    virtual ~Command_t() = default;
 };

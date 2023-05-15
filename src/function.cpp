@@ -18,7 +18,7 @@ void Analyze(uint8_t* tab, size_t size)
         }
 
         cmd->Read(tab);
-        cmd->PrintCommand();
+        cmd->PrintCommand(pos);
         delete cmd;
 
         pos++, tab++;
