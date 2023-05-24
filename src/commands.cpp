@@ -365,6 +365,11 @@ void JMP_DS::PrintCommand(size_t pos)
     printf("jmp %04x\n", (int)(frame.decoded.disp_low +
                                (frame.decoded.disp_high << 8) + pos + 3));
 }
+void JMP_DSS::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    printf("jmp short %04x\n", (int)(frame.decoded.disp + pos + 2));
+}
 void TEST_IaRM::PrintCommand(size_t pos)
 {
     if(frame.decoded.w == 1)

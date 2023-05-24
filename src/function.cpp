@@ -40,11 +40,13 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new JL();
         else if(CheckPattern(tab, size - pos, "11101001"))
             cmd = new JMP_DS();
+        else if(CheckPattern(tab, size - pos, "11101011"))
+            cmd = new JMP_DSS();
         else if(CheckPattern(tab, size - pos, "01010"))
             cmd = new PUSH_R();
         else if(CheckPattern(tab, size - pos, "11101000"))
             cmd = new CALL_DS();
-            else if(CheckPattern(tab, size - pos, "11111111XX010"))
+        else if(CheckPattern(tab, size - pos, "11111111XX010"))
             cmd = new CALL_IS();
         else if(CheckPattern(tab, size - pos, "11110100"))
             cmd = new HLT();

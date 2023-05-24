@@ -342,7 +342,25 @@ public:
     void PrintCommand(size_t) override;
     ~JMP_DS() = default;
 };
+class JMP_DSS : public Command_t {
+protected:
+    // 11101011 disp(8)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t : 8;
+            int8_t disp;
+        } decoded;
+    } frame;
 
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    JMP_DSS() : Command_t(2) { ; }
+
+    void PrintCommand(size_t) override;
+    ~JMP_DSS() = default;
+};
 class TEST_IaRM : public Command_t {
 protected:
     // 100000 d(1)w(1) mod(2)111r/m(3) data(8/16)
