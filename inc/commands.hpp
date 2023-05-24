@@ -174,6 +174,31 @@ public:
     void PrintCommand(size_t) override;
     ~ADD_I2RM() = default;
 };
+class SUB_IfRM : public Command_t {
+protected:
+    // 100000d(1)w(1) mod(2)101r/m(3) data(8) (if sw == 01)data(8)
+    union {
+        uint8_t raw[4];
+        struct {
+            uint8_t w : 1;
+            uint8_t s : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t : 3;
+            uint8_t mod : 2;
+            uint8_t data[2];
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    SUB_IfRM() : Command_t(4) { ; }
+
+    void PrintCommand(size_t) override;
+    ~SUB_IfRM() = default;
+};
 class SHL : public Command_t {
 protected:
     // 110100v(1)w(1) mod(2)100r/m(3)
@@ -256,7 +281,18 @@ protected:
             uint8_t reg : 3;
             uint8_t mod : 2;
             uint8_t disp[2];
-        } decoded;
+
+        } decoded_disp_2;
+        struct __attribute__((packed)) {
+            uint8_t w : 1;
+            uint8_t d : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+            int8_t disp;
+
+        } decoded_disp;
     } frame;
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
@@ -295,20 +331,29 @@ class LEA : public Command_t {
 protected:
     // 10001101 mod(2)reg(3)r/m(3)
     union {
-        uint8_t raw[3];
+        uint8_t raw[4];
         struct {
             uint8_t : 8;
             uint8_t rm : 3;
             uint8_t reg : 3;
             uint8_t mod : 2;
+            uint8_t disp[2];
+
+        } decoded_disp_2;
+        struct __attribute__((packed)) {
+            uint8_t : 8;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
             int8_t disp;
-        } decoded;
+
+        } decoded_disp;
     } frame;
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    LEA() : Command_t(3) { ; }
+    LEA() : Command_t(4) { ; }
 
     void PrintCommand(size_t) override;
     ~LEA() = default;
