@@ -23,8 +23,10 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new ADD_RMwR();
         else if(CheckPattern(tab, size - pos, "001100"))
             cmd = new XOR_RM2R();
+        else if(CheckPattern(tab, size - pos, "10001101"))
+            cmd = new LEA();
         else {
-            cout << pos << ":\t" << std::bitset<8>(tab[pos]) << "\n";
+            cout << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             pos++, tab++;
             continue;
         }

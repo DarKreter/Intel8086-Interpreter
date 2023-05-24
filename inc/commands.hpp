@@ -5,6 +5,7 @@
 
 extern std::map<uint8_t, std::string> regs_8;
 extern std::map<uint8_t, std::string> regs_16;
+extern std::map<uint8_t, std::string> rm_memory;
 
 class Command_t {
 protected:
@@ -134,4 +135,27 @@ public:
 
     void PrintCommand(size_t) override;
     ~MOV_RM2R() = default;
+};
+
+class LEA : public Command_t {
+protected:
+    // 100010 d(1)w(1) mod(2)reg(3)r/m(3)
+    union {
+        uint8_t raw[3];
+        struct {
+            uint8_t : 8;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+            int8_t disp;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    LEA() : Command_t(3) { ; }
+
+    void PrintCommand(size_t) override;
+    ~LEA() = default;
 };
