@@ -9,12 +9,6 @@ using namespace std;
 void ADD_I2RM::PrintCommand(size_t pos)
 {
 
-    // std::cout << "w: " << (int)frame.decoded.w << endl;
-    // std::cout << "s: " << (int)frame.decoded.s << endl;
-    // std::cout << "mod: " << (int)frame.decoded.mod << endl;
-    // std::cout << "reg: " << (int)frame.decoded.reg << endl;
-    // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
-
     if(frame.decoded.s == 0 && frame.decoded.w == 1)
         frame_length = 4;
     else
@@ -58,15 +52,35 @@ void PUSH_R::PrintCommand(size_t pos)
 
     std::cout << "push " << regs_16[frame.decoded.reg] << "\n";
 }
+void DEC_R::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "dec " << regs_16[frame.decoded.reg] << "\n";
+}
 void CALL_DS::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
     int16_t disp = (frame.decoded.disp[1] << 8) + (frame.decoded.disp[0]);
     printf("call %04lx\n", disp + pos + 3);
 }
+void CALL_IS::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    cout << "call " << regs_16[frame.decoded.rm] << endl;
+}
 void MOV_RM2R::PrintCommand(size_t pos)
 {
-    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
+
+    // std::cout << "w: " << (int)frame.decoded.w << endl;
+    // std::cout << "d: " << (int)frame.decoded.d << endl;
+    // std::cout << "mod: " << (int)frame.decoded.mod << endl;
+    // std::cout << "reg: " << (int)frame.decoded.reg << endl;
+    // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
+
+    if((frame.decoded.mod == 0 && frame.decoded.rm == 6) ||
+       (frame.decoded.mod == 2))
         frame_length = 4;
     else
         frame_length = 2;
@@ -91,6 +105,9 @@ void MOV_RM2R::PrintCommand(size_t pos)
                 // std::cout << "+" << (int)frame.decoded.disp;
                 break;
             case 2:
+                std::cout << "+"
+                          << (int)(frame.decoded.disp[0] +
+                                   (frame.decoded.disp[1] << 8));
                 break;
             case 0: // disp == 0
             default:
@@ -118,6 +135,7 @@ void MOV_RM2R::PrintCommand(size_t pos)
         }
         else // mod == 00/01/10
         {
+            std::cout << ", [" << rm_memory[frame.decoded.rm];
             switch(frame.decoded.mod) {
             case 0:
                 disp = 0;
@@ -125,13 +143,57 @@ void MOV_RM2R::PrintCommand(size_t pos)
             case 1:
                 break;
             case 2:
+                printf("+%02x",
+                       (frame.decoded.disp[1] << 8) + frame.decoded.disp[0]);
                 break;
             default:
                 break;
             }
-            std::cout << ", [" << rm_memory[frame.decoded.rm] << "]\n";
+            std::cout << "]\n";
         }
     }
+}
+void SHL::PrintCommand(size_t pos)
+{
+    // std::cout << "w: " << (int)frame.decoded.w << endl;
+    // std::cout << "v: " << (int)frame.decoded.v << endl;
+    // std::cout << "mod: " << (int)frame.decoded.mod << endl;
+    // std::cout << "reg: " << (int)frame.decoded.reg << endl;
+    // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
+
+    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
+        frame_length = 4;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+    [[maybe_unused]] uint8_t disp;
+    std::cout << "shl ";
+
+    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                           : regs_16[frame.decoded.rm]);
+
+    // else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
+    //     printf("[%02x%02x]", frame.decoded.disp[1], frame.decoded.disp[0]);
+    // }
+    // else // mod == 00/01/10
+    // {
+    //     std::cout << "[" << rm_memory[frame.decoded.rm];
+    //     switch(frame.decoded.mod) {
+    //     case 1:
+    //         // std::cout << "+" << (int)frame.decoded.disp;
+    //         break;
+    //     case 2:
+    //         break;
+    //     case 0: // disp == 0
+    //     default:
+    //         break;
+    //     }
+    //     std::cout << "]";
+    // }
+
+    std::cout << ", " << (int)(frame.decoded.v == 0 ? 1 : 69) << std::endl;
 }
 void XOR_RM2R::PrintCommand(size_t pos)
 {
@@ -289,6 +351,19 @@ void JNE::PrintCommand(size_t pos)
     // + 2, because actual position is after jne which is not yet added to
     // jne
     printf("jne %04x\n", (int)(frame.decoded.disp + pos + 2));
+}
+void JL::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    // + 2, because actual position is after jl which is not yet added to
+    // jl
+    printf("jl %04x\n", (int)(frame.decoded.disp + pos + 2));
+}
+void JMP_DS::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    printf("jmp %04x\n", (int)(frame.decoded.disp_low +
+                               (frame.decoded.disp_high << 8) + pos + 3));
 }
 void TEST_IaRM::PrintCommand(size_t pos)
 {
