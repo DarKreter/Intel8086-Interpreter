@@ -27,8 +27,14 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new LEA();
         else if(CheckPattern(tab, size - pos, "100000XXXX111"))
             cmd = new CMP_IwRM();
+        else if(CheckPattern(tab, size - pos, "01110011"))
+            cmd = new JNB();
+        else if(CheckPattern(tab, size - pos, "1111011XXX000"))
+            cmd = new TEST_IaRM();
+        else if(CheckPattern(tab, size - pos, "01110101"))
+            cmd = new JNE();
         else {
-            cout << pos << ":\t" << std::bitset<8>(*tab) << "\n";
+            cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             pos++, tab++;
             continue;
         }

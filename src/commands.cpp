@@ -190,7 +190,49 @@ void CMP_IwRM::PrintCommand(size_t pos)
         printf("%02X\n", frame.decoded.data[0]);
     }
 }
+void JNB::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    // + 2, because actual position is after jnb command which is not yet added
+    // to jnb
+    printf("jnb %04x\n", (int)(frame.decoded.disp + pos + 2));
+}
+void JNE::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    // + 2, because actual position is after jne which is not yet added to jne
+    printf("jne %04x\n", (int)(frame.decoded.disp + pos + 2));
+}
+void TEST_IaRM::PrintCommand(size_t pos)
+{
+    if(frame.decoded.w == 1)
+        frame_length = 4;
+    else
+        frame_length = 3;
 
+    Command_t::PrintCommand(pos);
+
+    // std::cout << "w: " << (int)frame.decoded.w << endl;
+    // std::cout << "d: " << (int)frame.decoded.d << endl;
+    // std::cout << "mod: " << (int)frame.decoded.mod << endl;
+    // std::cout << "reg: " << (int)frame.decoded.reg << endl;
+    // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
+
+    std::cout << "test ";
+
+    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                           : regs_16[frame.decoded.rm])
+                  << ", ";
+
+    if(frame.decoded.w == 1) {
+        printf("%02X", frame.decoded.data[1]);
+        printf("%02X\n", frame.decoded.data[0]);
+    }
+    else {
+        printf("%02X\n", frame.decoded.data[0]);
+    }
+}
 Command_t::Command_t(uint8_t fl) : frame_length{fl} {}
 
 void Command_t::PrintCommand(size_t pos)
