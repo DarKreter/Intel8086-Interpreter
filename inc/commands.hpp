@@ -205,9 +205,9 @@ public:
 };
 class CMP_IwRM : public Command_t {
 protected:
-    // 100000 d(1)w(1) mod(2)111r/m(3) data(8/16)
+    // 100000 d(1)w(1) mod(2)111r/m(3) disp(0/8/16) data(8/16)
     union {
-        uint8_t raw[5];
+        uint8_t raw[6];
         struct {
             uint8_t w : 1;
             uint8_t s : 1;
@@ -215,14 +215,14 @@ protected:
             uint8_t rm : 3;
             uint8_t : 3;
             uint8_t mod : 2;
-            int8_t data[3];
+            int8_t data[4];
         } decoded;
     } frame;
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CMP_IwRM() : Command_t(5) { ; }
+    CMP_IwRM() : Command_t(6) { ; }
 
     void PrintCommand(size_t) override;
     ~CMP_IwRM() = default;
@@ -410,9 +410,9 @@ protected:
     // 11101000 disp-low(8) disp-high(8)
     union {
         uint8_t raw[3];
-        struct {
+        struct __attribute__((packed)) {
             uint8_t : 8;
-            int8_t disp[2];
+            int16_t disp;
         } decoded;
     } frame;
 

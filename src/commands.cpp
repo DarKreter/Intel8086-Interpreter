@@ -61,8 +61,9 @@ void DEC_R::PrintCommand(size_t pos)
 void CALL_DS::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
-    int16_t disp = (frame.decoded.disp[1] << 8) + (frame.decoded.disp[0]);
-    printf("call %04lx\n", disp + pos + 3);
+
+    // uint16_t disp = (frame.decoded.disp[1] << 8) + (frame.decoded.disp[0]);
+    printf("call %04lx\n", frame.decoded.disp + pos + 3);
 }
 void CALL_IS::PrintCommand(size_t pos)
 {
@@ -299,21 +300,32 @@ void LEA::PrintCommand(size_t pos)
 }
 void CMP_IwRM::PrintCommand(size_t pos)
 {
-    if(frame.decoded.s == 0 && frame.decoded.w == 1)
-        frame_length = 4;
-    else
-        frame_length = 3;
+    // std::cout << "w: " << (int)frame.decoded.w << endl;
+    // std::cout << "s: " << (int)frame.decoded.s << endl;
+    // std::cout << "mod: " << (int)frame.decoded.mod << endl;
+    // std::cout << "reg: " << (int)frame.decoded.reg << endl;
+    // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
+
+    frame_length = 3;
+    if((frame.decoded.s == 0 && frame.decoded.w == 1))
+        frame_length++;
     if(frame.decoded.mod != 0x03 && frame.decoded.mod != 0x00)
         frame_length++;
+    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
+        frame_length += 2;
 
     Command_t::PrintCommand(pos);
-
+    uint8_t offset = 0;
     std::cout << "cmp ";
 
     if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
         std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
                                            : regs_16[frame.decoded.rm])
                   << ", ";
+    else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
+        printf("[%02x%02x], ", frame.decoded.data[1], frame.decoded.data[0]);
+        offset = 2;
+    }
     else // mod == 00/01/10
     {
         std::cout << "[" << rm_memory[frame.decoded.rm];
@@ -331,11 +343,11 @@ void CMP_IwRM::PrintCommand(size_t pos)
     }
 
     if(frame.decoded.s == 0 && frame.decoded.w == 1) {
-        printf("%02X", frame.decoded.data[1]);
-        printf("%02X\n", frame.decoded.data[0]);
+        printf("%02X", frame.decoded.data[1 + offset]);
+        printf("%02X\n", frame.decoded.data[0 + offset]);
     }
     else {
-        printf("%02X\n", frame.decoded.data[0]);
+        printf("%02X\n", frame.decoded.data[0 + offset]);
     }
 }
 void JNB::PrintCommand(size_t pos)

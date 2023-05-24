@@ -1,4 +1,5 @@
 #include "function.hpp"
+#include <bitset>
 
 using namespace std;
 
@@ -6,7 +7,6 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-
     if(argc < 2) {
         printf("No command-line arguments!\n");
         exit(1);
