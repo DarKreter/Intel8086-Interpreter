@@ -4,21 +4,27 @@
 #include "function.hpp"
 #include "commands.hpp"
 
+#include <bitset>
+
+using namespace std;
+
 void Analyze(uint8_t* tab, size_t size)
 {
     size_t pos = 0;
     Command_t* cmd = nullptr;
     while(pos < size) {
-        if(CheckPattern(tab, size - pos, "1011")) {
+        if(CheckPattern(tab, size - pos, "1011"))
             cmd = new MOV_I2R();
-        }
-        else if(CheckPattern(tab, size - pos, "11001101")) {
+        else if(CheckPattern(tab, size - pos, "100010"))
+            cmd = new MOV_RM2R();
+        else if(CheckPattern(tab, size - pos, "11001101"))
             cmd = new INT();
-        }
-        else if(CheckPattern(tab, size - pos, "000000")) {
+        else if(CheckPattern(tab, size - pos, "000000"))
             cmd = new ADD_RMwR();
-        }
+        else if(CheckPattern(tab, size - pos, "001100"))
+            cmd = new XOR_RM2R();
         else {
+            cout << pos << ":\t" << std::bitset<8>(tab[pos]) << "\n";
             pos++, tab++;
             continue;
         }

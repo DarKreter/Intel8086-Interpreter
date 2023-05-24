@@ -4,6 +4,99 @@
 #include "commands.hpp"
 #include <bitset>
 
+using namespace std;
+
+void MOV_RM2R::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    [[maybe_unused]] uint8_t disp;
+    std::cout << "mov ";
+
+    // std::cout << "w: " << (int)frame.decoded.w << endl;
+    // std::cout << "d: " << (int)frame.decoded.d << endl;
+    // std::cout << "mod: " << (int)frame.decoded.mod << endl;
+    // std::cout << "reg: " << (int)frame.decoded.reg << endl;
+    // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
+
+    if(frame.decoded.d == 0) {        // from reg
+        if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
+            std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                               : regs_16[frame.decoded.rm]);
+        else // mod == 00/01/10
+        {
+            switch(frame.decoded.mod) {
+            case 0:
+                disp = 0;
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            default:
+                break;
+            }
+            std::cout << "[" << (int)frame.decoded.rm << "]";
+        }
+
+        std::cout << ", "
+                  << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                           : regs_16[frame.decoded.reg])
+                  << std::endl;
+    }
+    else { // to reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                           : regs_16[frame.decoded.reg]);
+        if(frame.decoded.mod == 0x03) // if mod == 3, rm is treated like reg
+            std::cout << ", "
+                      << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                               : regs_16[frame.decoded.rm])
+                      << endl;
+        else // mod == 00/01/10
+        {
+            switch(frame.decoded.mod) {
+            case 0:
+                disp = 0;
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            default:
+                break;
+            }
+            std::cout << ", [" << (int)frame.decoded.rm << "]\n";
+        }
+    }
+}
+
+void XOR_RM2R::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    [[maybe_unused]] uint8_t disp;
+    std::cout << "xor ";
+    if(frame.decoded.mod == 0)
+        disp = 0;
+
+    if(frame.decoded.d == 0) { // from reg
+        if(frame.decoded.mod == 0x03)
+            std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                               : regs_16[frame.decoded.rm]);
+        std::cout << ", "
+                  << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                           : regs_16[frame.decoded.reg])
+                  << std::endl;
+    }
+    else { // to reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                           : regs_16[frame.decoded.reg]);
+        if(frame.decoded.mod == 0x03)
+            std::cout << ", "
+                      << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                               : regs_16[frame.decoded.rm])
+                      << endl;
+    }
+}
+
 void ADD_RMwR::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
@@ -47,10 +140,10 @@ Command_t::Command_t(uint8_t fl) : frame_length{fl} {}
 
 void Command_t::PrintCommand(size_t pos)
 {
-    printf("%04lX: ", pos);
+    printf("%04lx: ", pos);
     for(uint8_t i = 0; i < frame_length; i++)
-        printf("%02X", GetFramePart(i));
-    printf("\t\t");
+        printf("%02x", GetFramePart(i));
+    printf("\t");
 }
 
 void Command_t::Read(uint8_t* tab)
@@ -59,11 +152,11 @@ void Command_t::Read(uint8_t* tab)
         GetFramePart(i) = *(tab++);
 }
 
-std::map<uint8_t, std::string> regs_8 = {{0, "AL"}, {1, "CL"}, {2, "DL"},
-                                         {3, "BL"}, {4, "AH"}, {5, "CH"},
-                                         {6, "DH"}, {7, "BH"}};
-std::map<uint8_t, std::string> regs_16 = {{0, "AX"}, {1, "CX"}, {2, "DX"},
-                                          {3, "BX"}, {4, "SP"}, {5, "BP"},
-                                          {6, "SI"}, {7, "DI"}};
+std::map<uint8_t, std::string> regs_8 = {{0, "al"}, {1, "cl"}, {2, "dl"},
+                                         {3, "bl"}, {4, "ah"}, {5, "ch"},
+                                         {6, "dh"}, {7, "bh"}};
+std::map<uint8_t, std::string> regs_16 = {{0, "ax"}, {1, "cx"}, {2, "dx"},
+                                          {3, "bx"}, {4, "sp"}, {5, "bp"},
+                                          {6, "si"}, {7, "di"}};
 
 #endif // COMMANDS_DISASSEMBLY

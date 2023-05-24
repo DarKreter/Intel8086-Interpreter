@@ -65,6 +65,31 @@ public:
     ~ADD_RMwR() = default;
 };
 
+class XOR_RM2R : public Command_t {
+protected:
+    // 001100d(1)w(1) mod(2)reg(3)r/m(3)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t w : 1;
+            uint8_t d : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    XOR_RM2R() : Command_t(2) { ; }
+
+    void PrintCommand(size_t) override;
+    ~XOR_RM2R() = default;
+};
+
 class MOV_I2R : public Command_t {
 protected:
     // 1101 w(1) reg(3)  data(8/16)
@@ -85,4 +110,28 @@ public:
 
     void PrintCommand(size_t) override;
     ~MOV_I2R() = default;
+};
+
+class MOV_RM2R : public Command_t {
+protected:
+    // 100010 d(1)w(1) mod(2)reg(3)r/m(3)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t w : 1;
+            uint8_t d : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    MOV_RM2R() : Command_t(2) { ; }
+
+    void PrintCommand(size_t) override;
+    ~MOV_RM2R() = default;
 };
