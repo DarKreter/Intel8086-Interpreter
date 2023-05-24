@@ -166,11 +166,17 @@ void LEA::PrintCommand(size_t pos)
 }
 void CMP_IwRM::PrintCommand(size_t pos)
 {
+    if(frame.decoded.s == 0 && frame.decoded.w == 1)
+        frame_length = 4;
+    else
+        frame_length = 3;
+    if(frame.decoded.mod != 0x03 && frame.decoded.mod != 0x00)
+        frame_length++;
+
     Command_t::PrintCommand(pos);
-    [[maybe_unused]] uint8_t disp;
 
     // std::cout << "w: " << (int)frame.decoded.w << endl;
-    // std::cout << "d: " << (int)frame.decoded.d << endl;
+    // std::cout << "s: " << (int)frame.decoded.s << endl;
     // std::cout << "mod: " << (int)frame.decoded.mod << endl;
     // std::cout << "reg: " << (int)frame.decoded.reg << endl;
     // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
@@ -181,6 +187,21 @@ void CMP_IwRM::PrintCommand(size_t pos)
         std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
                                            : regs_16[frame.decoded.rm])
                   << ", ";
+    else // mod == 00/01/10
+    {
+        std::cout << "[" << rm_memory[frame.decoded.rm];
+        switch(frame.decoded.mod) {
+        case 1:
+            // std::cout << "+" << (int)frame.decoded.disp;
+            break;
+        case 2:
+            break;
+        case 0: // disp == 0
+        default:
+            break;
+        }
+        std::cout << "], ";
+    }
 
     if(frame.decoded.s == 0 && frame.decoded.w == 1) {
         printf("%02X", frame.decoded.data[1]);
