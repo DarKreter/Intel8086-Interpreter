@@ -62,7 +62,12 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new POP_R();
         else if(CheckPattern(tab, size - pos, "001000"))
             cmd = new AND_RMaR();
-
+        else if(CheckPattern(tab, size - pos, "1110010"))
+            cmd = new IN_PORT();
+        else if(CheckPattern(tab, size - pos, "1110110"))
+            cmd = new IN_PORT_VAR();
+        else if(CheckPattern(tab, size - pos, "000110"))
+            cmd = new SBB_RMaR();
         else {
             cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             pos++, tab++;

@@ -39,18 +39,34 @@ public:
     void PrintCommand(size_t) override;
     ~INT() = default;
 };
-class ADD_RMwR : public Command_t {
+class IN_PORT : public Command_t {
 protected:
-    // 000000d(1)w(1) mod(2)reg(3)r/m(3)
+    // 1110010w(1) port(8)
     union {
         uint8_t raw[2];
         struct {
             uint8_t w : 1;
-            uint8_t d : 1;
-            uint8_t : 6;
-            uint8_t rm : 3;
-            uint8_t reg : 3;
-            uint8_t mod : 2;
+            uint8_t : 7;
+            uint8_t port;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    IN_PORT() : Command_t(2) { ; }
+
+    void PrintCommand(size_t) override;
+    ~IN_PORT() = default;
+};
+class IN_PORT_VAR : public Command_t {
+protected:
+    // 1110010w(1)
+    union {
+        uint8_t raw[1];
+        struct {
+            uint8_t w : 1;
+            uint8_t : 7;
 
         } decoded;
     } frame;
@@ -58,10 +74,80 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    ADD_RMwR() : Command_t(2) { ; }
+    IN_PORT_VAR() : Command_t(1) { ; }
+
+    void PrintCommand(size_t) override;
+    ~IN_PORT_VAR() = default;
+};
+class ADD_RMwR : public Command_t {
+protected:
+    // 000000d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
+    union {
+        uint8_t raw[4];
+        struct {
+            uint8_t w : 1;
+            uint8_t d : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+            uint8_t disp[2];
+
+        } decoded_disp_2;
+        struct __attribute__((packed)) {
+            uint8_t w : 1;
+            uint8_t d : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+            int8_t disp;
+
+        } decoded_disp;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    ADD_RMwR() : Command_t(4) { ; }
 
     void PrintCommand(size_t) override;
     ~ADD_RMwR() = default;
+};
+class SBB_RMaR : public Command_t {
+protected:
+    // 000000d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
+    union {
+        uint8_t raw[4];
+        struct {
+            uint8_t w : 1;
+            uint8_t d : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+            uint8_t disp[2];
+
+        } decoded_disp_2;
+        struct __attribute__((packed)) {
+            uint8_t w : 1;
+            uint8_t d : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+            int8_t disp;
+
+        } decoded_disp;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    SBB_RMaR() : Command_t(4) { ; }
+
+    void PrintCommand(size_t) override;
+    ~SBB_RMaR() = default;
 };
 class ADD_I2RM : public Command_t {
 protected:
