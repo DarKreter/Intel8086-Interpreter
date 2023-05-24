@@ -181,6 +181,30 @@ public:
     void PrintCommand(size_t) override;
     ~MOV_RM2R() = default;
 };
+class AND_RMaR : public Command_t {
+protected:
+    // 100010 d(1)w(1) mod(2)reg(3)r/m(3)
+    union {
+        uint8_t raw[4];
+        struct {
+            uint8_t w : 1;
+            uint8_t d : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t reg : 3;
+            uint8_t mod : 2;
+            uint8_t disp[2];
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    AND_RMaR() : Command_t(4) { ; }
+
+    void PrintCommand(size_t) override;
+    ~AND_RMaR() = default;
+};
 class LEA : public Command_t {
 protected:
     // 10001101 mod(2)reg(3)r/m(3)
@@ -246,6 +270,28 @@ public:
     void PrintCommand(size_t) override;
     ~PUSH_R() = default;
 };
+class PUSH_RM : public Command_t {
+protected:
+    // 11111111 mod(2)110r/m(3) disp(0/8/16)
+    union {
+        uint8_t raw[4];
+        struct {
+            uint8_t : 8;
+            uint8_t rm : 3;
+            uint8_t : 3;
+            uint8_t mod : 2;
+            uint8_t disp[2];
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    PUSH_RM() : Command_t(4) { ; }
+
+    void PrintCommand(size_t) override;
+    ~PUSH_RM() = default;
+};
 class DEC_R : public Command_t {
 protected:
     // 01001 reg(3)
@@ -264,6 +310,25 @@ public:
 
     void PrintCommand(size_t) override;
     ~DEC_R() = default;
+};
+class POP_R : public Command_t {
+protected:
+    // 01011 reg(3)
+    union {
+        uint8_t raw[1];
+        struct {
+            uint8_t reg : 3;
+            uint8_t : 5;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    POP_R() : Command_t(1) { ; }
+
+    void PrintCommand(size_t) override;
+    ~POP_R() = default;
 };
 class JNB : public Command_t {
 protected:
@@ -321,6 +386,25 @@ public:
 
     void PrintCommand(size_t) override;
     ~JNE() = default;
+};
+class JE : public Command_t {
+protected:
+    // 01110100 disp(8)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t : 8;
+            int8_t disp;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    JE() : Command_t(2) { ; }
+
+    void PrintCommand(size_t) override;
+    ~JE() = default;
 };
 class JMP_DS : public Command_t {
 protected:

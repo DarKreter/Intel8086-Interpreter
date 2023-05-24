@@ -52,11 +52,50 @@ void PUSH_R::PrintCommand(size_t pos)
 
     std::cout << "push " << regs_16[frame.decoded.reg] << "\n";
 }
+void PUSH_RM::PrintCommand(size_t pos)
+{
+    if(frame.decoded.mod == 1)
+        frame_length = 3;
+    else if(frame.decoded.mod == 2)
+        frame_length = 4;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+
+    cout << "push ";
+    if(frame.decoded.mod == 0x03)
+        std::cout << regs_16[frame.decoded.rm] << "\n";
+    else // mod == 00/01/10
+    {
+        std::cout << "[" << rm_memory[frame.decoded.rm];
+        switch(frame.decoded.mod) {
+        case 1:
+            std::cout << "+" << (int)frame.decoded.disp[0];
+            break;
+        case 2:
+            std::cout << "+"
+                      << (int)(frame.decoded.disp[0] +
+                               (frame.decoded.disp[1] << 8));
+            break;
+        case 0: // disp == 0
+        default:
+            break;
+        }
+        std::cout << "]\n";
+    }
+}
 void DEC_R::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
 
     std::cout << "dec " << regs_16[frame.decoded.reg] << "\n";
+}
+void POP_R::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "pop " << regs_16[frame.decoded.reg] << "\n";
 }
 void CALL_DS::PrintCommand(size_t pos)
 {
@@ -154,6 +193,89 @@ void MOV_RM2R::PrintCommand(size_t pos)
         }
     }
 }
+void AND_RMaR::PrintCommand(size_t pos)
+{
+
+    // std::cout << "w: " << (int)frame.decoded.w << endl;
+    // std::cout << "d: " << (int)frame.decoded.d << endl;
+    // std::cout << "mod: " << (int)frame.decoded.mod << endl;
+    // std::cout << "reg: " << (int)frame.decoded.reg << endl;
+    // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
+
+    if(frame.decoded.mod == 2)
+        frame_length = 4;
+    else if(frame.decoded.mod == 1)
+        frame_length = 3;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+    std::cout << "and ";
+
+    if(frame.decoded.d == 0) {        // from reg
+        if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
+            std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                               : regs_16[frame.decoded.rm]);
+
+        else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
+            printf("[%02x%02x]", frame.decoded.disp[1], frame.decoded.disp[0]);
+        }
+        else // mod == 00/01/10
+        {
+            std::cout << "[" << rm_memory[frame.decoded.rm];
+            switch(frame.decoded.mod) {
+            case 1:
+                std::cout << "+" << (int)frame.decoded.disp[0];
+                break;
+            case 2:
+                std::cout << "+"
+                          << (int)(frame.decoded.disp[0] +
+                                   (frame.decoded.disp[1] << 8));
+                break;
+            case 0: // disp == 0
+            default:
+                break;
+            }
+            std::cout << "]";
+        }
+
+        std::cout << ", "
+                  << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                           : regs_16[frame.decoded.reg])
+                  << std::endl;
+    }
+    else { // to reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                           : regs_16[frame.decoded.reg]);
+        if(frame.decoded.mod == 0x03) // if mod == 3, rm is treated like reg
+            std::cout << ", "
+                      << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                               : regs_16[frame.decoded.rm])
+                      << endl;
+        else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
+            printf(", [%02x%02x]\n", frame.decoded.disp[1],
+                   frame.decoded.disp[0]);
+        }
+        else // mod == 00/01/10
+        {
+            std::cout << ", [" << rm_memory[frame.decoded.rm];
+            switch(frame.decoded.mod) {
+            case 0:
+                break;
+            case 1:
+                printf("+%02x", frame.decoded.disp[0]);
+                break;
+            case 2:
+                printf("+%02x",
+                       (frame.decoded.disp[1] << 8) + frame.decoded.disp[0]);
+                break;
+            default:
+                break;
+            }
+            std::cout << "]\n";
+        }
+    }
+}
 void SHL::PrintCommand(size_t pos)
 {
     // std::cout << "w: " << (int)frame.decoded.w << endl;
@@ -234,7 +356,8 @@ void ADD_RMwR::PrintCommand(size_t pos)
     if(frame.decoded.d == 0) // from reg
     {
         if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
-            std::cout << regs_16[frame.decoded.rm];
+            std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                               : regs_16[frame.decoded.rm]);
         std::cout << ", "
                   << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
                                            : regs_16[frame.decoded.reg])
@@ -245,7 +368,10 @@ void ADD_RMwR::PrintCommand(size_t pos)
                                            : regs_16[frame.decoded.reg]);
 
         if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
-            std::cout << ", " << regs_16[frame.decoded.rm] << std::endl;
+            std::cout << ", "
+                      << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                               : regs_16[frame.decoded.rm])
+                      << std::endl;
     }
 
     // if(frame.decoded.rm == 0)
@@ -364,6 +490,11 @@ void JNE::PrintCommand(size_t pos)
     // jne
     printf("jne %04x\n", (int)(frame.decoded.disp + pos + 2));
 }
+void JE::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+    printf("je %04x\n", (int)(frame.decoded.disp + pos + 2));
+}
 void JL::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
@@ -420,7 +551,7 @@ void Command_t::PrintCommand(size_t pos)
     printf("%04lx: ", pos);
     for(uint8_t i = 0; i < frame_length; i++)
         printf("%02x", GetFramePart(i));
-    printf("\t");
+    printf("\t\t");
 }
 
 void Command_t::Read(uint8_t* tab)
@@ -436,7 +567,7 @@ std::map<uint8_t, std::string> regs_16 = {{0, "ax"}, {1, "cx"}, {2, "dx"},
                                           {3, "bx"}, {4, "sp"}, {5, "bp"},
                                           {6, "si"}, {7, "di"}};
 std::map<uint8_t, std::string> rm_memory = {
-    {0, "bx + si"}, {1, "bx + di"}, {2, "bp + si"}, {3, "bp + di"},
-    {4, "si"},      {5, "di"},      {6, "bp"},      {7, "bx"}};
+    {0, "bx+si"}, {1, "bx+di"}, {2, "bp+si"}, {3, "bp+di"},
+    {4, "si"},    {5, "di"},    {6, "bp"},    {7, "bx"}};
 
 #endif // COMMANDS_DISASSEMBLYregs_8

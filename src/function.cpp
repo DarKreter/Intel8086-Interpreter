@@ -38,12 +38,16 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new JNE();
         else if(CheckPattern(tab, size - pos, "01111100"))
             cmd = new JL();
+        else if(CheckPattern(tab, size - pos, "01110100"))
+            cmd = new JE();
         else if(CheckPattern(tab, size - pos, "11101001"))
             cmd = new JMP_DS();
         else if(CheckPattern(tab, size - pos, "11101011"))
             cmd = new JMP_DSS();
         else if(CheckPattern(tab, size - pos, "01010"))
             cmd = new PUSH_R();
+        else if(CheckPattern(tab, size - pos, "11111111XX110"))
+            cmd = new PUSH_RM();
         else if(CheckPattern(tab, size - pos, "11101000"))
             cmd = new CALL_DS();
         else if(CheckPattern(tab, size - pos, "11111111XX010"))
@@ -54,6 +58,10 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new DEC_R();
         else if(CheckPattern(tab, size - pos, "110100XXXX100"))
             cmd = new SHL();
+        else if(CheckPattern(tab, size - pos, "01011"))
+            cmd = new POP_R();
+        else if(CheckPattern(tab, size - pos, "001000"))
+            cmd = new AND_RMaR();
 
         else {
             cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
