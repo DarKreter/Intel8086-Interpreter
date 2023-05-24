@@ -25,6 +25,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new XOR_RM2R();
         else if(CheckPattern(tab, size - pos, "10001101"))
             cmd = new LEA();
+        else if(CheckPattern(tab, size - pos, "100000XXXX111"))
+            cmd = new CMP_IwRM();
         else {
             cout << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             pos++, tab++;
@@ -41,9 +43,10 @@ void Analyze(uint8_t* tab, size_t size)
 bool CheckPattern(uint8_t* tab, size_t sizeLeft, std::string pattern)
 {
     for(unsigned int i = 0; i < pattern.length(); i++) {
-        if(pattern[i] == 'X')
-            continue;
         bool bit = (*tab << (i % 8)) & 0x80;
+        // if(pattern[i] == 'X') {
+        // std::cout << (int)bit << "\n";
+        // }
         if((pattern[i] == '1' && !bit) || (pattern[i] == '0' && bit))
             return false;
 

@@ -139,7 +139,7 @@ public:
 
 class LEA : public Command_t {
 protected:
-    // 100010 d(1)w(1) mod(2)reg(3)r/m(3)
+    // 10001101 mod(2)reg(3)r/m(3)
     union {
         uint8_t raw[3];
         struct {
@@ -158,4 +158,29 @@ public:
 
     void PrintCommand(size_t) override;
     ~LEA() = default;
+};
+
+class CMP_IwRM : public Command_t {
+protected:
+    // 100000 d(1)w(1) mod(2)111r/m(3) data(8/16)
+    union {
+        uint8_t raw[4];
+        struct {
+            uint8_t w : 1;
+            uint8_t s : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t : 3;
+            uint8_t mod : 2;
+            int8_t data[2];
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    CMP_IwRM() : Command_t(4) { ; }
+
+    void PrintCommand(size_t) override;
+    ~CMP_IwRM() = default;
 };
