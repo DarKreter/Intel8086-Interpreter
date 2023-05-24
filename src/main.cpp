@@ -1,5 +1,7 @@
 #include "function.hpp"
 
+using namespace std;
+
 #define TEXT_START_BYTE 32
 
 int main(int argc, char* argv[])
@@ -15,7 +17,7 @@ int main(int argc, char* argv[])
     }
 
     uint8_t* fileContent = ReadFile(argv[1]);
-    int textSegmentSize = fileContent[8];
+    size_t textSegmentSize = (fileContent[9] << 8) + fileContent[8];
 
     Analyze(fileContent + TEXT_START_BYTE, textSegmentSize);
 

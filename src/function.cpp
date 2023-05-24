@@ -10,6 +10,7 @@ using namespace std;
 
 void Analyze(uint8_t* tab, size_t size)
 {
+    // cout << hex << size << endl;
     size_t pos = 0;
     Command_t* cmd = nullptr;
     while(pos < size) {
@@ -21,6 +22,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new INT();
         else if(CheckPattern(tab, size - pos, "000000"))
             cmd = new ADD_RMwR();
+        else if(CheckPattern(tab, size - pos, "100000XXXX000"))
+            cmd = new ADD_I2RM();
         else if(CheckPattern(tab, size - pos, "001100"))
             cmd = new XOR_RM2R();
         else if(CheckPattern(tab, size - pos, "10001101"))
@@ -33,6 +36,12 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new TEST_IaRM();
         else if(CheckPattern(tab, size - pos, "01110101"))
             cmd = new JNE();
+        else if(CheckPattern(tab, size - pos, "01010"))
+            cmd = new PUSH_R();
+        else if(CheckPattern(tab, size - pos, "11101000"))
+            cmd = new CALL_DS();
+        else if(CheckPattern(tab, size - pos, "11110100"))
+            cmd = new HLT();
         else {
             cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             pos++, tab++;
