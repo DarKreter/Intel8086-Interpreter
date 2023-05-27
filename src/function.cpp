@@ -2,8 +2,10 @@
 #define FUNCTION_DISASSEMBLY
 
 #include "function.hpp"
+#include "RMwR.hpp"
 #include "commands.hpp"
 #include "jmp.hpp"
+
 
 #include <bitset>
 
