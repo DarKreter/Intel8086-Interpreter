@@ -97,5 +97,13 @@ public:
     void PrintCommand(size_t) override;
     ~LEA() = default;
 };
+class PUSH_RM : public RMwR_BASIC {
+protected:
+    // 11111111 mod(2)110r/m(3) disp(0/8/16)
+public:
+    PUSH_RM() : RMwR_BASIC("push") { ; }
+    void PrintCommand(size_t) override;
+    ~PUSH_RM() = default;
+};
 
 #endif // RMWR_DIS

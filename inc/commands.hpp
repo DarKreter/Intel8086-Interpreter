@@ -24,56 +24,6 @@ public:
     virtual ~Command_t() = default;
 };
 
-class ADD_I2RM : public Command_t {
-protected:
-    // 100000d(1)w(1) mod(2)000r/m(3) data(8) (if sw == 01)data(8)
-    union {
-        uint8_t raw[4];
-        struct {
-            uint8_t w : 1;
-            uint8_t s : 1;
-            uint8_t : 6;
-            uint8_t rm : 3;
-            uint8_t : 3;
-            uint8_t mod : 2;
-            uint8_t data[2];
-
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    ADD_I2RM() : Command_t(4) { ; }
-
-    void PrintCommand(size_t) override;
-    ~ADD_I2RM() = default;
-};
-class SUB_IfRM : public Command_t {
-protected:
-    // 100000d(1)w(1) mod(2)101r/m(3) data(8) (if sw == 01)data(8)
-    union {
-        uint8_t raw[4];
-        struct {
-            uint8_t w : 1;
-            uint8_t s : 1;
-            uint8_t : 6;
-            uint8_t rm : 3;
-            uint8_t : 3;
-            uint8_t mod : 2;
-            uint8_t data[2];
-
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    SUB_IfRM() : Command_t(4) { ; }
-
-    void PrintCommand(size_t) override;
-    ~SUB_IfRM() = default;
-};
 class MOV_I2R : public Command_t {
 protected:
     // 1101 w(1) reg(3)  data(8/16)
@@ -244,28 +194,6 @@ public:
 
     void PrintCommand(size_t) override;
     ~PUSH_R() = default;
-};
-class PUSH_RM : public Command_t {
-protected:
-    // 11111111 mod(2)110r/m(3) disp(0/8/16)
-    union {
-        uint8_t raw[4];
-        struct {
-            uint8_t : 8;
-            uint8_t rm : 3;
-            uint8_t : 3;
-            uint8_t mod : 2;
-            uint8_t disp[2];
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    PUSH_RM() : Command_t(4) { ; }
-
-    void PrintCommand(size_t) override;
-    ~PUSH_RM() = default;
 };
 class NEG : public Command_t {
 protected:
