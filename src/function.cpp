@@ -51,6 +51,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new JMP_DSS();
         else if(CheckPattern(tab, size - pos, "01010"))
             cmd = new PUSH_R();
+        else if(CheckPattern(tab, size - pos, "01000"))
+            cmd = new INC_R();
         else if(CheckPattern(tab, size - pos, "11111111XX110"))
             cmd = new PUSH_RM();
         else if(CheckPattern(tab, size - pos, "11101000"))
@@ -77,6 +79,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new SBB_RMaR();
         else if(CheckPattern(tab, size - pos, "100000XXXX101"))
             cmd = new SUB_IfRM();
+        else if(CheckPattern(tab, size - pos, "0010110"))
+            cmd = new SUB_IfA();
         else if(CheckPattern(tab, size - pos, "000010"))
             cmd = new OR_RMaR();
         else if(CheckPattern(tab, size - pos, "1111011XXX011"))

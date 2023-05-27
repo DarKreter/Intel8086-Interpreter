@@ -67,11 +67,11 @@ void CMP_IwRM::PrintCommand(size_t pos)
     }
 
     if(frame.decoded.s == 0 && frame.decoded.w == 1) {
-        printf("%02X", frame.decoded.data[1 + offset]);
-        printf("%02X\n", frame.decoded.data[0 + offset]);
+        printf("%02x", frame.decoded.data[1 + offset]);
+        printf("%02x\n", frame.decoded.data[0 + offset]);
     }
     else {
-        printf("%02X\n", frame.decoded.data[0 + offset]);
+        printf("%x\n", frame.decoded.data[0 + offset]);
     }
 }
 void TEST_IaRM::PrintCommand(size_t pos)
@@ -91,11 +91,11 @@ void TEST_IaRM::PrintCommand(size_t pos)
                   << ", ";
 
     if(frame.decoded.w == 1) {
-        printf("%02X", frame.decoded.data[1]);
-        printf("%02X\n", frame.decoded.data[0]);
+        printf("%02x", frame.decoded.data[1]);
+        printf("%02x\n", frame.decoded.data[0]);
     }
     else {
-        printf("%02X\n", frame.decoded.data[0]);
+        printf("%x\n", frame.decoded.data[0]);
     }
 }
 void PUSH_R::PrintCommand(size_t pos)
@@ -148,6 +148,12 @@ void POP_R::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     std::cout << "pop " << regs_16[frame.decoded.reg] << "\n";
+}
+void INC_R::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "inc " << regs_16[frame.decoded.reg] << "\n";
 }
 void IN_PORT::PrintCommand(size_t pos)
 {
@@ -213,6 +219,22 @@ void RET::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     printf("ret\n");
+}
+void SUB_IfA::PrintCommand(size_t pos)
+{
+    if(frame.decoded.w == 1)
+        frame_length = 3;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+
+    printf("sub ax, ");
+
+    if(frame.decoded.w == 1)
+        printf("%02x%02x\n", frame.decoded.data[1], frame.decoded.data[0]);
+    else
+        printf("%x\n", frame.decoded.data[0]);
 }
 
 Command_t::Command_t(uint8_t fl) : frame_length{fl} {}

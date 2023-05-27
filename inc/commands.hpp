@@ -255,6 +255,25 @@ public:
     void PrintCommand(size_t) override;
     ~POP_R() = default;
 };
+class INC_R : public Command_t {
+protected:
+    // 01000 reg(3)
+    union {
+        uint8_t raw[1];
+        struct {
+            uint8_t reg : 3;
+            uint8_t : 5;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    INC_R() : Command_t(1) { ; }
+
+    void PrintCommand(size_t) override;
+    ~INC_R() = default;
+};
 class CALL_IS : public Command_t {
 protected:
     // 11111111 mod(2)010r/m(3)
@@ -339,6 +358,26 @@ public:
 
     void PrintCommand(size_t) override;
     ~RET() = default;
+};
+class SUB_IfA : public Command_t {
+protected:
+    // 0010110w(1) data(8) (if w == 1)data(8)
+    union {
+        uint8_t raw[3];
+        struct {
+            uint8_t w : 1;
+            uint8_t : 7;
+            uint8_t data[2];
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    SUB_IfA() : Command_t(3) { ; }
+    void PrintCommand(size_t) override;
+    ~SUB_IfA() = default;
 };
 
 #endif // COMMANDS_DIS
