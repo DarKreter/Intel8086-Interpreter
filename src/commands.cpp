@@ -15,9 +15,9 @@ void MOV_I2R::PrintCommand(size_t pos)
                                        : regs_16[frame.decoded.reg])
               << ", ";
 
-    printf("%02X", frame.decoded.data[1]);
+    printf("%02x", frame.decoded.data[1]);
     if(frame.decoded.w == 1)
-        printf("%02X", frame.decoded.data[0]);
+        printf("%02x", frame.decoded.data[0]);
 
     printf("\n");
 }
@@ -201,6 +201,12 @@ void HLT::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     printf("hlt\n");
+}
+void CBW::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    printf("cbw\n");
 }
 void RET::PrintCommand(size_t pos)
 {

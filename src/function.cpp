@@ -59,6 +59,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new CALL_IS();
         else if(CheckPattern(tab, size - pos, "11110100"))
             cmd = new HLT();
+        else if(CheckPattern(tab, size - pos, "10011000"))
+            cmd = new CBW();
         else if(CheckPattern(tab, size - pos, "01001"))
             cmd = new DEC_R();
         else if(CheckPattern(tab, size - pos, "110100XXXX100"))
