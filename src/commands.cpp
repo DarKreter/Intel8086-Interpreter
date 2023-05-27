@@ -834,48 +834,6 @@ void CMP_IwRM::PrintCommand(size_t pos)
     }
 }
 
-void JMP_BASIC::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-    // + 2, because actual position is after jump(jump is 2 byte long)
-    printf("%s %04x\n", name, (int)(frame.decoded.disp + pos + 2));
-}
-void JNE::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-    // + 2, because actual position is after jne which is not yet added to
-    // jne
-    printf("jne %04x\n", (int)(frame.decoded.disp + pos + 2));
-}
-void JE::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-    printf("je %04x\n", (int)(frame.decoded.disp + pos + 2));
-}
-void JNL::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-    printf("jnl %04x\n", (int)(frame.decoded.disp + pos + 2));
-}
-void JL::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-    // + 2, because actual position is after jl which is not yet added to
-    // jl
-    printf("jl %04x\n", (int)(frame.decoded.disp + pos + 2));
-}
-void JMP_DS::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-    printf("jmp %04x\n", (int)(frame.decoded.disp_low +
-                               (frame.decoded.disp_high << 8) + pos + 3));
-}
-void JMP_DSS::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-    printf("jmp short %04x\n", (int)(frame.decoded.disp + pos + 2));
-}
-
 void TEST_IaRM::PrintCommand(size_t pos)
 {
     if(frame.decoded.w == 1)

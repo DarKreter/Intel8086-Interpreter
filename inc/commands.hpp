@@ -1,3 +1,6 @@
+#ifndef COMMANDS_DIS
+#define COMMANDS_DIS
+
 #include <iostream>
 #include <map>
 #include <stdio.h>
@@ -329,151 +332,6 @@ public:
     ~TEST_IaRM() = default;
 };
 
-class JMP_BASIC : public Command_t {
-protected:
-    // XXXXXXXX disp
-    const char* name;
-    union {
-        uint8_t raw[2];
-        struct {
-            uint8_t : 8;
-            int8_t disp;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-    JMP_BASIC(const char* _n) : Command_t(2), name{_n} { ; }
-
-public:
-    void PrintCommand(size_t) override;
-    ~JMP_BASIC() = default;
-};
-
-class JNB : public JMP_BASIC {
-protected:
-    // 01110011 disp(8)
-
-public:
-    JNB() : JMP_BASIC("jnbbb") { ; }
-    ~JNB() = default;
-};
-class JL : public Command_t {
-protected:
-    // 01111100 disp(8)
-    union {
-        uint8_t raw[2];
-        struct {
-            uint8_t : 8;
-            int8_t disp;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    JL() : Command_t(2) { ; }
-
-    void PrintCommand(size_t) override;
-    ~JL() = default;
-};
-class JNL : public Command_t {
-protected:
-    // 01111101 disp(8)
-    union {
-        uint8_t raw[2];
-        struct {
-            uint8_t : 8;
-            int8_t disp;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    JNL() : Command_t(2) { ; }
-
-    void PrintCommand(size_t) override;
-    ~JNL() = default;
-};
-class JNE : public Command_t {
-protected:
-    // 01110101 disp(8)
-    union {
-        uint8_t raw[2];
-        struct {
-            uint8_t : 8;
-            int8_t disp;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    JNE() : Command_t(2) { ; }
-
-    void PrintCommand(size_t) override;
-    ~JNE() = default;
-};
-class JE : public Command_t {
-protected:
-    // 01110100 disp(8)
-    union {
-        uint8_t raw[2];
-        struct {
-            uint8_t : 8;
-            int8_t disp;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    JE() : Command_t(2) { ; }
-
-    void PrintCommand(size_t) override;
-    ~JE() = default;
-};
-class JMP_DS : public Command_t {
-protected:
-    // 11101001 disp(16)
-    union {
-        uint8_t raw[3];
-        struct {
-            uint8_t : 8;
-            uint8_t disp_low;
-            uint8_t disp_high;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    JMP_DS() : Command_t(3) { ; }
-
-    void PrintCommand(size_t) override;
-    ~JMP_DS() = default;
-};
-class JMP_DSS : public Command_t {
-protected:
-    // 11101011 disp(8)
-    union {
-        uint8_t raw[2];
-        struct {
-            uint8_t : 8;
-            int8_t disp;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    JMP_DSS() : Command_t(2) { ; }
-
-    void PrintCommand(size_t) override;
-    ~JMP_DSS() = default;
-};
-
 class INT : public Command_t {
 protected:
     // 11001101 type(8)
@@ -759,3 +617,5 @@ public:
     void PrintCommand(size_t) override;
     ~RET() = default;
 };
+
+#endif // COMMANDS_DIS

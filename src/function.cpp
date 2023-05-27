@@ -3,6 +3,7 @@
 
 #include "function.hpp"
 #include "commands.hpp"
+#include "jmp.hpp"
 
 #include <bitset>
 
