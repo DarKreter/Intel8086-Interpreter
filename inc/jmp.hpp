@@ -24,6 +24,9 @@ public:
     ~JMP_BASIC() = default;
 };
 class JNBE : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01110111";
+
 protected:
     // 01110111 disp(8)
 public:
@@ -31,6 +34,9 @@ public:
     ~JNBE() = default;
 };
 class JBE : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01110110";
+
 protected:
     // 01110110 disp(8)
 public:
@@ -38,6 +44,9 @@ public:
     ~JBE() = default;
 };
 class JL : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01111100";
+
 protected:
     // 01111100 disp(8)
 public:
@@ -45,6 +54,9 @@ public:
     ~JL() = default;
 };
 class JLE : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01111110";
+
 protected:
     // 01111110 disp(8)
 public:
@@ -52,6 +64,9 @@ public:
     ~JLE() = default;
 };
 class JB : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01110010";
+
 protected:
     // 01110010 disp(8)
 public:
@@ -59,6 +74,9 @@ public:
     ~JB() = default;
 };
 class JNB : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01110011";
+
 protected:
     // 01110011 disp(8)
 public:
@@ -66,6 +84,9 @@ public:
     ~JNB() = default;
 };
 class JNL : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01111101";
+
 protected:
     // 01111101 disp(8)
 public:
@@ -73,6 +94,9 @@ public:
     ~JNL() = default;
 };
 class JNE : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01110101";
+
 protected:
     // 01110101 disp(8)
 public:
@@ -80,6 +104,9 @@ public:
     ~JNE() = default;
 };
 class JE : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01110100";
+
 protected:
     // 01110100 disp(8)
 public:
@@ -87,6 +114,9 @@ public:
     ~JE() = default;
 };
 class JMP_DSS : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "11101011";
+
 protected:
     // 11101011 disp(8)
 public:
@@ -94,6 +124,9 @@ public:
     ~JMP_DSS() = default;
 };
 class JMP_DS : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "11101001";
+
 protected:
     // 11101001 disp(8)
     union {
@@ -113,6 +146,9 @@ public:
     ~JMP_DS() = default;
 };
 class JNLE : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01111111";
+
 protected:
     // 01111111 disp(8)
 public:
@@ -120,6 +156,9 @@ public:
     ~JNLE() = default;
 };
 class JS : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "01111000";
+
 protected:
     // 01111111 disp(8)
 public:
@@ -127,6 +166,9 @@ public:
     ~JS() = default;
 };
 class LOOP : public JMP_BASIC {
+public:
+    constexpr static std::string_view pattern = "11100010";
+
 protected:
     // 11100010 disp(8)
 public:
@@ -135,6 +177,9 @@ public:
 };
 
 class JMP_IS : public Command_t {
+public:
+    constexpr static std::string_view pattern = "11111111XX100";
+
 protected:
     // 11111111 mod(2)101r/m(3)
     union {

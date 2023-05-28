@@ -34,6 +34,9 @@ public:
 };
 
 class MOV_I2RM : public I2RM_BASIC {
+public:
+    constexpr static std::string_view pattern = "1100011XXX000";
+
 protected:
     // 1100011w(1) mod(2)000r/m(3) data(8) (if w == 1)data(8)
 
@@ -43,6 +46,9 @@ public:
     ~MOV_I2RM() = default;
 };
 class OR_I2RM : public I2RM_BASIC {
+public:
+    constexpr static std::string_view pattern = "1000000XXX001";
+
 protected:
     // 1000000w(1) mod(2)001r/m(3) data(8) (if sw == 01)data(8)
 
@@ -51,7 +57,11 @@ public:
     void PrintCommand(size_t) override;
     ~OR_I2RM() = default;
 };
+
 class AND_I2RM : public I2RM_BASIC {
+public:
+    constexpr static std::string_view pattern = "1000000XXX100";
+
 protected:
     // 1000000w(1) mod(2)001r/m(3) data(8) (if sw == 01)data(8)
 
@@ -61,8 +71,10 @@ public:
     ~AND_I2RM() = default;
 };
 
-
 class ADD_I2RM : public I2RM_BASIC {
+public:
+    constexpr static std::string_view pattern = "100000XXXX000";
+
 protected:
     // 100000d(1)w(1) mod(2)000r/m(3) data(8) (if sw == 01)data(8)
 
@@ -72,6 +84,9 @@ public:
     ~ADD_I2RM() = default;
 };
 class SSB_I2RM : public I2RM_BASIC {
+public:
+    constexpr static std::string_view pattern = "100000XXXX011";
+
 protected:
     // 100000d(1)w(1) mod(2)011r/m(3) data(8) (if sw == 01)data(8)
 
@@ -81,6 +96,9 @@ public:
     ~SSB_I2RM() = default;
 };
 class SUB_IfRM : public I2RM_BASIC {
+public:
+    constexpr static std::string_view pattern = "100000XXXX101";
+
 protected:
     // 100000d(1)w(1) mod(2)101r/m(3) data(8) (if sw == 01)data(8)
 
@@ -90,6 +108,9 @@ public:
     ~SUB_IfRM() = default;
 };
 class TEST_IaRM : public I2RM_BASIC {
+public:
+    constexpr static std::string_view pattern = "1111011XXX000";
+
 protected:
     // 100000d(1)w(1) mod(2)101r/m(3) data(8) (if sw == 01)data(8)
 
@@ -99,6 +120,9 @@ public:
     ~TEST_IaRM() = default;
 };
 class CMP_IwRM : public I2RM_BASIC {
+public:
+    constexpr static std::string_view pattern = "100000XXXX111";
+
 protected:
     // 100000d(1)w(1) mod(2)111r/m(3) data(8) (if sw == 01)data(8)
 

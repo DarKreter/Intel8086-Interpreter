@@ -12,156 +12,41 @@
 
 using namespace std;
 
+template <typename... Ts>
+Command_t* ProcessTypes(uint8_t* tab, size_t diff)
+{
+    Command_t* cmd = nullptr;
+    // Iterate over each type and call CheckCommand
+    ((CheckCommand<Ts>(tab, diff) == true ? cmd = new Ts() : cmd), ...);
+    return cmd;
+}
+
+template <typename T>
+bool CheckCommand(uint8_t* tab, size_t diff)
+{
+    if(CheckPattern(tab, diff, T::pattern))
+        return true;
+    return false;
+}
+
 void Analyze(uint8_t* tab, size_t size)
 {
-    // cout << hex << size << endl;
     size_t pos = 0;
     Command_t* cmd = nullptr;
+
     while(pos < size) {
-        if(CheckPattern(tab, size - pos, "1011"))
-            cmd = new MOV_I2R();
-        else if(CheckPattern(tab, size - pos, "100010"))
-            cmd = new MOV_RM2R();
-        else if(CheckPattern(tab, size - pos, "11001101"))
-            cmd = new INT();
-        else if(CheckPattern(tab, size - pos, "000000"))
-            cmd = new ADD_RMwR();
-        else if(CheckPattern(tab, size - pos, "100000XXXX000"))
-            cmd = new ADD_I2RM();
-        else if(CheckPattern(tab, size - pos, "1000000XXX100"))
-            cmd = new AND_I2RM();
-        else if(CheckPattern(tab, size - pos, "1100011XXX000"))
-            cmd = new MOV_I2RM();
-        else if(CheckPattern(tab, size - pos, "001100"))
-            cmd = new XOR_RM2R();
-        else if(CheckPattern(tab, size - pos, "001010"))
-            cmd = new SUB_RM2R();
-        else if(CheckPattern(tab, size - pos, "10001101"))
-            cmd = new LEA();
-        else if(CheckPattern(tab, size - pos, "100000XXXX111"))
-            cmd = new CMP_IwRM();
-        else if(CheckPattern(tab, size - pos, "1000000XXX001"))
-            cmd = new OR_I2RM();
-        else if(CheckPattern(tab, size - pos, "001110"))
-            cmd = new CMP_RMaR();
-        else if(CheckPattern(tab, size - pos, "1111011XXX000"))
-            cmd = new TEST_IaRM();
-        else if(CheckPattern(tab, size - pos, "1111111XXX000"))
-            cmd = new INC_RM();
-        else if(CheckPattern(tab, size - pos, "01110011"))
-            cmd = new JNB();
-        else if(CheckPattern(tab, size - pos, "01111110"))
-            cmd = new JLE();
-        else if(CheckPattern(tab, size - pos, "01110010"))
-            cmd = new JB();
-        else if(CheckPattern(tab, size - pos, "01110101"))
-            cmd = new JNE();
-        else if(CheckPattern(tab, size - pos, "01110111"))
-            cmd = new JNBE();
-        else if(CheckPattern(tab, size - pos, "01110110"))
-            cmd = new JBE();
-        else if(CheckPattern(tab, size - pos, "01111100"))
-            cmd = new JL();
-        else if(CheckPattern(tab, size - pos, "01111111"))
-            cmd = new JNLE();
-        else if(CheckPattern(tab, size - pos, "01111101"))
-            cmd = new JNL();
-        else if(CheckPattern(tab, size - pos, "01110100"))
-            cmd = new JE();
-        else if(CheckPattern(tab, size - pos, "01111000"))
-            cmd = new JS();
-        else if(CheckPattern(tab, size - pos, "11101001"))
-            cmd = new JMP_DS();
-        else if(CheckPattern(tab, size - pos, "11111111XX100"))
-            cmd = new JMP_IS();
-        else if(CheckPattern(tab, size - pos, "1111011XXX110"))
-            cmd = new DIV();
-        else if(CheckPattern(tab, size - pos, "1000011"))
-            cmd = new XCHG_RMwR();
-        else if(CheckPattern(tab, size - pos, "10010"))
-            cmd = new XCHG_RwA();
-        else if(CheckPattern(tab, size - pos, "11100010"))
-            cmd = new LOOP();
-        else if(CheckPattern(tab, size - pos, "11101011"))
-            cmd = new JMP_DSS();
-        else if(CheckPattern(tab, size - pos, "1010000"))
-            cmd = new MOV_MwA();
-        else if(CheckPattern(tab, size - pos, "11000010"))
-            cmd = new RET_wSAI();
-        else if(CheckPattern(tab, size - pos, "01010"))
-            cmd = new PUSH_R();
-        else if(CheckPattern(tab, size - pos, "0000010"))
-            cmd = new ADD_IwA();
-        else if(CheckPattern(tab, size - pos, "110100XXXX111"))
-            cmd = new SAR();
-        else if(CheckPattern(tab, size - pos, "110100XXXX010"))
-            cmd = new RCL();
-        else if(CheckPattern(tab, size - pos, "01000"))
-            cmd = new INC_R();
-        else if(CheckPattern(tab, size - pos, "11111111XX110"))
-            cmd = new PUSH_RM();
-        else if(CheckPattern(tab, size - pos, "1111111XXX001"))
-            cmd = new DEC_RM();
-        else if(CheckPattern(tab, size - pos, "1111011XXX100"))
-            cmd = new MUL();
-        else if(CheckPattern(tab, size - pos, "11101000"))
-            cmd = new CALL_DS();
-        else if(CheckPattern(tab, size - pos, "11111111XX010"))
-            cmd = new CALL_IS();
-        else if(CheckPattern(tab, size - pos, "11110100"))
-            cmd = new HLT();
-        else if(CheckPattern(tab, size - pos, "10011000"))
-            cmd = new CBW();
-        else if(CheckPattern(tab, size - pos, "10011001"))
-            cmd = new CWD();
-        else if(CheckPattern(tab, size - pos, "01001"))
-            cmd = new DEC_R();
-        else if(CheckPattern(tab, size - pos, "000100"))
-            cmd = new ADC_RMwR();
-        else if(CheckPattern(tab, size - pos, "1000010"))
-            cmd = new TEST_RMwR();
-        else if(CheckPattern(tab, size - pos, "110100XXXX100"))
-            cmd = new SHL();
-        else if(CheckPattern(tab, size - pos, "110100XXXX101"))
-            cmd = new SHR();
-        else if(CheckPattern(tab, size - pos, "111100101010010"))
-            cmd = new REP_MOVS();
-        else if(CheckPattern(tab, size - pos, "111100101010101"))
-            cmd = new REP_STOS();
-        else if(CheckPattern(tab, size - pos, "111100101010111"))
-            cmd = new REP_SCAS();
-        else if(CheckPattern(tab, size - pos, "1010011"))
-            cmd = new CMPS();
-        else if(CheckPattern(tab, size - pos, "01011"))
-            cmd = new POP_R();
-        else if(CheckPattern(tab, size - pos, "001000"))
-            cmd = new AND_RMaR();
-        else if(CheckPattern(tab, size - pos, "1110010"))
-            cmd = new IN_PORT();
-        else if(CheckPattern(tab, size - pos, "1110110"))
-            cmd = new IN_PORT_VAR();
-        else if(CheckPattern(tab, size - pos, "000110"))
-            cmd = new SBB_RMaR();
-        else if(CheckPattern(tab, size - pos, "100000XXXX101"))
-            cmd = new SUB_IfRM();
-        else if(CheckPattern(tab, size - pos, "0010110"))
-            cmd = new SUB_IfA();
-        else if(CheckPattern(tab, size - pos, "0011110"))
-            cmd = new CMP_IwA();
-        else if(CheckPattern(tab, size - pos, "000010"))
-            cmd = new OR_RMaR();
-        else if(CheckPattern(tab, size - pos, "1111011XXX011"))
-            cmd = new NEG();
-        else if(CheckPattern(tab, size - pos, "100000XXXX011"))
-            cmd = new SSB_I2RM();
-        else if(CheckPattern(tab, size - pos, "11000011"))
-            cmd = new RET();
-        else if(CheckPattern(tab, size - pos, "11111100"))
-            cmd = new CLD();
-        else if(CheckPattern(tab, size - pos, "11111101"))
-            cmd = new STD();
-        else if(CheckPattern(tab, size - pos, "1010100"))
-            cmd = new TEST_IwA();
+        cmd = ProcessTypes<
+            MOV_I2R, MOV_RM2R, OR_I2RM, INT, ADD_RMwR, ADD_I2RM, AND_I2RM,
+            MOV_I2RM, XOR_RM2R, SUB_RM2R, LEA, CMP_IwRM, CMP_RMaR, TEST_IaRM,
+            INC_RM, JNB, JLE, JB, JNE, JNBE, JBE, JL, JNLE, JNL, JE, JS, JMP_DS,
+            JMP_IS, DIV, XCHG_RMwR, XCHG_RwA, LOOP, JMP_DSS, MOV_MwA, RET_wSAI,
+            PUSH_R, ADD_IwA, SAR, RCL, INC_R, PUSH_RM, DEC_RM, MUL, CALL_DS,
+            CALL_IS, HLT, CBW, CWD, DEC_R, ADC_RMwR, TEST_RMwR, SHL, SHR,
+            REP_MOVS, REP_STOS, REP_SCAS, CMPS, POP_R, AND_RMaR, IN_PORT,
+            IN_PORT_VAR, SBB_RMaR, SUB_IfRM, SUB_IfA, CMP_IwA, OR_RMaR, NEG,
+            SSB_I2RM, RET, CLD, STD, TEST_IwA>(tab, size - pos);
+        if(cmd != nullptr)
+            ;
         else {
             cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             pos++, tab++;
@@ -176,7 +61,7 @@ void Analyze(uint8_t* tab, size_t size)
     }
 }
 
-bool CheckPattern(uint8_t* tab, size_t sizeLeft, std::string pattern)
+bool CheckPattern(uint8_t* tab, size_t sizeLeft, std::string_view pattern)
 {
     for(unsigned int i = 0; i < pattern.length(); i++) {
         bool bit = (*tab << (i % 8)) & 0x80;

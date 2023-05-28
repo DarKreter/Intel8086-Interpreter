@@ -315,7 +315,7 @@ void MOV_MwA::PrintCommand(size_t pos)
     printf("[%02x%02x]\n", frame.decoded.addr_high, frame.decoded.addr_low);
 }
 
-Command_t::Command_t(uint8_t fl) : frame_length{fl} {}
+Command_t::Command_t(uint8_t _frame_length) : frame_length{_frame_length} {}
 
 void Command_t::PrintCommand(size_t pos)
 {
