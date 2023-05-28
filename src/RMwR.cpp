@@ -148,8 +148,6 @@ void XCHG_RMwR::PrintCommand(size_t pos)
               << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
                                        : regs_16[frame.decoded.reg])
               << std::endl;
-
-    std::cout << std::endl;
 }
 void DEC_RM::PrintCommand(size_t pos)
 {

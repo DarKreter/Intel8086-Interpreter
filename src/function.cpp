@@ -86,6 +86,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new RET_wSAI();
         else if(CheckPattern(tab, size - pos, "01010"))
             cmd = new PUSH_R();
+        else if(CheckPattern(tab, size - pos, "110100XXXX111"))
+            cmd = new SAR();
         else if(CheckPattern(tab, size - pos, "110100XXXX010"))
             cmd = new RCL();
         else if(CheckPattern(tab, size - pos, "01000"))

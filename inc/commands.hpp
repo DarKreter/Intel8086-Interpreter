@@ -132,6 +132,30 @@ public:
     void PrintCommand(size_t) override;
     ~SHR() = default;
 };
+class SAR : public Command_t {
+protected:
+    // 110100 v(1)w(1) mod(2) 111 r/m(3)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t w : 1;
+            uint8_t v : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t : 3;
+            uint8_t mod : 2;
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    SAR() : Command_t(2) { ; }
+    void PrintCommand(size_t) override;
+    ~SAR() = default;
+};
+
 class RCL : public Command_t {
 protected:
     // 110100 v(1)w(1) mod(2) 010 r/m(3)
