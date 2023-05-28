@@ -51,6 +51,14 @@ public:
 
     ~ADD_RMwR() = default;
 };
+class SUB_RM2R : public RMwR_BASIC {
+protected:
+    // 001010 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
+public:
+    SUB_RM2R() : RMwR_BASIC("sub") { ; }
+
+    ~SUB_RM2R() = default;
+};
 class CMP_RMaR : public RMwR_BASIC {
 protected:
     // 001110d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
@@ -120,6 +128,14 @@ public:
     PUSH_RM() : RMwR_BASIC("push") { ; }
     void PrintCommand(size_t) override;
     ~PUSH_RM() = default;
+};
+class DEC_RM : public RMwR_BASIC {
+protected:
+    // 11111111 mod(2)001r/m(3) disp(0/8/16)
+public:
+    DEC_RM() : RMwR_BASIC("dec") { ; }
+    void PrintCommand(size_t) override;
+    ~DEC_RM() = default;
 };
 class INC_RM : public RMwR_BASIC {
 protected:

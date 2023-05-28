@@ -34,6 +34,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new MOV_I2RM();
         else if(CheckPattern(tab, size - pos, "001100"))
             cmd = new XOR_RM2R();
+        else if(CheckPattern(tab, size - pos, "001010"))
+            cmd = new SUB_RM2R();
         else if(CheckPattern(tab, size - pos, "10001101"))
             cmd = new LEA();
         else if(CheckPattern(tab, size - pos, "100000XXXX111"))
@@ -48,8 +50,16 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new INC_RM();
         else if(CheckPattern(tab, size - pos, "01110011"))
             cmd = new JNB();
+        else if(CheckPattern(tab, size - pos, "01111110"))
+            cmd = new JLE();
+        else if(CheckPattern(tab, size - pos, "01110010"))
+            cmd = new JB();
         else if(CheckPattern(tab, size - pos, "01110101"))
             cmd = new JNE();
+        else if(CheckPattern(tab, size - pos, "01110111"))
+            cmd = new JNBE();
+        else if(CheckPattern(tab, size - pos, "01110110"))
+            cmd = new JBE();
         else if(CheckPattern(tab, size - pos, "01111100"))
             cmd = new JL();
         else if(CheckPattern(tab, size - pos, "01111111"))
@@ -68,6 +78,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new INC_R();
         else if(CheckPattern(tab, size - pos, "11111111XX110"))
             cmd = new PUSH_RM();
+        else if(CheckPattern(tab, size - pos, "1111111XXX001"))
+            cmd = new DEC_RM();
         else if(CheckPattern(tab, size - pos, "1111011XXX100"))
             cmd = new MUL();
         else if(CheckPattern(tab, size - pos, "11101000"))
@@ -98,6 +110,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new SUB_IfRM();
         else if(CheckPattern(tab, size - pos, "0010110"))
             cmd = new SUB_IfA();
+        else if(CheckPattern(tab, size - pos, "0011110"))
+            cmd = new CMP_IwA();
         else if(CheckPattern(tab, size - pos, "000010"))
             cmd = new OR_RMaR();
         else if(CheckPattern(tab, size - pos, "1111011XXX011"))

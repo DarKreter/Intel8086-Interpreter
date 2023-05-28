@@ -1,5 +1,7 @@
 #include "jmp.hpp"
 
+using namespace std;
+
 void JMP_BASIC::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
@@ -10,6 +12,6 @@ void JMP_DS::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
 
-    printf("jmp %04x\n", (int)(frame.decoded.disp_low +
-                               (frame.decoded.disp_high << 8) + pos + 3));
+    printf("jmp %04x\n", (uint16_t)(frame.decoded.disp_low +
+                                     (frame.decoded.disp_high << 8) + pos + 3));
 }

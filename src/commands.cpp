@@ -133,6 +133,23 @@ void SUB_IfA::PrintCommand(size_t pos)
         printf("%x\n", frame.decoded.data[0]);
 }
 
+void CMP_IwA::PrintCommand(size_t pos)
+{
+    if(frame.decoded.w == 1)
+        frame_length = 3;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+
+    printf("cmp ax, ");
+
+    if(frame.decoded.w == 1)
+        printf("%02x%02x\n", frame.decoded.data[1], frame.decoded.data[0]);
+    else
+        printf("%x\n", frame.decoded.data[0]);
+}
+
 Command_t::Command_t(uint8_t fl) : frame_length{fl} {}
 
 void Command_t::PrintCommand(size_t pos)

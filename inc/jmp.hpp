@@ -23,12 +23,40 @@ public:
     void PrintCommand(size_t) override;
     ~JMP_BASIC() = default;
 };
+class JNBE : public JMP_BASIC {
+protected:
+    // 01110111 disp(8)
+public:
+    JNBE() : JMP_BASIC("jnbe") { ; }
+    ~JNBE() = default;
+};
+class JBE : public JMP_BASIC {
+protected:
+    // 01110110 disp(8)
+public:
+    JBE() : JMP_BASIC("jbe") { ; }
+    ~JBE() = default;
+};
 class JL : public JMP_BASIC {
 protected:
     // 01111100 disp(8)
 public:
     JL() : JMP_BASIC("jl") { ; }
     ~JL() = default;
+};
+class JLE : public JMP_BASIC {
+protected:
+    // 01111110 disp(8)
+public:
+    JLE() : JMP_BASIC("jle") { ; }
+    ~JLE() = default;
+};
+class JB : public JMP_BASIC {
+protected:
+    // 01110010 disp(8)
+public:
+    JB() : JMP_BASIC("jb") { ; }
+    ~JB() = default;
 };
 class JNB : public JMP_BASIC {
 protected:
