@@ -33,11 +33,29 @@ void PUSH_R::PrintCommand(size_t pos)
 
     std::cout << "push " << regs_16[frame.decoded.reg] << "\n";
 }
-void REP_MOV::PrintCommand(size_t pos)
+void REP_MOVS::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
 
     std::cout << "rep movs" << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
+}
+void REP_STOS::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "rep stos" << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
+}
+void REP_SCAS::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "rep scas" << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
+}
+void CMPS::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "cmps " << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
 }
 void DEC_R::PrintCommand(size_t pos)
 {
@@ -266,6 +284,36 @@ void TEST_IwA::PrintCommand(size_t pos)
     else
         printf("%x\n", frame.decoded.data[0]);
 }
+void ADD_IwA::PrintCommand(size_t pos)
+{
+    if(frame.decoded.w == 1)
+        frame_length = 3;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+
+    if(frame.decoded.w == 0)
+        printf("add al, ");
+    else
+        printf("add ax, ");
+
+    if(frame.decoded.w == 1)
+        printf("%02x%02x\n", frame.decoded.data[1], frame.decoded.data[0]);
+    else
+        printf("%x\n", frame.decoded.data[0]);
+}
+void MOV_MwA::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    if(frame.decoded.w == 0)
+        printf("mov al, ");
+    else
+        printf("mov ax, ");
+
+    printf("[%02x%02x]\n", frame.decoded.addr_high, frame.decoded.addr_low);
+}
 
 Command_t::Command_t(uint8_t fl) : frame_length{fl} {}
 
@@ -276,13 +324,11 @@ void Command_t::PrintCommand(size_t pos)
         printf("%02x", GetFramePart(i));
     printf("\t\t");
 }
-
 void Command_t::Read(uint8_t* tab)
 {
     for(int i = 0; i < frame_length; i++)
         GetFramePart(i) = *(tab++);
 }
-
 std::map<uint8_t, std::string> regs_8 = {{0, "al"}, {1, "cl"}, {2, "dl"},
                                          {3, "bl"}, {4, "ah"}, {5, "ch"},
                                          {6, "dh"}, {7, "bh"}};
@@ -293,4 +339,4 @@ std::map<uint8_t, std::string> rm_memory = {
     {0, "bx+si"}, {1, "bx+di"}, {2, "bp+si"}, {3, "bp+di"},
     {4, "si"},    {5, "di"},    {6, "bp"},    {7, "bx"}};
 
-#endif // COMMANDS_DISASSEMBLYregs_8
+#endif // COMMANDS_DISASSEMBLY

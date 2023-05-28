@@ -53,10 +53,11 @@ void I2RM_BASIC::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    if(frame.decoded.w == 0)
-        printf("%s byte ", name);
-    else
+    if(frame.decoded.w == 1 ||
+       (frame.decoded.rm == 1 && frame.decoded.mod == 3))
         printf("%s ", name);
+    else
+        printf("%s byte ", name);
 
     PrintRM();
     printf(", ");

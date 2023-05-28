@@ -68,6 +68,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new JNL();
         else if(CheckPattern(tab, size - pos, "01110100"))
             cmd = new JE();
+        else if(CheckPattern(tab, size - pos, "01111000"))
+            cmd = new JS();
         else if(CheckPattern(tab, size - pos, "11101001"))
             cmd = new JMP_DS();
         else if(CheckPattern(tab, size - pos, "11111111XX100"))
@@ -82,10 +84,14 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new LOOP();
         else if(CheckPattern(tab, size - pos, "11101011"))
             cmd = new JMP_DSS();
+        else if(CheckPattern(tab, size - pos, "1010000"))
+            cmd = new MOV_MwA();
         else if(CheckPattern(tab, size - pos, "11000010"))
             cmd = new RET_wSAI();
         else if(CheckPattern(tab, size - pos, "01010"))
             cmd = new PUSH_R();
+        else if(CheckPattern(tab, size - pos, "0000010"))
+            cmd = new ADD_IwA();
         else if(CheckPattern(tab, size - pos, "110100XXXX111"))
             cmd = new SAR();
         else if(CheckPattern(tab, size - pos, "110100XXXX010"))
@@ -119,7 +125,13 @@ void Analyze(uint8_t* tab, size_t size)
         else if(CheckPattern(tab, size - pos, "110100XXXX101"))
             cmd = new SHR();
         else if(CheckPattern(tab, size - pos, "111100101010010"))
-            cmd = new REP_MOV();
+            cmd = new REP_MOVS();
+        else if(CheckPattern(tab, size - pos, "111100101010101"))
+            cmd = new REP_STOS();
+        else if(CheckPattern(tab, size - pos, "111100101010111"))
+            cmd = new REP_SCAS();
+        else if(CheckPattern(tab, size - pos, "1010011"))
+            cmd = new CMPS();
         else if(CheckPattern(tab, size - pos, "01011"))
             cmd = new POP_R();
         else if(CheckPattern(tab, size - pos, "001000"))
@@ -150,7 +162,6 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new STD();
         else if(CheckPattern(tab, size - pos, "1010100"))
             cmd = new TEST_IwA();
-
         else {
             cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             pos++, tab++;

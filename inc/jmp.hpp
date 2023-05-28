@@ -119,6 +119,13 @@ public:
     JNLE() : JMP_BASIC("jnle") { ; }
     ~JNLE() = default;
 };
+class JS : public JMP_BASIC {
+protected:
+    // 01111111 disp(8)
+public:
+    JS() : JMP_BASIC("js") { ; }
+    ~JS() = default;
+};
 class LOOP : public JMP_BASIC {
 protected:
     // 11100010 disp(8)
