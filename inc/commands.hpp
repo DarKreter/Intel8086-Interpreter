@@ -344,6 +344,21 @@ public:
     void PrintCommand(size_t) override;
     ~CBW() = default;
 };
+class CWD : public Command_t {
+protected:
+    // 10011001
+    union {
+        uint8_t raw[1];
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    CWD() : Command_t(1) { ; }
+
+    void PrintCommand(size_t) override;
+    ~CWD() = default;
+};
 class RET : public Command_t {
 protected:
     // 11000011

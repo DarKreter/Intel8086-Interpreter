@@ -41,6 +41,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new JNE();
         else if(CheckPattern(tab, size - pos, "01111100"))
             cmd = new JL();
+        else if(CheckPattern(tab, size - pos, "01111111"))
+            cmd = new JNLE();
         else if(CheckPattern(tab, size - pos, "01111101"))
             cmd = new JNL();
         else if(CheckPattern(tab, size - pos, "01110100"))
@@ -55,6 +57,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new INC_R();
         else if(CheckPattern(tab, size - pos, "11111111XX110"))
             cmd = new PUSH_RM();
+        else if(CheckPattern(tab, size - pos, "1111011XXX100"))
+            cmd = new MUL();
         else if(CheckPattern(tab, size - pos, "11101000"))
             cmd = new CALL_DS();
         else if(CheckPattern(tab, size - pos, "11111111XX010"))
@@ -63,6 +67,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new HLT();
         else if(CheckPattern(tab, size - pos, "10011000"))
             cmd = new CBW();
+        else if(CheckPattern(tab, size - pos, "10011001"))
+            cmd = new CWD();
         else if(CheckPattern(tab, size - pos, "01001"))
             cmd = new DEC_R();
         else if(CheckPattern(tab, size - pos, "110100XXXX100"))

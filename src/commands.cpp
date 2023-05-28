@@ -23,12 +23,6 @@ void MOV_I2R::PrintCommand(size_t pos)
 }
 void CMP_IwRM::PrintCommand(size_t pos)
 {
-    // std::cout << "w: " << (int)frame.decoded.w << endl;
-    // std::cout << "s: " << (int)frame.decoded.s << endl;
-    // std::cout << "mod: " << (int)frame.decoded.mod << endl;
-    // std::cout << "reg: " << (int)frame.decoded.reg << endl;
-    // std::cout << "r/m: " << (int)frame.decoded.rm << endl;
-
     frame_length = 3;
     if((frame.decoded.s == 0 && frame.decoded.w == 1))
         frame_length++;
@@ -39,7 +33,10 @@ void CMP_IwRM::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
     uint8_t offset = 0;
-    std::cout << "cmp ";
+    if(frame.decoded.w == 0)
+        std::cout << "cmp byte ";
+    else
+        std::cout << "cmp ";
 
     if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
         std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
@@ -54,7 +51,10 @@ void CMP_IwRM::PrintCommand(size_t pos)
         std::cout << "[" << rm_memory[frame.decoded.rm];
         switch(frame.decoded.mod) {
         case 1:
-            std::cout << "+" << (int)frame.decoded.data[0];
+            if(frame.decoded.data[0] < 0)
+                printf("-%x", (int)-frame.decoded.data[0]);
+            else
+                printf("+%x", (int)frame.decoded.data[0]);
             offset = 1;
             break;
         case 2:
@@ -213,6 +213,12 @@ void CBW::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     printf("cbw\n");
+}
+void CWD::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    printf("cwd\n");
 }
 void RET::PrintCommand(size_t pos)
 {

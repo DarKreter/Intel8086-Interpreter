@@ -102,3 +102,21 @@ void PUSH_RM::PrintCommand(size_t pos)
     PrintRM();
     std::cout << std::endl;
 }
+
+void MUL::PrintCommand(size_t pos)
+{
+    if(frame.decoded.mod == 2 ||
+       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
+        frame_length = 4;
+    else if(frame.decoded.mod == 1)
+        frame_length = 3;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+
+    printf("%s ", name);
+
+    PrintRM();
+    std::cout << std::endl;
+}

@@ -5,22 +5,27 @@
 class I2RM_BASIC : public Command_t {
 protected:
     const char* name;
+    uint8_t offset = 0;
     // XXXXXXd(1)w(1) mod(2)XXXr/m(3) data(8) (if sw == 01)data(8)
     union {
-        uint8_t raw[4];
-        struct {
+        uint8_t raw[6];
+        struct __attribute__((packed)) {
             uint8_t w : 1;
             uint8_t s : 1;
             uint8_t : 6;
             uint8_t rm : 3;
             uint8_t : 3;
             uint8_t mod : 2;
-            uint8_t data[2];
+            union {
+                uint8_t d[4]; // double
+                int8_t s;     // single
+            } disp;
 
         } decoded;
     } frame;
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+    void PrintRM();
 
 public:
     I2RM_BASIC(const char* _name) : Command_t(4), name{_name} { ; }
@@ -46,6 +51,5 @@ public:
 
     ~SUB_IfRM() = default;
 };
-
 
 #endif // IWRM_DIS

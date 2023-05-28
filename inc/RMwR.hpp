@@ -105,5 +105,13 @@ public:
     void PrintCommand(size_t) override;
     ~PUSH_RM() = default;
 };
+class MUL : public RMwR_BASIC {
+protected:
+    // 1111011w(1) mod(2)100r/m(3) disp(0/8/16)
+public:
+    MUL() : RMwR_BASIC("mul") { ; }
+    void PrintCommand(size_t) override;
+    ~MUL() = default;
+};
 
 #endif // RMWR_DIS

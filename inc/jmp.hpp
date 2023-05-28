@@ -84,5 +84,12 @@ public:
     void PrintCommand(size_t) override;
     ~JMP_DS() = default;
 };
+class JNLE : public JMP_BASIC {
+protected:
+    // 01111111 disp(8)
+public:
+    JNLE() : JMP_BASIC("jnle") { ; }
+    ~JNLE() = default;
+};
 
 #endif // JMP_DIS
