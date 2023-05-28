@@ -12,30 +12,13 @@
 
 using namespace std;
 
-template <typename... Ts>
-Command_t* ProcessTypes(uint8_t* tab, size_t diff)
-{
-    Command_t* cmd = nullptr;
-    // Iterate over each type and call CheckCommand
-    ((CheckCommand<Ts>(tab, diff) == true ? cmd = new Ts() : cmd), ...);
-    return cmd;
-}
-
-template <typename T>
-bool CheckCommand(uint8_t* tab, size_t diff)
-{
-    if(CheckPattern(tab, diff, T::pattern))
-        return true;
-    return false;
-}
-
 void Analyze(uint8_t* tab, size_t size)
 {
     size_t pos = 0;
     Command_t* cmd = nullptr;
 
     while(pos < size) {
-        cmd = ProcessTypes<
+        cmd = CheckAllCommands<
             MOV_I2R, MOV_RM2R, OR_I2RM, INT, ADD_RMwR, ADD_I2RM, AND_I2RM,
             MOV_I2RM, XOR_RM2R, SUB_RM2R, LEA, CMP_IwRM, CMP_RMaR, TEST_IaRM,
             INC_RM, JNB, JLE, JB, JNE, JNBE, JBE, JL, JNLE, JNL, JE, JS, JMP_DS,
@@ -59,6 +42,23 @@ void Analyze(uint8_t* tab, size_t size)
         delete cmd;
         cmd = nullptr;
     }
+}
+
+template <typename... Ts>
+Command_t* CheckAllCommands(uint8_t* tab, size_t diff)
+{
+    Command_t* cmd = nullptr;
+    // Iterate over each type and call CheckCommand
+    ((CheckCommand<Ts>(tab, diff) == true ? cmd = new Ts() : cmd), ...);
+    return cmd;
+}
+
+template <typename T>
+bool CheckCommand(uint8_t* tab, size_t diff)
+{
+    if(CheckPattern(tab, diff, T::pattern))
+        return true;
+    return false;
 }
 
 bool CheckPattern(uint8_t* tab, size_t sizeLeft, std::string_view pattern)

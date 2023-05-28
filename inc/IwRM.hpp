@@ -4,7 +4,6 @@
 
 class I2RM_BASIC : public Command_t {
 protected:
-    const char* name;
     uint8_t offset = 0;
     // XXXXXXs(1)w(1) mod(2)XXXr/m(3) data(8) (if sw == 01)data(8)
     union {
@@ -28,7 +27,7 @@ protected:
     void PrintRM();
 
 public:
-    I2RM_BASIC(const char* _name) : Command_t(6), name{_name} { ; }
+    I2RM_BASIC(const char* _name) : Command_t(6, _name) { ; }
     void PrintCommand(size_t) override;
     ~I2RM_BASIC() = default;
 };

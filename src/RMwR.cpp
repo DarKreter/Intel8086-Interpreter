@@ -52,8 +52,6 @@ void RMwR_BASIC::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    printf("%s ", name);
-
     if(frame.decoded.d == 0) { // from reg
         PrintRM();
 
@@ -85,7 +83,6 @@ void LEA::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    printf("%s ", name);
     std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
                                        : regs_16[frame.decoded.reg])
               << ", ";
@@ -105,8 +102,6 @@ void NEG::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    printf("%s ", name);
-
     PrintRM();
     std::cout << std::endl;
 }
@@ -123,8 +118,6 @@ void PUSH_RM::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    printf("%s ", name);
-
     PrintRM();
     std::cout << std::endl;
 }
@@ -139,8 +132,6 @@ void XCHG_RMwR::PrintCommand(size_t pos)
         frame_length = 2;
 
     Command_t::PrintCommand(pos);
-
-    printf("%s ", name);
 
     PrintRM();
 
@@ -161,8 +152,6 @@ void DEC_RM::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    printf("%s ", name);
-
     PrintRM();
     std::cout << std::endl;
 }
@@ -179,8 +168,6 @@ void INC_RM::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    printf("%s ", name);
-
     PrintRM();
     std::cout << std::endl;
 }
@@ -196,8 +183,6 @@ void MUL::PrintCommand(size_t pos)
         frame_length = 2;
 
     Command_t::PrintCommand(pos);
-
-    printf("%s ", name);
 
     PrintRM();
     std::cout << std::endl;

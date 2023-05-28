@@ -55,9 +55,9 @@ void I2RM_BASIC::PrintCommand(size_t pos)
 
     if(frame.decoded.w == 1 ||
        (frame.decoded.rm == 1 && frame.decoded.mod == 3))
-        printf("%s ", name);
+        ;
     else
-        printf("%s byte ", name);
+        printf("byte ");
 
     PrintRM();
     printf(", ");
@@ -95,9 +95,7 @@ void MOV_I2RM::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     if(frame.decoded.w == 0)
-        printf("%s byte ", name);
-    else
-        printf("%s ", name);
+        printf("byte ");
 
     PrintRM();
 
@@ -124,9 +122,7 @@ void OR_I2RM::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     if(frame.decoded.w == 0)
-        printf("%s byte ", name);
-    else
-        printf("%s ", name);
+        printf("byte ");
 
     PrintRM();
 
@@ -153,9 +149,7 @@ void AND_I2RM::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     if(frame.decoded.w == 0)
-        printf("%s byte ", name);
-    else
-        printf("%s ", name);
+        printf("byte ");
 
     PrintRM();
 
@@ -183,9 +177,9 @@ void TEST_IaRM::PrintCommand(size_t pos)
 
     if(frame.decoded.w == 1 ||
        (frame.decoded.rm == 3 && frame.decoded.mod == 3))
-        printf("%s ", name);
+        ;
     else
-        printf("%s byte ", name);
+        printf("byte ");
 
     PrintRM();
 

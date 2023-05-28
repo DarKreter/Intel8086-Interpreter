@@ -6,7 +6,6 @@
 class JMP_BASIC : public Command_t {
 protected:
     // XXXXXXXX disp
-    const char* name;
     union {
         uint8_t raw[2];
         struct {
@@ -16,8 +15,7 @@ protected:
     } frame;
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-    JMP_BASIC(const char* _n, size_t _s = 2) : Command_t(_s), name{_n} { ; }
+    JMP_BASIC(const char* _n, size_t _s = 2) : Command_t(_s, _n) { ; }
 
 public:
     void PrintCommand(size_t) override;
@@ -196,7 +194,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    JMP_IS() : Command_t(2) { ; }
+    JMP_IS() : Command_t(2, "jmp") { ; }
     void PrintCommand(size_t) override;
     ~JMP_IS() = default;
 };

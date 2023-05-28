@@ -13,7 +13,9 @@ extern std::map<uint8_t, std::string> rm_memory;
 class Command_t {
 protected:
     uint8_t frame_length;
-    Command_t(uint8_t);
+    const char* name;
+
+    Command_t(uint8_t, const char*);
 
     virtual uint8_t& GetFramePart(uint8_t) = 0;
 
@@ -44,7 +46,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    MOV_I2R() : Command_t(size) { ; }
+    MOV_I2R() : Command_t(size, "mov") { ; }
     void PrintCommand(size_t) override;
     ~MOV_I2R() = default;
 };
@@ -65,7 +67,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    INT() : Command_t(2) { ; }
+    INT() : Command_t(2, "int") { ; }
 
     void PrintCommand(size_t) override;
     ~INT() = default;
@@ -88,7 +90,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    IN_PORT() : Command_t(2) { ; }
+    IN_PORT() : Command_t(2, "in") { ; }
 
     void PrintCommand(size_t) override;
     ~IN_PORT() = default;
@@ -115,7 +117,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    SHL() : Command_t(2) { ; }
+    SHL() : Command_t(2, "shl") { ; }
 
     void PrintCommand(size_t) override;
     ~SHL() = default;
@@ -142,7 +144,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    SHR() : Command_t(2) { ; }
+    SHR() : Command_t(2, "shr") { ; }
 
     void PrintCommand(size_t) override;
     ~SHR() = default;
@@ -169,7 +171,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    SAR() : Command_t(2) { ; }
+    SAR() : Command_t(2, "sar") { ; }
     void PrintCommand(size_t) override;
     ~SAR() = default;
 };
@@ -195,7 +197,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    RCL() : Command_t(2) { ; }
+    RCL() : Command_t(2, "rcl") { ; }
     void PrintCommand(size_t) override;
     ~RCL() = default;
 };
@@ -220,7 +222,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    DIV() : Command_t(2) { ; }
+    DIV() : Command_t(2, "div") { ; }
 
     void PrintCommand(size_t) override;
     ~DIV() = default;
@@ -243,7 +245,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    IN_PORT_VAR() : Command_t(1) { ; }
+    IN_PORT_VAR() : Command_t(1, "in") { ; }
 
     void PrintCommand(size_t) override;
     ~IN_PORT_VAR() = default;
@@ -265,7 +267,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    PUSH_R() : Command_t(1) { ; }
+    PUSH_R() : Command_t(1, "push") { ; }
 
     void PrintCommand(size_t) override;
     ~PUSH_R() = default;
@@ -289,7 +291,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    REP_MOVS() : Command_t(2) { ; }
+    REP_MOVS() : Command_t(2, "rep movs") { ; }
     void PrintCommand(size_t) override;
     ~REP_MOVS() = default;
 };
@@ -312,7 +314,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    REP_STOS() : Command_t(2) { ; }
+    REP_STOS() : Command_t(2, "rep stos") { ; }
     void PrintCommand(size_t) override;
     ~REP_STOS() = default;
 };
@@ -333,7 +335,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CMPS() : Command_t(1) { ; }
+    CMPS() : Command_t(1, "cmps") { ; }
     void PrintCommand(size_t) override;
     ~CMPS() = default;
 };
@@ -356,7 +358,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    REP_SCAS() : Command_t(2) { ; }
+    REP_SCAS() : Command_t(2, "rep scas") { ; }
     void PrintCommand(size_t) override;
     ~REP_SCAS() = default;
 };
@@ -377,7 +379,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    DEC_R() : Command_t(1) { ; }
+    DEC_R() : Command_t(1, "dec") { ; }
 
     void PrintCommand(size_t) override;
     ~DEC_R() = default;
@@ -399,7 +401,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    POP_R() : Command_t(1) { ; }
+    POP_R() : Command_t(1, "pop") { ; }
 
     void PrintCommand(size_t) override;
     ~POP_R() = default;
@@ -421,7 +423,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    INC_R() : Command_t(1) { ; }
+    INC_R() : Command_t(1, "inc") { ; }
 
     void PrintCommand(size_t) override;
     ~INC_R() = default;
@@ -445,7 +447,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CALL_IS() : Command_t(2) { ; }
+    CALL_IS() : Command_t(2, "call") { ; }
 
     void PrintCommand(size_t) override;
     ~CALL_IS() = default;
@@ -467,7 +469,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CALL_DS() : Command_t(3) { ; }
+    CALL_DS() : Command_t(3, "call") { ; }
 
     void PrintCommand(size_t) override;
     ~CALL_DS() = default;
@@ -485,7 +487,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    HLT() : Command_t(1) { ; }
+    HLT() : Command_t(1, "hlt") { ; }
 
     void PrintCommand(size_t) override;
     ~HLT() = default;
@@ -503,7 +505,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CBW() : Command_t(1) { ; }
+    CBW() : Command_t(1, "cbw") { ; }
 
     void PrintCommand(size_t) override;
     ~CBW() = default;
@@ -521,7 +523,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CLD() : Command_t(1) { ; }
+    CLD() : Command_t(1, "cld") { ; }
 
     void PrintCommand(size_t) override;
     ~CLD() = default;
@@ -539,7 +541,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    STD() : Command_t(1) { ; }
+    STD() : Command_t(1, "std") { ; }
     void PrintCommand(size_t) override;
     ~STD() = default;
 };
@@ -556,7 +558,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CWD() : Command_t(1) { ; }
+    CWD() : Command_t(1, "cwd") { ; }
 
     void PrintCommand(size_t) override;
     ~CWD() = default;
@@ -574,7 +576,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    RET() : Command_t(1) { ; }
+    RET() : Command_t(1, "ret") { ; }
 
     void PrintCommand(size_t) override;
     ~RET() = default;
@@ -598,7 +600,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    SUB_IfA() : Command_t(3) { ; }
+    SUB_IfA() : Command_t(3, "sub") { ; }
     void PrintCommand(size_t) override;
     ~SUB_IfA() = default;
 };
@@ -621,7 +623,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CMP_IwA() : Command_t(3) { ; }
+    CMP_IwA() : Command_t(3, "cmp") { ; }
     void PrintCommand(size_t) override;
     ~CMP_IwA() = default;
 };
@@ -644,7 +646,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    TEST_IwA() : Command_t(3) { ; }
+    TEST_IwA() : Command_t(3, "test") { ; }
     void PrintCommand(size_t) override;
     ~TEST_IwA() = default;
 };
@@ -667,7 +669,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    ADD_IwA() : Command_t(3) { ; }
+    ADD_IwA() : Command_t(3, "add") { ; }
     void PrintCommand(size_t) override;
     ~ADD_IwA() = default;
 };
@@ -688,7 +690,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    XCHG_RwA() : Command_t(1) { ; }
+    XCHG_RwA() : Command_t(1, "xchg") { ; }
     void PrintCommand(size_t) override;
     ~XCHG_RwA() = default;
 };
@@ -710,7 +712,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    RET_wSAI() : Command_t(3) { ; }
+    RET_wSAI() : Command_t(3, "ret") { ; }
     void PrintCommand(size_t) override;
     ~RET_wSAI() = default;
 };
@@ -734,7 +736,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    MOV_MwA() : Command_t(3) { ; }
+    MOV_MwA() : Command_t(3, "mov") { ; }
     void PrintCommand(size_t) override;
     ~MOV_MwA() = default;
 };

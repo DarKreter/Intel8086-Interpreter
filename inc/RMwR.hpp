@@ -6,7 +6,6 @@
 class RMwR_BASIC : public Command_t {
 protected:
     constexpr static size_t size = 4;
-    const char* name;
     // XXXXXXd(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     union {
         uint8_t raw[size];
@@ -29,7 +28,7 @@ protected:
     void PrintRM();
 
 public:
-    RMwR_BASIC(const char* _name) : Command_t(size), name{_name} { ; }
+    RMwR_BASIC(const char* _name) : Command_t(size, _name) { ; }
 
     void PrintCommand(size_t) override;
     ~RMwR_BASIC() = default;
