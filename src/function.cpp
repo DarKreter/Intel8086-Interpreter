@@ -94,8 +94,16 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new CWD();
         else if(CheckPattern(tab, size - pos, "01001"))
             cmd = new DEC_R();
+        else if(CheckPattern(tab, size - pos, "000100"))
+            cmd = new ADC_RMwR();
+        else if(CheckPattern(tab, size - pos, "1000010"))
+            cmd = new TEST_RMwR();
         else if(CheckPattern(tab, size - pos, "110100XXXX100"))
             cmd = new SHL();
+        else if(CheckPattern(tab, size - pos, "110100XXXX101"))
+            cmd = new SHR();
+        else if(CheckPattern(tab, size - pos, "111100101010010"))
+            cmd = new REP_MOV();
         else if(CheckPattern(tab, size - pos, "01011"))
             cmd = new POP_R();
         else if(CheckPattern(tab, size - pos, "001000"))
@@ -120,6 +128,13 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new SSB_I2RM();
         else if(CheckPattern(tab, size - pos, "11000011"))
             cmd = new RET();
+        else if(CheckPattern(tab, size - pos, "11111100"))
+            cmd = new CLD();
+        else if(CheckPattern(tab, size - pos, "11111101"))
+            cmd = new STD();
+        else if(CheckPattern(tab, size - pos, "1010100"))
+            cmd = new TEST_IwA();
+
         else {
             cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             pos++, tab++;

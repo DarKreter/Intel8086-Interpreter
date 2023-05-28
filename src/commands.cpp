@@ -27,6 +27,12 @@ void PUSH_R::PrintCommand(size_t pos)
 
     std::cout << "push " << regs_16[frame.decoded.reg] << "\n";
 }
+void REP_MOV::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "rep movs" << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
+}
 void DEC_R::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
@@ -86,6 +92,22 @@ void SHL::PrintCommand(size_t pos)
 
     std::cout << ", " << (int)(frame.decoded.v == 0 ? 1 : 69) << std::endl;
 }
+void SHR::PrintCommand(size_t pos)
+{
+    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
+        frame_length = 4;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+    std::cout << "shr ";
+
+    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                           : regs_16[frame.decoded.rm]);
+
+    std::cout << ", " << (int)(frame.decoded.v == 0 ? 1 : 69) << std::endl;
+}
 void INT::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
@@ -110,6 +132,18 @@ void CWD::PrintCommand(size_t pos)
 
     printf("cwd\n");
 }
+void CLD::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    printf("cld\n");
+}
+void STD::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    printf("std\n");
+}
 void RET::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
@@ -125,14 +159,16 @@ void SUB_IfA::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    printf("sub ax, ");
+    if(frame.decoded.w == 0)
+        printf("sub al, ");
+    else
+        printf("sub ax, ");
 
     if(frame.decoded.w == 1)
         printf("%02x%02x\n", frame.decoded.data[1], frame.decoded.data[0]);
     else
         printf("%x\n", frame.decoded.data[0]);
 }
-
 void CMP_IwA::PrintCommand(size_t pos)
 {
     if(frame.decoded.w == 1)
@@ -142,7 +178,29 @@ void CMP_IwA::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    printf("cmp ax, ");
+    if(frame.decoded.w == 0)
+        printf("cmp al, ");
+    else
+        printf("cmp ax, ");
+
+    if(frame.decoded.w == 1)
+        printf("%02x%02x\n", frame.decoded.data[1], frame.decoded.data[0]);
+    else
+        printf("%x\n", frame.decoded.data[0]);
+}
+void TEST_IwA::PrintCommand(size_t pos)
+{
+    if(frame.decoded.w == 1)
+        frame_length = 3;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+
+    if(frame.decoded.w == 0)
+        printf("test al, ");
+    else
+        printf("test ax, ");
 
     if(frame.decoded.w == 1)
         printf("%02x%02x\n", frame.decoded.data[1], frame.decoded.data[0]);

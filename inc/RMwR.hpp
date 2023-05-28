@@ -37,11 +37,19 @@ public:
 
 class NEG : public RMwR_BASIC {
 protected:
-    // 1111011w(1) mod(2)011r/m(3) disp(0/8/16)
+    // 1111011 w(1) mod(2)011r/m(3) disp(0/8/16)
 public:
     NEG() : RMwR_BASIC("neg") { ; }
     void PrintCommand(size_t) override;
     ~NEG() = default;
+};
+class ADC_RMwR : public RMwR_BASIC {
+protected:
+    // 000100 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
+public:
+    ADC_RMwR() : RMwR_BASIC("adc") { ; }
+
+    ~ADC_RMwR() = default;
 };
 class ADD_RMwR : public RMwR_BASIC {
 protected:
@@ -147,11 +155,19 @@ public:
 };
 class MUL : public RMwR_BASIC {
 protected:
-    // 1111011w(1) mod(2)100r/m(3) disp(0/8/16)
+    // 1111011 w(1) mod(2)100r/m(3) disp(0/8/16)
 public:
     MUL() : RMwR_BASIC("mul") { ; }
     void PrintCommand(size_t) override;
     ~MUL() = default;
+};
+class TEST_RMwR : public RMwR_BASIC {
+protected:
+    // 1000010 w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
+public:
+    TEST_RMwR() : RMwR_BASIC("test") { ; }
+    // void PrintCommand(size_t) override;
+    ~TEST_RMwR() = default;
 };
 
 #endif // RMWR_DIS

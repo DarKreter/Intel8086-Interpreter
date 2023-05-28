@@ -108,6 +108,30 @@ public:
     void PrintCommand(size_t) override;
     ~SHL() = default;
 };
+class SHR : public Command_t {
+protected:
+    // 110100v(1)w(1) mod(2)100r/m(3)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t w : 1;
+            uint8_t v : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t : 3;
+            uint8_t mod : 2;
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    SHR() : Command_t(2) { ; }
+
+    void PrintCommand(size_t) override;
+    ~SHR() = default;
+};
 class IN_PORT_VAR : public Command_t {
 protected:
     // 1110010w(1)
@@ -146,6 +170,27 @@ public:
 
     void PrintCommand(size_t) override;
     ~PUSH_R() = default;
+};
+class REP_MOV : public Command_t {
+protected:
+    // 1111001 z(1) 1010010 w(1)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t z : 1;
+            uint8_t : 7;
+            uint8_t w : 1;
+            uint8_t : 7;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    REP_MOV() : Command_t(2) { ; }
+
+    void PrintCommand(size_t) override;
+    ~REP_MOV() = default;
 };
 class DEC_R : public Command_t {
 protected:
@@ -274,6 +319,35 @@ public:
     void PrintCommand(size_t) override;
     ~CBW() = default;
 };
+class CLD : public Command_t {
+protected:
+    // 11111100
+    union {
+        uint8_t raw[1];
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    CLD() : Command_t(1) { ; }
+
+    void PrintCommand(size_t) override;
+    ~CLD() = default;
+};
+class STD : public Command_t {
+protected:
+    // 11111101
+    union {
+        uint8_t raw[1];
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    STD() : Command_t(1) { ; }
+    void PrintCommand(size_t) override;
+    ~STD() = default;
+};
 class CWD : public Command_t {
 protected:
     // 10011001
@@ -343,6 +417,26 @@ public:
     CMP_IwA() : Command_t(3) { ; }
     void PrintCommand(size_t) override;
     ~CMP_IwA() = default;
+};
+class TEST_IwA : public Command_t {
+protected:
+    // 1010100 w(1) data(8) (if w == 1)data(8)
+    union {
+        uint8_t raw[3];
+        struct {
+            uint8_t w : 1;
+            uint8_t : 7;
+            uint8_t data[2];
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    TEST_IwA() : Command_t(3) { ; }
+    void PrintCommand(size_t) override;
+    ~TEST_IwA() = default;
 };
 
 #endif // COMMANDS_DIS
