@@ -2,7 +2,7 @@
 #define COMMANDS_DISASSEMBLY
 
 #include "commands.hpp"
-#include <bitset>
+// #include <bitset>
 
 using namespace std;
 
