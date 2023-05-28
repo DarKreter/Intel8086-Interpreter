@@ -21,6 +21,12 @@ void MOV_I2R::PrintCommand(size_t pos)
 
     printf("\n");
 }
+void RET_wSAI::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    printf("ret %02x%02x\n", frame.decoded.disp_high, frame.decoded.disp_low);
+}
 void PUSH_R::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
@@ -44,6 +50,12 @@ void POP_R::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     std::cout << "pop " << regs_16[frame.decoded.reg] << "\n";
+}
+void XCHG_RwA::PrintCommand(size_t pos)
+{
+    Command_t::PrintCommand(pos);
+
+    std::cout << "xchg " << regs_16[frame.decoded.reg] << ", ax\n";
 }
 void INC_R::PrintCommand(size_t pos)
 {
@@ -107,6 +119,37 @@ void SHR::PrintCommand(size_t pos)
                                            : regs_16[frame.decoded.rm]);
 
     std::cout << ", " << (int)(frame.decoded.v == 0 ? 1 : 69) << std::endl;
+}
+void RCL::PrintCommand(size_t pos)
+{
+    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
+        frame_length = 4;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+    std::cout << "rcl ";
+
+    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                           : regs_16[frame.decoded.rm]);
+
+    std::cout << ", " << (int)(frame.decoded.v == 0 ? 1 : 69) << std::endl;
+}
+void DIV::PrintCommand(size_t pos)
+{
+    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
+        frame_length = 4;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+    std::cout << "div ";
+
+    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
+                                           : regs_16[frame.decoded.rm]);
+    printf("\n");
 }
 void INT::PrintCommand(size_t pos)
 {

@@ -70,10 +70,24 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new JE();
         else if(CheckPattern(tab, size - pos, "11101001"))
             cmd = new JMP_DS();
+        else if(CheckPattern(tab, size - pos, "11111111XX100"))
+            cmd = new JMP_IS();
+        else if(CheckPattern(tab, size - pos, "1111011XXX110"))
+            cmd = new DIV();
+        else if(CheckPattern(tab, size - pos, "1000011"))
+            cmd = new XCHG_RMwR();
+        else if(CheckPattern(tab, size - pos, "10010"))
+            cmd = new XCHG_RwA();
+        else if(CheckPattern(tab, size - pos, "11100010"))
+            cmd = new LOOP();
         else if(CheckPattern(tab, size - pos, "11101011"))
             cmd = new JMP_DSS();
+        else if(CheckPattern(tab, size - pos, "11000010"))
+            cmd = new RET_wSAI();
         else if(CheckPattern(tab, size - pos, "01010"))
             cmd = new PUSH_R();
+        else if(CheckPattern(tab, size - pos, "110100XXXX010"))
+            cmd = new RCL();
         else if(CheckPattern(tab, size - pos, "01000"))
             cmd = new INC_R();
         else if(CheckPattern(tab, size - pos, "11111111XX110"))

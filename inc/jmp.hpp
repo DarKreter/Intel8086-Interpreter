@@ -119,5 +119,34 @@ public:
     JNLE() : JMP_BASIC("jnle") { ; }
     ~JNLE() = default;
 };
+class LOOP : public JMP_BASIC {
+protected:
+    // 11100010 disp(8)
+public:
+    LOOP() : JMP_BASIC("loop") { ; }
+    ~LOOP() = default;
+};
+
+class JMP_IS : public Command_t {
+protected:
+    // 11111111 mod(2)101r/m(3)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t : 8;
+            uint8_t rm : 3;
+            uint8_t : 3;
+            uint8_t mod : 2;
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    JMP_IS() : Command_t(2) { ; }
+    void PrintCommand(size_t) override;
+    ~JMP_IS() = default;
+};
 
 #endif // JMP_DIS

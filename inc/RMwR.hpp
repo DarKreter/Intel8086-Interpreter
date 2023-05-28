@@ -86,12 +86,21 @@ public:
 };
 class SBB_RMaR : public RMwR_BASIC {
 protected:
-    // 000000d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
+    // 000000 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
 
 public:
     SBB_RMaR() : RMwR_BASIC("sbb") { ; }
 
     ~SBB_RMaR() = default;
+};
+class XCHG_RMwR : public RMwR_BASIC {
+protected:
+    // 1000011 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
+
+public:
+    XCHG_RMwR() : RMwR_BASIC("xchg") { ; }
+    void PrintCommand(size_t) override;
+    ~XCHG_RMwR() = default;
 };
 class OR_RMaR : public RMwR_BASIC {
 protected:

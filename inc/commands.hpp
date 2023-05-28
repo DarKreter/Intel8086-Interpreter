@@ -110,7 +110,7 @@ public:
 };
 class SHR : public Command_t {
 protected:
-    // 110100v(1)w(1) mod(2)100r/m(3)
+    // 110100 v(1)w(1) mod(2)100r/m(3)
     union {
         uint8_t raw[2];
         struct {
@@ -131,6 +131,52 @@ public:
 
     void PrintCommand(size_t) override;
     ~SHR() = default;
+};
+class RCL : public Command_t {
+protected:
+    // 110100 v(1)w(1) mod(2) 010 r/m(3)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t w : 1;
+            uint8_t v : 1;
+            uint8_t : 6;
+            uint8_t rm : 3;
+            uint8_t : 3;
+            uint8_t mod : 2;
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    RCL() : Command_t(2) { ; }
+    void PrintCommand(size_t) override;
+    ~RCL() = default;
+};
+class DIV : public Command_t {
+protected:
+    // 1111011 w(1) mod(2) 110 r/m(3)
+    union {
+        uint8_t raw[2];
+        struct {
+            uint8_t w : 1;
+            uint8_t : 7;
+            uint8_t rm : 3;
+            uint8_t : 3;
+            uint8_t mod : 2;
+
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    DIV() : Command_t(2) { ; }
+
+    void PrintCommand(size_t) override;
+    ~DIV() = default;
 };
 class IN_PORT_VAR : public Command_t {
 protected:
@@ -437,6 +483,43 @@ public:
     TEST_IwA() : Command_t(3) { ; }
     void PrintCommand(size_t) override;
     ~TEST_IwA() = default;
+};
+class XCHG_RwA : public Command_t {
+protected:
+    // 10010 reg(3)
+    union {
+        uint8_t raw[1];
+        struct {
+            uint8_t reg : 3;
+            uint8_t : 5;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    XCHG_RwA() : Command_t(1) { ; }
+    void PrintCommand(size_t) override;
+    ~XCHG_RwA() = default;
+};
+class RET_wSAI : public Command_t {
+protected:
+    // 11000010 data-low(8) data-high(8)
+    union {
+        uint8_t raw[3];
+        struct __attribute__((packed)) {
+            uint8_t : 8;
+            uint8_t disp_low;
+            uint8_t disp_high;
+        } decoded;
+    } frame;
+
+    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+
+public:
+    RET_wSAI() : Command_t(3) { ; }
+    void PrintCommand(size_t) override;
+    ~RET_wSAI() = default;
 };
 
 #endif // COMMANDS_DIS
