@@ -3,11 +3,14 @@
 
 #include "commands.hpp"
 
-class JMP_BASIC : public Command_t {
+struct JMP_BASIC : public Command_t {
+    constexpr static size_t size_max = 2;
+    constexpr static size_t size_min = 2;
+
 protected:
     // XXXXXXXX disp
     union {
-        uint8_t raw[2];
+        uint8_t raw[size_max];
         struct {
             uint8_t : 8;
             int8_t disp;
@@ -15,120 +18,91 @@ protected:
     } frame;
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-    JMP_BASIC(const char* _n, size_t _s = 2) : Command_t(_s, _n) { ; }
+    JMP_BASIC(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
 
 public:
     void PrintCommand(size_t) override;
     ~JMP_BASIC() = default;
 };
-class JNBE : public JMP_BASIC {
-public:
+
+struct JNBE : public JMP_BASIC {
+    // 01110111 disp(8)
     constexpr static std::string_view pattern = "01110111";
 
-protected:
-    // 01110111 disp(8)
-public:
     JNBE() : JMP_BASIC("jnbe") { ; }
     ~JNBE() = default;
 };
-class JBE : public JMP_BASIC {
-public:
+struct JBE : public JMP_BASIC {
+    // 01110110 disp(8)
     constexpr static std::string_view pattern = "01110110";
 
-protected:
-    // 01110110 disp(8)
-public:
     JBE() : JMP_BASIC("jbe") { ; }
     ~JBE() = default;
 };
-class JL : public JMP_BASIC {
-public:
-    constexpr static std::string_view pattern = "01111100";
-
-protected:
+struct JL : public JMP_BASIC {
     // 01111100 disp(8)
-public:
+    constexpr static std::string_view pattern = "01111100";
     JL() : JMP_BASIC("jl") { ; }
     ~JL() = default;
 };
-class JLE : public JMP_BASIC {
-public:
+struct JLE : public JMP_BASIC {
+    // 01111110 disp(8)
     constexpr static std::string_view pattern = "01111110";
 
-protected:
-    // 01111110 disp(8)
-public:
     JLE() : JMP_BASIC("jle") { ; }
     ~JLE() = default;
 };
-class JB : public JMP_BASIC {
-public:
+struct JB : public JMP_BASIC {
+    // 01110010 disp(8)
     constexpr static std::string_view pattern = "01110010";
 
-protected:
-    // 01110010 disp(8)
-public:
     JB() : JMP_BASIC("jb") { ; }
     ~JB() = default;
 };
-class JNB : public JMP_BASIC {
-public:
+struct JNB : public JMP_BASIC {
+    // 01110011 disp(8)
     constexpr static std::string_view pattern = "01110011";
 
-protected:
-    // 01110011 disp(8)
-public:
     JNB() : JMP_BASIC("jnb") { ; }
     ~JNB() = default;
 };
-class JNL : public JMP_BASIC {
-public:
+struct JNL : public JMP_BASIC {
+    // 01111101 disp(8)
     constexpr static std::string_view pattern = "01111101";
 
-protected:
-    // 01111101 disp(8)
-public:
     JNL() : JMP_BASIC("jnl") { ; }
     ~JNL() = default;
 };
-class JNE : public JMP_BASIC {
-public:
+struct JNE : public JMP_BASIC {
+    // 01110101 disp(8)
     constexpr static std::string_view pattern = "01110101";
 
-protected:
-    // 01110101 disp(8)
-public:
     JNE() : JMP_BASIC("jne") { ; }
     ~JNE() = default;
 };
-class JE : public JMP_BASIC {
-public:
+struct JE : public JMP_BASIC {
+    // 01110100 disp(8)
     constexpr static std::string_view pattern = "01110100";
 
-protected:
-    // 01110100 disp(8)
-public:
     JE() : JMP_BASIC("je") { ; }
     ~JE() = default;
 };
-class JMP_DSS : public JMP_BASIC {
-public:
+struct JMP_DSS : public JMP_BASIC {
+    // 11101011 disp(8)
     constexpr static std::string_view pattern = "11101011";
 
-protected:
-    // 11101011 disp(8)
-public:
     JMP_DSS() : JMP_BASIC("jmp short") { ; }
     ~JMP_DSS() = default;
 };
-class JMP_DS : public JMP_BASIC {
-public:
+struct JMP_DS : public JMP_BASIC {
+    constexpr static size_t size_max = 3;
+    constexpr static size_t size_min = 3;
     constexpr static std::string_view pattern = "11101001";
 
 protected:
     // 11101001 disp(8)
     union {
-        uint8_t raw[3];
+        uint8_t raw[size_max];
         struct {
             uint8_t : 8;
             uint8_t disp_low;
@@ -139,49 +113,41 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    JMP_DS() : JMP_BASIC("jmp", 3) { ; }
+    JMP_DS() : JMP_BASIC("jmp", size_max) { ; }
     void PrintCommand(size_t) override;
     ~JMP_DS() = default;
 };
-class JNLE : public JMP_BASIC {
-public:
+struct JNLE : public JMP_BASIC {
+    // 01111111 disp(8)
     constexpr static std::string_view pattern = "01111111";
 
-protected:
-    // 01111111 disp(8)
-public:
     JNLE() : JMP_BASIC("jnle") { ; }
     ~JNLE() = default;
 };
-class JS : public JMP_BASIC {
-public:
+struct JS : public JMP_BASIC {
+    // 01111111 disp(8)
     constexpr static std::string_view pattern = "01111000";
 
-protected:
-    // 01111111 disp(8)
-public:
     JS() : JMP_BASIC("js") { ; }
     ~JS() = default;
 };
-class LOOP : public JMP_BASIC {
-public:
+struct LOOP : public JMP_BASIC {
+    // 11100010 disp(8)
     constexpr static std::string_view pattern = "11100010";
 
-protected:
-    // 11100010 disp(8)
-public:
     LOOP() : JMP_BASIC("loop") { ; }
     ~LOOP() = default;
 };
 
-class JMP_IS : public Command_t {
-public:
+struct JMP_IS : public Command_t {
+    constexpr static size_t size_max = 2;
+    constexpr static size_t size_min = 2;
     constexpr static std::string_view pattern = "11111111XX100";
 
 protected:
     // 11111111 mod(2)101r/m(3)
     union {
-        uint8_t raw[2];
+        uint8_t raw[size_max];
         struct {
             uint8_t : 8;
             uint8_t rm : 3;
@@ -194,7 +160,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    JMP_IS() : Command_t(2, "jmp") { ; }
+    JMP_IS() : Command_t(size_max, "jmp") { ; }
     void PrintCommand(size_t) override;
     ~JMP_IS() = default;
 };

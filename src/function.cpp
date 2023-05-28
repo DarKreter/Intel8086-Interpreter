@@ -31,7 +31,8 @@ void Analyze(uint8_t* tab, size_t size)
         if(cmd != nullptr)
             ;
         else {
-            cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
+            // cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
+            printf("%04lx: %02x\t\t(undefined)", pos, *tab);
             pos++, tab++;
             continue;
         }
@@ -56,7 +57,7 @@ Command_t* CheckAllCommands(uint8_t* tab, size_t diff)
 template <typename T>
 bool CheckCommand(uint8_t* tab, size_t diff)
 {
-    if(CheckPattern(tab, diff, T::pattern))
+    if(T::size_min <= diff && CheckPattern(tab, diff, T::pattern))
         return true;
     return false;
 }
