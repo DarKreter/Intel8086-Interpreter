@@ -45,54 +45,6 @@ public:
     void PrintCommand(size_t) override;
     ~MOV_I2R() = default;
 };
-class CMP_IwRM : public Command_t {
-protected:
-    // 100000 d(1)w(1) mod(2)111r/m(3) disp(0/8/16) data(8/16)
-    union {
-        uint8_t raw[6];
-        struct {
-            uint8_t w : 1;
-            uint8_t s : 1;
-            uint8_t : 6;
-            uint8_t rm : 3;
-            uint8_t : 3;
-            uint8_t mod : 2;
-            int8_t data[4];
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    CMP_IwRM() : Command_t(6) { ; }
-
-    void PrintCommand(size_t) override;
-    ~CMP_IwRM() = default;
-};
-class TEST_IaRM : public Command_t {
-protected:
-    // 100000 d(1)w(1) mod(2)111r/m(3) data(8/16)
-    union {
-        uint8_t raw[4];
-        struct {
-            uint8_t w : 1;
-            uint8_t : 7;
-            uint8_t rm : 3;
-            uint8_t : 3;
-            uint8_t mod : 2;
-            int8_t data[2];
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    TEST_IaRM() : Command_t(4) { ; }
-
-    void PrintCommand(size_t) override;
-    ~TEST_IaRM() = default;
-};
-
 class INT : public Command_t {
 protected:
     // 11001101 type(8)
@@ -194,28 +146,6 @@ public:
 
     void PrintCommand(size_t) override;
     ~PUSH_R() = default;
-};
-class NEG : public Command_t {
-protected:
-    // 1111011w(1) mod(2)011r/m(3) disp(0/8/16)
-    union {
-        uint8_t raw[4];
-        struct {
-            uint8_t : 8;
-            uint8_t rm : 3;
-            uint8_t : 3;
-            uint8_t mod : 2;
-            uint8_t disp[2];
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    NEG() : Command_t(4) { ; }
-
-    void PrintCommand(size_t) override;
-    ~NEG() = default;
 };
 class DEC_R : public Command_t {
 protected:

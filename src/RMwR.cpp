@@ -21,8 +21,16 @@ void RMwR_BASIC::PrintRM()
                 printf("+%x", (int)frame.decoded.disp.s);
             break;
         case 2:
-            printf("+%x", (int)(frame.decoded.disp.d[0] +
-                                (frame.decoded.disp.d[1] << 8)));
+            union {
+                uint16_t u;
+                int16_t i;
+            } u;
+            u.u = frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
+            if(u.i < 0)
+                printf("-%x", (int)-u.i);
+            else
+                printf("+%x", (int)u.i);
+            break;
             break;
         case 0: // disp == 0
         default:
@@ -85,7 +93,43 @@ void LEA::PrintCommand(size_t pos)
     std::cout << std::endl;
 }
 
+void NEG::PrintCommand(size_t pos)
+{
+    if(frame.decoded.mod == 2 ||
+       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
+        frame_length = 4;
+    else if(frame.decoded.mod == 1)
+        frame_length = 3;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+
+    printf("%s ", name);
+
+    PrintRM();
+    std::cout << std::endl;
+}
+
 void PUSH_RM::PrintCommand(size_t pos)
+{
+    if(frame.decoded.mod == 2 ||
+       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
+        frame_length = 4;
+    else if(frame.decoded.mod == 1)
+        frame_length = 3;
+    else
+        frame_length = 2;
+
+    Command_t::PrintCommand(pos);
+
+    printf("%s ", name);
+
+    PrintRM();
+    std::cout << std::endl;
+}
+
+void INC_RM::PrintCommand(size_t pos)
 {
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))

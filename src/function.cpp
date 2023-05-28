@@ -8,6 +8,7 @@
 #include "jmp.hpp"
 
 #include <bitset>
+#include <iomanip>
 
 using namespace std;
 
@@ -27,14 +28,24 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new ADD_RMwR();
         else if(CheckPattern(tab, size - pos, "100000XXXX000"))
             cmd = new ADD_I2RM();
+        else if(CheckPattern(tab, size - pos, "1000000XXX100"))
+            cmd = new AND_I2RM();
+        else if(CheckPattern(tab, size - pos, "1100011XXX000"))
+            cmd = new MOV_I2RM();
         else if(CheckPattern(tab, size - pos, "001100"))
             cmd = new XOR_RM2R();
         else if(CheckPattern(tab, size - pos, "10001101"))
             cmd = new LEA();
         else if(CheckPattern(tab, size - pos, "100000XXXX111"))
             cmd = new CMP_IwRM();
+        else if(CheckPattern(tab, size - pos, "1000000XXX001"))
+            cmd = new OR_I2RM();
+        else if(CheckPattern(tab, size - pos, "001110"))
+            cmd = new CMP_RMaR();
         else if(CheckPattern(tab, size - pos, "1111011XXX000"))
             cmd = new TEST_IaRM();
+        else if(CheckPattern(tab, size - pos, "1111111XXX000"))
+            cmd = new INC_RM();
         else if(CheckPattern(tab, size - pos, "01110011"))
             cmd = new JNB();
         else if(CheckPattern(tab, size - pos, "01110101"))
@@ -91,6 +102,8 @@ void Analyze(uint8_t* tab, size_t size)
             cmd = new OR_RMaR();
         else if(CheckPattern(tab, size - pos, "1111011XXX011"))
             cmd = new NEG();
+        else if(CheckPattern(tab, size - pos, "100000XXXX011"))
+            cmd = new SSB_I2RM();
         else if(CheckPattern(tab, size - pos, "11000011"))
             cmd = new RET();
         else {

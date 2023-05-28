@@ -35,6 +35,14 @@ public:
     ~RMwR_BASIC() = default;
 };
 
+class NEG : public RMwR_BASIC {
+protected:
+    // 1111011w(1) mod(2)011r/m(3) disp(0/8/16)
+public:
+    NEG() : RMwR_BASIC("neg") { ; }
+    void PrintCommand(size_t) override;
+    ~NEG() = default;
+};
 class ADD_RMwR : public RMwR_BASIC {
 protected:
     // 000000d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
@@ -42,6 +50,14 @@ public:
     ADD_RMwR() : RMwR_BASIC("add") { ; }
 
     ~ADD_RMwR() = default;
+};
+class CMP_RMaR : public RMwR_BASIC {
+protected:
+    // 001110d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
+public:
+    CMP_RMaR() : RMwR_BASIC("cmp") { ; }
+
+    ~CMP_RMaR() = default;
 };
 class XOR_RM2R : public RMwR_BASIC {
 protected:
@@ -104,6 +120,14 @@ public:
     PUSH_RM() : RMwR_BASIC("push") { ; }
     void PrintCommand(size_t) override;
     ~PUSH_RM() = default;
+};
+class INC_RM : public RMwR_BASIC {
+protected:
+    // 11111111 mod(2)000r/m(3) disp(0/8/16)
+public:
+    INC_RM() : RMwR_BASIC("inc") { ; }
+    void PrintCommand(size_t) override;
+    ~INC_RM() = default;
 };
 class MUL : public RMwR_BASIC {
 protected:
