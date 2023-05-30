@@ -1,4 +1,4 @@
-#include "Singleton.hpp"
+#include "singleton.hpp"
 
 void Singleton::PrintCommand(size_t pos)
 {

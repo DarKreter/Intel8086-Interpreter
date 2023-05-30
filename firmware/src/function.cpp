@@ -5,12 +5,12 @@
 #include "IwA.hpp"
 #include "IwRM.hpp"
 #include "RMwR.hpp"
-#include "Singleton.hpp"
 #include "basic_R.hpp"
 #include "commands.hpp"
 #include "jmp.hpp"
 #include "logic.hpp"
 #include "rep.hpp"
+#include "singleton.hpp"
 
 // #include <bitset>
 

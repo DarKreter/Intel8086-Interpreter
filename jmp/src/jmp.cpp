@@ -13,7 +13,7 @@ void JMP_DS::PrintCommand(size_t pos)
     Command_t::PrintCommand(pos);
 
     printf("%04x\n", (uint16_t)(frame.decoded.disp_low +
-                                    (frame.decoded.disp_high << 8) + pos + 3));
+                                (frame.decoded.disp_high << 8) + pos + 3));
 }
 void JMP_IS::PrintCommand(size_t pos)
 {
