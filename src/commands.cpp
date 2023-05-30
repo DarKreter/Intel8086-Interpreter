@@ -105,80 +105,8 @@ void CALL_IS::PrintCommand(size_t pos)
 
     cout << regs_16[frame.decoded.rm] << endl;
 }
-void SHL::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
-        frame_length = 4;
-    else
-        frame_length = 2;
 
-    Command_t::PrintCommand(pos);
 
-    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
-        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
-                                           : regs_16[frame.decoded.rm]);
-
-    printf(", %s\n", frame.decoded.v == 0 ? "1" : "cl");
-}
-void SHR::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
-        frame_length = 4;
-    else
-        frame_length = 2;
-
-    Command_t::PrintCommand(pos);
-
-    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
-        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
-                                           : regs_16[frame.decoded.rm]);
-
-    printf(", %s\n", frame.decoded.v == 0 ? "1" : "cl");
-}
-void SAR::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
-        frame_length = 4;
-    else
-        frame_length = 2;
-
-    Command_t::PrintCommand(pos);
-
-    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
-        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
-                                           : regs_16[frame.decoded.rm]);
-
-    printf(", %s\n", frame.decoded.v == 0 ? "1" : "cl");
-}
-void RCL::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
-        frame_length = 4;
-    else
-        frame_length = 2;
-
-    Command_t::PrintCommand(pos);
-
-    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
-        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
-                                           : regs_16[frame.decoded.rm]);
-
-    std::cout << ", " << (int)(frame.decoded.v == 0 ? 1 : 69) << std::endl;
-}
-void DIV::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
-        frame_length = 4;
-    else
-        frame_length = 2;
-
-    Command_t::PrintCommand(pos);
-
-    if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
-        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
-                                           : regs_16[frame.decoded.rm]);
-    printf("\n");
-}
 void INT::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);

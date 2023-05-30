@@ -6,6 +6,7 @@
 #include "RMwR.hpp"
 #include "commands.hpp"
 #include "jmp.hpp"
+#include "logic.hpp"
 // #include <bitset>
 
 using namespace std;
