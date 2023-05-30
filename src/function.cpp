@@ -2,6 +2,7 @@
 #define FUNCTION_DISASSEMBLY
 
 #include "function.hpp"
+#include "IwA.hpp"
 #include "IwRM.hpp"
 #include "RMwR.hpp"
 #include "basic_R.hpp"
@@ -9,6 +10,7 @@
 #include "jmp.hpp"
 #include "logic.hpp"
 #include "rep.hpp"
+
 
 // #include <bitset>
 
