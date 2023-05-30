@@ -50,12 +50,6 @@ void CMPS::PrintCommand(size_t pos)
 
     std::cout << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
 }
-void XCHG_RwA::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << regs_16[frame.decoded.reg] << ", ax\n";
-}
 void IN_PORT::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);

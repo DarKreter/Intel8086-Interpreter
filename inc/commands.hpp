@@ -474,28 +474,8 @@ public:
     void PrintCommand(size_t) override;
     ~ADD_IwA() = default;
 };
-struct XCHG_RwA : public Command_t {
-    constexpr static size_t size_max = 1;
-    constexpr static size_t size_min = 1;
-    constexpr static std::string_view pattern = "10010";
 
-protected:
-    // 10010 reg(3)
-    union {
-        uint8_t raw[size_max];
-        struct {
-            uint8_t reg : 3;
-            uint8_t : 5;
-        } decoded;
-    } frame;
 
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    XCHG_RwA() : Command_t(size_max, "xchg") { ; }
-    void PrintCommand(size_t) override;
-    ~XCHG_RwA() = default;
-};
 struct RET_wSAI : public Command_t {
     constexpr static size_t size_max = 3;
     constexpr static size_t size_min = 3;

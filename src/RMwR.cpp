@@ -52,76 +52,11 @@ void RMwR_BASIC::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    if(frame.decoded.d == 0) { // from reg
-        PrintRM();
-
-        std::cout << ", "
-                  << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
-                                           : regs_16[frame.decoded.reg])
-                  << std::endl;
-    }
-    else { // to reg
-        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
-                                           : regs_16[frame.decoded.reg])
-                  << ", ";
-
-        PrintRM();
-
-        std::cout << std::endl;
-    }
-}
-
-void LEA::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 2 ||
-       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
-        frame_length = 4;
-    else if(frame.decoded.mod == 1)
-        frame_length = 3;
-    else
-        frame_length = 2;
-
-    Command_t::PrintCommand(pos);
-
-    std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
-                                       : regs_16[frame.decoded.reg])
-              << ", ";
     PrintRM();
     std::cout << std::endl;
 }
 
-void NEG::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 2 ||
-       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
-        frame_length = 4;
-    else if(frame.decoded.mod == 1)
-        frame_length = 3;
-    else
-        frame_length = 2;
-
-    Command_t::PrintCommand(pos);
-
-    PrintRM();
-    std::cout << std::endl;
-}
-
-void PUSH_RM::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 2 ||
-       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
-        frame_length = 4;
-    else if(frame.decoded.mod == 1)
-        frame_length = 3;
-    else
-        frame_length = 2;
-
-    Command_t::PrintCommand(pos);
-
-    PrintRM();
-    std::cout << std::endl;
-}
-void XCHG_RMwR::PrintCommand(size_t pos)
+void RMwR_BASIC_w::PrintCommand(size_t pos)
 {
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
@@ -140,7 +75,8 @@ void XCHG_RMwR::PrintCommand(size_t pos)
                                        : regs_16[frame.decoded.reg])
               << std::endl;
 }
-void DEC_RM::PrintCommand(size_t pos)
+
+void RMwR_BASIC_dw::PrintCommand(size_t pos)
 {
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
@@ -152,11 +88,23 @@ void DEC_RM::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    PrintRM();
-    std::cout << std::endl;
+    if(frame.decoded.d == 0) { // from reg
+        PrintRM();
+        std::cout << ", "
+                  << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                           : regs_16[frame.decoded.reg])
+                  << std::endl;
+    }
+    else { // to reg
+        std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
+                                           : regs_16[frame.decoded.reg])
+                  << ", ";
+        PrintRM();
+        std::cout << std::endl;
+    }
 }
 
-void INC_RM::PrintCommand(size_t pos)
+void LEA::PrintCommand(size_t pos)
 {
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
@@ -168,21 +116,7 @@ void INC_RM::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    PrintRM();
-    std::cout << std::endl;
-}
-
-void MUL::PrintCommand(size_t pos)
-{
-    if(frame.decoded.mod == 2 ||
-       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
-        frame_length = 4;
-    else if(frame.decoded.mod == 1)
-        frame_length = 3;
-    else
-        frame_length = 2;
-
-    Command_t::PrintCommand(pos);
+    std::cout << regs_16[frame.decoded.reg] << ", ";
 
     PrintRM();
     std::cout << std::endl;

@@ -53,5 +53,13 @@ struct PUSH_R : public BASIC_R {
     PUSH_R() : BASIC_R("push") { ; }
     ~PUSH_R() = default;
 };
+struct XCHG_RwA : public BASIC_R {
+    // 10010 reg(3)
+    constexpr static std::string_view pattern = "10010";
+
+    XCHG_RwA() : BASIC_R("xchg") { ; }
+    void PrintCommand(size_t) override;
+    ~XCHG_RwA() = default;
+};
 
 #endif // BASICR_DIS
