@@ -26,30 +26,6 @@ void RET_wSAI::PrintCommand(size_t pos)
 
     printf("%02x%02x\n", frame.decoded.disp_high, frame.decoded.disp_low);
 }
-void REP_MOVS::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
-}
-void REP_STOS::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
-}
-void REP_SCAS::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
-}
-void CMPS::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
-}
 void IN_PORT::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);

@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CPU_OPTIONS -Werror -Wall -Wextra -pedantic -ffunction-sections -fdata-sections -Ofast)
 add_compile_options(${CPU_OPTIONS})
 
-add_executable(firmware src/basic_R.cpp src/logic.cpp src/IwRM.cpp src/RMwR.cpp src/jmp.cpp src/main.cpp src/function.cpp src/commands.cpp)
+add_executable(firmware src/rep.cpp src/basic_R.cpp src/logic.cpp src/IwRM.cpp src/RMwR.cpp src/jmp.cpp src/main.cpp src/function.cpp src/commands.cpp)
 
 target_include_directories(firmware PUBLIC . inc src)
 

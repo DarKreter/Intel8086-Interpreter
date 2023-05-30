@@ -8,6 +8,7 @@
 #include "commands.hpp"
 #include "jmp.hpp"
 #include "logic.hpp"
+#include "rep.hpp"
 
 // #include <bitset>
 
