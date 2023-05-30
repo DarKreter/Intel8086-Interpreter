@@ -121,29 +121,6 @@ public:
     void PrintCommand(size_t) override;
     ~IN_PORT_VAR() = default;
 };
-struct PUSH_R : public Command_t {
-    constexpr static size_t size_max = 1;
-    constexpr static size_t size_min = 1;
-    constexpr static std::string_view pattern = "01010";
-
-protected:
-    // 01010 reg(3)
-    union {
-        uint8_t raw[size_max];
-        struct {
-            uint8_t reg : 3;
-            uint8_t : 5;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    PUSH_R() : Command_t(size_max, "push") { ; }
-
-    void PrintCommand(size_t) override;
-    ~PUSH_R() = default;
-};
 struct REP_MOVS : public Command_t {
     constexpr static size_t size_max = 2;
     constexpr static size_t size_min = 2;
@@ -238,75 +215,7 @@ public:
     void PrintCommand(size_t) override;
     ~REP_SCAS() = default;
 };
-struct DEC_R : public Command_t {
-    constexpr static size_t size_max = 1;
-    constexpr static size_t size_min = 1;
-    constexpr static std::string_view pattern = "01001";
 
-protected:
-    // 01001 reg(3)
-    union {
-        uint8_t raw[size_max];
-        struct {
-            uint8_t reg : 3;
-            uint8_t : 5;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    DEC_R() : Command_t(size_max, "dec") { ; }
-
-    void PrintCommand(size_t) override;
-    ~DEC_R() = default;
-};
-struct POP_R : public Command_t {
-    constexpr static size_t size_max = 1;
-    constexpr static size_t size_min = 1;
-    constexpr static std::string_view pattern = "01011";
-
-protected:
-    // 01011 reg(3)
-    union {
-        uint8_t raw[size_max];
-        struct {
-            uint8_t reg : 3;
-            uint8_t : 5;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    POP_R() : Command_t(size_max, "pop") { ; }
-
-    void PrintCommand(size_t) override;
-    ~POP_R() = default;
-};
-struct INC_R : public Command_t {
-    constexpr static size_t size_max = 1;
-    constexpr static size_t size_min = 1;
-    constexpr static std::string_view pattern = "01000";
-
-protected:
-    // 01000 reg(3)
-    union {
-        uint8_t raw[size_max];
-        struct {
-            uint8_t reg : 3;
-            uint8_t : 5;
-        } decoded;
-    } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-
-public:
-    INC_R() : Command_t(size_max, "inc") { ; }
-
-    void PrintCommand(size_t) override;
-    ~INC_R() = default;
-};
 struct CALL_IS : public Command_t {
     constexpr static size_t size_max = 2;
     constexpr static size_t size_min = 2;
@@ -468,6 +377,7 @@ public:
     void PrintCommand(size_t) override;
     ~RET() = default;
 };
+
 struct SUB_IfA : public Command_t {
     constexpr static size_t size_max = 3;
     constexpr static size_t size_min = 2;

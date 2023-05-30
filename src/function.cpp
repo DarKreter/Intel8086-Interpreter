@@ -4,9 +4,11 @@
 #include "function.hpp"
 #include "IwRM.hpp"
 #include "RMwR.hpp"
+#include "basic_R.hpp"
 #include "commands.hpp"
 #include "jmp.hpp"
 #include "logic.hpp"
+
 // #include <bitset>
 
 using namespace std;

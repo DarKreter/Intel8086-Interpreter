@@ -26,12 +26,6 @@ void RET_wSAI::PrintCommand(size_t pos)
 
     printf("%02x%02x\n", frame.decoded.disp_high, frame.decoded.disp_low);
 }
-void PUSH_R::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << regs_16[frame.decoded.reg] << "\n";
-}
 void REP_MOVS::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
@@ -56,29 +50,11 @@ void CMPS::PrintCommand(size_t pos)
 
     std::cout << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
 }
-void DEC_R::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << regs_16[frame.decoded.reg] << "\n";
-}
-void POP_R::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << regs_16[frame.decoded.reg] << "\n";
-}
 void XCHG_RwA::PrintCommand(size_t pos)
 {
     Command_t::PrintCommand(pos);
 
     std::cout << regs_16[frame.decoded.reg] << ", ax\n";
-}
-void INC_R::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    std::cout << regs_16[frame.decoded.reg] << "\n";
 }
 void IN_PORT::PrintCommand(size_t pos)
 {
@@ -105,7 +81,6 @@ void CALL_IS::PrintCommand(size_t pos)
 
     cout << regs_16[frame.decoded.rm] << endl;
 }
-
 
 void INT::PrintCommand(size_t pos)
 {
@@ -149,6 +124,7 @@ void RET::PrintCommand(size_t pos)
 
     printf("\n");
 }
+
 void SUB_IfA::PrintCommand(size_t pos)
 {
     if(frame.decoded.w == 1)

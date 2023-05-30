@@ -38,10 +38,6 @@ void I2RM_BASIC::PrintRM()
 }
 void I2RM_BASIC::PrintCommand(size_t pos)
 {
-    // printf("w: %d\ns: %d\nr/m: %d\nmod: %d\n", (int)frame.decoded.w,
-    //        (int)frame.decoded.s, (int)frame.decoded.rm,
-    //        (int)frame.decoded.mod);
-
     frame_length = 3;
     if(frame.decoded.s == 0 && frame.decoded.w == 1)
         frame_length++;
