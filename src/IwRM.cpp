@@ -39,6 +39,31 @@ void I2RM_BASIC::PrintRM()
 void I2RM_BASIC::PrintCommand(size_t pos)
 {
     frame_length = 3;
+    if(frame.decoded.w == 1)
+        frame_length += 1;
+    if(frame.decoded.mod == 2 ||
+       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
+        frame_length += 2;
+    else if(frame.decoded.mod == 1)
+        frame_length++;
+
+    Command_t::PrintCommand(pos);
+
+    if(frame.decoded.w != 1 &&
+       (frame.decoded.rm != 3 || frame.decoded.mod != 3))
+        printf("byte ");
+
+    PrintRM();
+
+    if(frame.decoded.w == 1)
+        printf(", %02x%02x\n", frame.decoded.disp.d[1 + offset],
+               frame.decoded.disp.d[0 + offset]);
+    else
+        printf(", %x\n", frame.decoded.disp.d[0 + offset]);
+}
+void I2RM_BASIC_s::PrintCommand(size_t pos)
+{
+    frame_length = 3;
     if(frame.decoded.s == 0 && frame.decoded.w == 1)
         frame_length++;
     if(frame.decoded.mod == 2 ||
@@ -49,10 +74,8 @@ void I2RM_BASIC::PrintCommand(size_t pos)
 
     Command_t::PrintCommand(pos);
 
-    if(frame.decoded.w == 1 ||
-       (frame.decoded.rm == 1 && frame.decoded.mod == 3))
-        ;
-    else
+    if(frame.decoded.w != 1 &&
+       (frame.decoded.rm != 1 || frame.decoded.mod != 3))
         printf("byte ");
 
     PrintRM();
@@ -73,115 +96,4 @@ void I2RM_BASIC::PrintCommand(size_t pos)
             printf("%x", (int)u.i);
     }
     printf("\n");
-}
-void MOV_I2RM::PrintCommand(size_t pos)
-{
-    // printf("w: %d\ns: %d\nr/m: %d\nmod: %d\n", (int)frame.decoded.w,
-    //        (int)frame.decoded.s, (int)frame.decoded.rm,
-    //        (int)frame.decoded.mod);
-    frame_length = 3;
-    if(frame.decoded.w == 1)
-        frame_length += 1;
-    if(frame.decoded.mod == 2 ||
-       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
-        frame_length += 2;
-    else if(frame.decoded.mod == 1)
-        frame_length++;
-
-    Command_t::PrintCommand(pos);
-
-    if(frame.decoded.w == 0)
-        printf("byte ");
-
-    PrintRM();
-
-    if(frame.decoded.w == 1)
-        printf(", %02x%02x\n", frame.decoded.disp.d[1 + offset],
-               frame.decoded.disp.d[0 + offset]);
-    else
-        printf(", %x\n", frame.decoded.disp.d[0 + offset]);
-}
-void OR_I2RM::PrintCommand(size_t pos)
-{
-    // printf("w: %d\ns: %d\nr/m: %d\nmod: %d\n", (int)frame.decoded.w,
-    //        (int)frame.decoded.s, (int)frame.decoded.rm,
-    //        (int)frame.decoded.mod);
-    frame_length = 3;
-    if(frame.decoded.w == 1)
-        frame_length += 1;
-    if(frame.decoded.mod == 2 ||
-       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
-        frame_length += 2;
-    else if(frame.decoded.mod == 1)
-        frame_length++;
-
-    Command_t::PrintCommand(pos);
-
-    if(frame.decoded.w == 0)
-        printf("byte ");
-
-    PrintRM();
-
-    if(frame.decoded.w == 1)
-        printf(", %02x%02x\n", frame.decoded.disp.d[1 + offset],
-               frame.decoded.disp.d[0 + offset]);
-    else
-        printf(", %x\n", frame.decoded.disp.d[0 + offset]);
-}
-void AND_I2RM::PrintCommand(size_t pos)
-{
-    // printf("w: %d\ns: %d\nr/m: %d\nmod: %d\n", (int)frame.decoded.w,
-    //        (int)frame.decoded.s, (int)frame.decoded.rm,
-    //        (int)frame.decoded.mod);
-    frame_length = 3;
-    if(frame.decoded.w == 1)
-        frame_length += 1;
-    if(frame.decoded.mod == 2 ||
-       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
-        frame_length += 2;
-    else if(frame.decoded.mod == 1)
-        frame_length++;
-
-    Command_t::PrintCommand(pos);
-
-    if(frame.decoded.w == 0)
-        printf("byte ");
-
-    PrintRM();
-
-    if(frame.decoded.w == 1)
-        printf(", %02x%02x\n", frame.decoded.disp.d[1 + offset],
-               frame.decoded.disp.d[0 + offset]);
-    else
-        printf(", %x\n", frame.decoded.disp.d[0 + offset]);
-}
-void TEST_IaRM::PrintCommand(size_t pos)
-{
-    // printf("w: %d\ns: %d\nr/m: %d\nmod: %d\n", (int)frame.decoded.w,
-    //        (int)frame.decoded.s, (int)frame.decoded.rm,
-    //        (int)frame.decoded.mod);
-    frame_length = 3;
-    if(frame.decoded.w == 1)
-        frame_length += 1;
-    if(frame.decoded.mod == 2 ||
-       (frame.decoded.mod == 0 && frame.decoded.rm == 6))
-        frame_length += 2;
-    else if(frame.decoded.mod == 1)
-        frame_length++;
-
-    Command_t::PrintCommand(pos);
-
-    if(frame.decoded.w == 1 ||
-       (frame.decoded.rm == 3 && frame.decoded.mod == 3))
-        ;
-    else
-        printf("byte ");
-
-    PrintRM();
-
-    if(frame.decoded.w == 1)
-        printf(", %02x%02x\n", frame.decoded.disp.d[1 + offset],
-               frame.decoded.disp.d[0 + offset]);
-    else
-        printf(", %x\n", frame.decoded.disp.d[0 + offset]);
 }
