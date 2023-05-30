@@ -58,42 +58,6 @@ void INT::PrintCommand(size_t pos)
 
     std::cout << std::hex << (int)frame.raw[1] << std::endl;
 }
-void HLT::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    printf("\n");
-}
-void CBW::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    printf("\n");
-}
-void CWD::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    printf("\n");
-}
-void CLD::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    printf("\n");
-}
-void STD::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    printf("\n");
-}
-void RET::PrintCommand(size_t pos)
-{
-    Command_t::PrintCommand(pos);
-
-    printf("\n");
-}
 
 void MOV_MwA::PrintCommand(size_t pos)
 {
