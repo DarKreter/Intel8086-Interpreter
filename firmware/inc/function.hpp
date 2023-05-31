@@ -10,6 +10,7 @@
 unsigned char* ReadFile(char*);
 bool CheckPattern(uint8_t*, size_t, std::string_view);
 void Analyze(Binary_t&);
+void Execute(Binary_t&);
 
 template <typename... Ts>
 Command_t* CheckAllCommands(uint8_t* tab, size_t diff);

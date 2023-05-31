@@ -31,13 +31,13 @@ protected:
 
 public:
     I2RM_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~I2RM_BASIC() = default;
 };
 
 struct I2RM_BASIC_s : public I2RM_BASIC {
     // XXXXXXs(1)w(1) mod(2)XXXr/m(3) data(8) (if sw == 01)data(8)
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~I2RM_BASIC_s() = default;
 
 protected:

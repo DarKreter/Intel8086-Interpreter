@@ -24,7 +24,7 @@ protected:
     void PrintBase(size_t pos);
 
 public:
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~IwA() = default;
 };
 struct SUB_IfA : public IwA {

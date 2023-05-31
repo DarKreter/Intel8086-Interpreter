@@ -36,7 +36,7 @@ void I2RM_BASIC::PrintRM()
         std::cout << "]";
     }
 }
-void I2RM_BASIC::PrintCommand(size_t pos)
+void I2RM_BASIC::Disassemble(size_t pos)
 {
     frame_length = 3;
     if(frame.decoded.w == 1)
@@ -47,7 +47,7 @@ void I2RM_BASIC::PrintCommand(size_t pos)
     else if(frame.decoded.mod == 1)
         frame_length++;
 
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     if(frame.decoded.w != 1 &&
        (frame.decoded.rm != 3 || frame.decoded.mod != 3))
@@ -61,7 +61,7 @@ void I2RM_BASIC::PrintCommand(size_t pos)
     else
         printf(", %x\n", frame.decoded.disp.d[0 + offset]);
 }
-void I2RM_BASIC_s::PrintCommand(size_t pos)
+void I2RM_BASIC_s::Disassemble(size_t pos)
 {
     frame_length = 3;
     if(frame.decoded.s == 0 && frame.decoded.w == 1)
@@ -72,7 +72,7 @@ void I2RM_BASIC_s::PrintCommand(size_t pos)
     else if(frame.decoded.mod == 1)
         frame_length++;
 
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     if(frame.decoded.w != 1 &&
        (frame.decoded.rm != 1 || frame.decoded.mod != 3))

@@ -1,13 +1,13 @@
 #include "IwA.hpp"
 
-void IwA::PrintCommand(size_t pos)
+void IwA::Disassemble(size_t pos)
 {
     if(frame.decoded.w == 1)
         frame_length = 3;
     else
         frame_length = 2;
 
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     if(frame.decoded.w == 0)
         printf("al, ");

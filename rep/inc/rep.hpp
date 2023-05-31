@@ -23,7 +23,7 @@ protected:
     REP(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
 
 public:
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~REP() = default;
 };
 struct REP_MOVS : public REP {
@@ -54,7 +54,7 @@ struct CMPS : public REP {
     constexpr static std::string_view pattern = "1010011";
 
     CMPS() : REP("cmps", size_max) { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~CMPS() = default;
 };
 

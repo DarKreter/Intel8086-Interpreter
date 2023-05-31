@@ -1,6 +1,7 @@
 #ifndef COMMANDS_DIS
 #define COMMANDS_DIS
 
+#include "binary.hpp"
 #include <iostream>
 #include <map>
 #include <stdio.h>
@@ -22,7 +23,9 @@ protected:
 public:
     virtual uint8_t GetFrameLength() { return frame_length; }
     virtual void Read(uint8_t*);
-    virtual void PrintCommand(size_t pos);
+    virtual void Disassemble(size_t pos);
+    virtual void PrintStatus(Binary_t&);
+    virtual void Execute(Binary_t&);
     virtual ~Command_t() = default;
 };
 
@@ -47,7 +50,8 @@ protected:
 
 public:
     MOV_I2R() : Command_t(size_max, "mov") { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
+    void Execute(Binary_t&) override;
     ~MOV_I2R() = default;
 };
 
@@ -71,7 +75,7 @@ protected:
 public:
     INT() : Command_t(size_max, "int") { ; }
 
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~INT() = default;
 };
 
@@ -96,7 +100,7 @@ protected:
 public:
     IN_PORT() : Command_t(size_max, "in") { ; }
 
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~IN_PORT() = default;
 };
 struct IN_PORT_VAR : public Command_t {
@@ -120,7 +124,7 @@ protected:
 public:
     IN_PORT_VAR() : Command_t(size_max, "in") { ; }
 
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~IN_PORT_VAR() = default;
 };
 
@@ -146,7 +150,7 @@ protected:
 public:
     CALL_IS() : Command_t(size_max, "call") { ; }
 
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~CALL_IS() = default;
 };
 struct CALL_DS : public Command_t {
@@ -169,7 +173,7 @@ protected:
 public:
     CALL_DS() : Command_t(size_max, "call") { ; }
 
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~CALL_DS() = default;
 };
 
@@ -193,7 +197,7 @@ protected:
 
 public:
     RET_wSAI() : Command_t(size_max, "ret") { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~RET_wSAI() = default;
 };
 struct MOV_MwA : public Command_t {
@@ -218,7 +222,7 @@ protected:
 
 public:
     MOV_MwA() : Command_t(size_max, "mov") { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~MOV_MwA() = default;
 };
 

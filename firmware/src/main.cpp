@@ -17,10 +17,10 @@ int main(int argc, char* argv[])
 
     uint8_t* fileContent = ReadFile(argv[1]);
     Binary_t binary(fileContent);
-
-    Analyze(binary);
-
     free(fileContent);
+
+    // Analyze(binary);
+    Execute(binary);
 
     return 0;
 }

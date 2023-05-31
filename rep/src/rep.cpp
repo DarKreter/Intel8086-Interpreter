@@ -1,14 +1,14 @@
 #include "rep.hpp"
 
-void REP::PrintCommand(size_t pos)
+void REP::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     std::cout << (frame.decoded.w == 0 ? 'b' : 'w') << "\n";
 }
 
-void CMPS::PrintCommand(size_t pos)
+void CMPS::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
     std::cout << (frame.decoded.z == 0 ? 'b' : 'w') << "\n";
 }

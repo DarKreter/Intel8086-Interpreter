@@ -22,7 +22,7 @@ protected:
     void PrintBase(size_t pos);
 
 public:
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~BASIC_R() = default;
 };
 struct INC_R : public BASIC_R {
@@ -58,7 +58,7 @@ struct XCHG_RwA : public BASIC_R {
     constexpr static std::string_view pattern = "10010";
 
     XCHG_RwA() : BASIC_R("xchg") { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~XCHG_RwA() = default;
 };
 

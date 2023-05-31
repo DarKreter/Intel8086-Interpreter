@@ -40,7 +40,7 @@ void RMwR_BASIC::PrintRM()
     }
 }
 
-void RMwR_BASIC::PrintCommand(size_t pos)
+void RMwR_BASIC::Disassemble(size_t pos)
 {
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
@@ -50,13 +50,13 @@ void RMwR_BASIC::PrintCommand(size_t pos)
     else
         frame_length = 2;
 
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     PrintRM();
     std::cout << std::endl;
 }
 
-void RMwR_BASIC_w::PrintCommand(size_t pos)
+void RMwR_BASIC_w::Disassemble(size_t pos)
 {
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
@@ -66,7 +66,7 @@ void RMwR_BASIC_w::PrintCommand(size_t pos)
     else
         frame_length = 2;
 
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     PrintRM();
 
@@ -76,7 +76,7 @@ void RMwR_BASIC_w::PrintCommand(size_t pos)
               << std::endl;
 }
 
-void RMwR_BASIC_dw::PrintCommand(size_t pos)
+void RMwR_BASIC_dw::Disassemble(size_t pos)
 {
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
@@ -86,7 +86,7 @@ void RMwR_BASIC_dw::PrintCommand(size_t pos)
     else
         frame_length = 2;
 
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     if(frame.decoded.d == 0) { // from reg
         PrintRM();
@@ -104,7 +104,7 @@ void RMwR_BASIC_dw::PrintCommand(size_t pos)
     }
 }
 
-void LEA::PrintCommand(size_t pos)
+void LEA::Disassemble(size_t pos)
 {
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
@@ -114,7 +114,7 @@ void LEA::PrintCommand(size_t pos)
     else
         frame_length = 2;
 
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     std::cout << regs_16[frame.decoded.reg] << ", ";
 

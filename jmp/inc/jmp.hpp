@@ -21,7 +21,7 @@ protected:
     JMP_BASIC(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
 
 public:
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~JMP_BASIC() = default;
 };
 
@@ -114,7 +114,7 @@ protected:
 
 public:
     JMP_DS() : JMP_BASIC("jmp", size_max) { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~JMP_DS() = default;
 };
 struct JNLE : public JMP_BASIC {
@@ -161,7 +161,7 @@ protected:
 
 public:
     JMP_IS() : Command_t(size_max, "jmp") { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~JMP_IS() = default;
 };
 

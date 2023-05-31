@@ -31,7 +31,7 @@ protected:
     RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
 
 public:
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~RMwR_BASIC() = default;
 };
 
@@ -39,14 +39,14 @@ struct RMwR_BASIC_w : public RMwR_BASIC {
     // XXXXXXX w(1) mod(2) XXX r/m(3) disp(0/8/16)
 
     RMwR_BASIC_w(const char* _name) : RMwR_BASIC(_name) { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~RMwR_BASIC_w() = default;
 };
 struct RMwR_BASIC_dw : public RMwR_BASIC_w {
     // XXXXXX d(1)w(1) mod(2) XXX r/m(3) disp(0/8/16)
 
     RMwR_BASIC_dw(const char* _name) : RMwR_BASIC_w(_name) { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~RMwR_BASIC_dw() = default;
 };
 
@@ -106,7 +106,7 @@ struct LEA : public RMwR_BASIC_w {
     constexpr static std::string_view pattern = "10001101";
 
     LEA() : RMwR_BASIC_w("lea") { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~LEA() = default;
 };
 

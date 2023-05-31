@@ -27,7 +27,7 @@ protected:
     void PrintBase(size_t pos);
 
 public:
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~LGC_BASIC() = default;
 };
 struct RCL : public LGC_BASIC {
@@ -63,7 +63,7 @@ struct DIV : public LGC_BASIC {
     constexpr static std::string_view pattern = "1111011XXX110";
 
     DIV() : LGC_BASIC("div") { ; }
-    void PrintCommand(size_t) override;
+    void Disassemble(size_t) override;
     ~DIV() = default;
 };
 

@@ -6,9 +6,11 @@
 
 using namespace std;
 
-void MOV_I2R::PrintCommand(size_t pos)
+void Command_t::Execute(Binary_t&) { ; }
+
+void MOV_I2R::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
                                        : regs_16[frame.decoded.reg])
@@ -20,48 +22,62 @@ void MOV_I2R::PrintCommand(size_t pos)
 
     printf("\n");
 }
-void RET_wSAI::PrintCommand(size_t pos)
+
+void MOV_I2R::Execute(Binary_t& binary)
 {
-    Command_t::PrintCommand(pos);
+    auto& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    std::cout << reg;
+
+    if(frame.decoded.w == 0)
+        reg = frame.decoded.data[0];
+    else
+        reg = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
+
+    printf("\n");
+}
+
+void RET_wSAI::Disassemble(size_t pos)
+{
+    Command_t::Disassemble(pos);
 
     printf("%02x%02x\n", frame.decoded.disp_high, frame.decoded.disp_low);
 }
-void IN_PORT::PrintCommand(size_t pos)
+void IN_PORT::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     std::cout << (frame.decoded.w == 1 ? "ax, " : "al, ");
     printf("%02x\n", frame.decoded.port);
 }
-void IN_PORT_VAR::PrintCommand(size_t pos)
+void IN_PORT_VAR::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     std::cout << (frame.decoded.w == 1 ? "ax, " : "al, ");
     printf("dx\n");
 }
-void CALL_DS::PrintCommand(size_t pos)
+void CALL_DS::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
     printf("%04lx\n", frame.decoded.disp + pos + 3);
 }
-void CALL_IS::PrintCommand(size_t pos)
+void CALL_IS::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     cout << regs_16[frame.decoded.rm] << endl;
 }
 
-void INT::PrintCommand(size_t pos)
+void INT::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     std::cout << std::hex << (int)frame.raw[1] << std::endl;
 }
 
-void MOV_MwA::PrintCommand(size_t pos)
+void MOV_MwA::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     if(frame.decoded.w == 0)
         printf("al, ");
@@ -76,7 +92,13 @@ Command_t::Command_t(uint8_t _frame_length, const char* _name)
 {
 }
 
-void Command_t::PrintCommand(size_t pos)
+void Command_t::PrintStatus(Binary_t& binary)
+{
+    binary.PrintStatus();
+    Disassemble(binary.textPos);
+}
+
+void Command_t::Disassemble(size_t pos)
 {
     printf("%04lx: ", pos);
     for(uint8_t i = 0; i < frame_length; i++)

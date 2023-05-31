@@ -1,8 +1,8 @@
 #include "singleton.hpp"
 
-void Singleton::PrintCommand(size_t pos)
+void Singleton::Disassemble(size_t pos)
 {
-    Command_t::PrintCommand(pos);
+    Command_t::Disassemble(pos);
 
     printf("\n");
 }
