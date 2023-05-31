@@ -16,12 +16,11 @@
 
 using namespace std;
 
-void Analyze(uint8_t* tab, size_t size)
+void Analyze(Binary_t& binary)
 {
-    size_t pos = 0;
     Command_t* cmd = nullptr;
 
-    while(pos < size) {
+    while(binary.textPos < binary.textSegmentSize) {
         cmd = CheckAllCommands<
             MOV_I2R, MOV_RM2R, OR_I2RM, INT, ADD_RMwR, ADD_I2RM, AND_I2RM,
             MOV_I2RM, XOR_RM2R, SUB_RM2R, LEA, CMP_IwRM, CMP_RMaR, TEST_IaRM,
@@ -31,19 +30,21 @@ void Analyze(uint8_t* tab, size_t size)
             CALL_IS, HLT, CBW, CWD, DEC_R, ADC_RMwR, TEST_RMwR, SHL, SHR,
             REP_MOVS, REP_STOS, REP_SCAS, CMPS, POP_R, AND_RMaR, IN_PORT,
             IN_PORT_VAR, SBB_RMaR, SUB_IfRM, SUB_IfA, CMP_IwA, OR_RMaR, NEG,
-            SSB_I2RM, RET, CLD, STD, TEST_IwA>(tab, size - pos);
+            SSB_I2RM, RET, CLD, STD, TEST_IwA>(
+            binary.text, binary.textSegmentSize - binary.textPos);
         if(cmd != nullptr)
             ;
         else {
             // cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
-            printf("%04lx: %02x\t\t(undefined)", pos, *tab);
-            pos++, tab++;
+            printf("%04lx: %02x\t\t(undefined)", binary.textPos, *binary.text);
+            binary.textPos++, binary.text++;
             continue;
         }
 
-        cmd->Read(tab);
-        cmd->PrintCommand(pos);
-        pos += cmd->GetFrameLength(), tab += cmd->GetFrameLength();
+        cmd->Read(binary.text);
+        cmd->PrintCommand(binary.textPos);
+        binary.textPos += cmd->GetFrameLength(),
+            binary.text += cmd->GetFrameLength();
         delete cmd;
         cmd = nullptr;
     }

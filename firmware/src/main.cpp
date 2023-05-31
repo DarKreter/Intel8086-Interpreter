@@ -1,9 +1,8 @@
+#include "binary.hpp"
 #include "function.hpp"
-#include <bitset>
+#include <iostream>
 
 using namespace std;
-
-#define TEXT_START_BYTE 32
 
 int main(int argc, char* argv[])
 {
@@ -17,9 +16,9 @@ int main(int argc, char* argv[])
     }
 
     uint8_t* fileContent = ReadFile(argv[1]);
-    size_t textSegmentSize = (fileContent[9] << 8) + fileContent[8];
+    Binary_t binary(fileContent);
 
-    Analyze(fileContent + TEXT_START_BYTE, textSegmentSize);
+    Analyze(binary);
 
     free(fileContent);
 

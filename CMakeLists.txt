@@ -10,6 +10,7 @@ set(CPU_OPTIONS -Werror -Wall -Wextra -pedantic -ffunction-sections -fdata-secti
 add_compile_options(${CPU_OPTIONS})
 
 add_subdirectory(Command)
+add_subdirectory(Binary)
 add_subdirectory(basic_R)
 add_subdirectory(IwA)
 add_subdirectory(IwRM)

@@ -1,4 +1,4 @@
-set(DEPENDENCIES_LIST commands Singleton jmp logic basic_R rep IwA IwRM RMwR)
+set(DEPENDENCIES_LIST commands Binary Singleton jmp logic basic_R rep IwA IwRM RMwR)
 
 add_executable(firmware src/main.cpp src/function.cpp)
 
