@@ -74,7 +74,8 @@ protected:
 
 public:
     INT() : Command_t(size_max, "int") { ; }
-
+    void PrintStatus(Binary_t&) override;
+    void Execute(Binary_t&) override;
     void Disassemble(size_t) override;
     ~INT() = default;
 };

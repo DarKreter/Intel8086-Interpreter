@@ -26,14 +26,11 @@ void MOV_I2R::Disassemble(size_t pos)
 void MOV_I2R::Execute(Binary_t& binary)
 {
     auto& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    std::cout << reg;
 
     if(frame.decoded.w == 0)
         reg = frame.decoded.data[0];
     else
         reg = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
-
-    printf("\n");
 }
 
 void RET_wSAI::Disassemble(size_t pos)
@@ -73,6 +70,26 @@ void INT::Disassemble(size_t pos)
     Command_t::Disassemble(pos);
 
     std::cout << std::hex << (int)frame.raw[1] << std::endl;
+}
+void INT::Execute(Binary_t& binary)
+{
+    if(binary.bx == 0x0010)
+        throw std::runtime_error("exit");
+    else if(binary.bx == 0) {
+        printf("<write(1, %04x, %lx)", frame.decoded.type,
+               binary.dataSegmentSize - frame.decoded.type);
+        for(size_t i = frame.decoded.type; i < binary.dataSegmentSize; i++)
+            printf("%c", binary.data[i]);
+        printf("=> %lx>\n", binary.dataSegmentSize - frame.decoded.type);
+    }
+}
+void INT::PrintStatus(Binary_t& bin)
+{
+    Command_t::PrintStatus(bin);
+    if(bin.bx == 0x0010)
+        printf("<exit(0)>\n");
+    // else if(binary.bx == 0)
+    //     printf("<\n");
 }
 
 void MOV_MwA::Disassemble(size_t pos)

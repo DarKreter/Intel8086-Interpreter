@@ -43,7 +43,12 @@ void Execute(Binary_t& binary)
 
         cmd->Read(binary.text);
         cmd->PrintStatus(binary);
-        cmd->Execute(binary);
+        try {
+            cmd->Execute(binary);
+        }
+        catch(std::runtime_error& e) {
+            break;
+        }
 
         binary.textPos += cmd->GetFrameLength(),
             binary.text += cmd->GetFrameLength();
