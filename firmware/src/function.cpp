@@ -16,10 +16,11 @@
 
 using namespace std;
 
-void Execute(Binary_t& binary)
+void Execute(Binary_t& binary, bool log)
 {
     Command_t* cmd = nullptr;
-    printf(" AX   BX   CX   DX   SP   BP   SI   DI  FLAGS IP\n");
+    if(log)
+        printf(" AX   BX   CX   DX   SP   BP   SI   DI  FLAGS IP\n");
     while(binary.textPos < binary.textSegmentSize) {
         cmd = CheckAllCommands<
             MOV_I2R, MOV_RM2R, OR_I2RM, INT, ADD_RMwR, ADD_I2RM, AND_I2RM,
@@ -42,7 +43,8 @@ void Execute(Binary_t& binary)
         }
 
         cmd->Read(binary.text);
-        cmd->PrintStatus(binary);
+        if(log)
+            cmd->PrintStatus(binary);
         try {
             cmd->Execute(binary);
         }
