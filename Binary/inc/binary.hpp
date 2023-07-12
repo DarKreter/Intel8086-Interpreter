@@ -49,4 +49,6 @@ struct Binary_t {
     ~Binary_t();
 };
 
+
+
 #endif // DATA_INT

@@ -8,9 +8,9 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     enum class Mode_e {
-        diss,
+        int_nolog = 0,
         int_log,
-        int_nolog
+        diss
     } mode = Mode_e::int_nolog;
     uint8_t count = 1;
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     if(mode == Mode_e::diss)
         Analyze(binary);
     else if(mode == Mode_e::int_log)
-        Execute(binary);
+        Execute(binary, (bool)mode);
     else if(mode == Mode_e::int_nolog)
         Execute(binary);
     else {

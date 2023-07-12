@@ -2,11 +2,13 @@
 #define COMMANDS_DISASSEMBLY
 
 #include "commands.hpp"
+#include "message.hpp"
+#include <unistd.h>
 // #include <bitset>
 
 using namespace std;
 
-void Command_t::Execute(Binary_t&) { ; }
+void Command_t::Execute(Binary_t&, bool) { ; }
 
 void MOV_I2R::Disassemble(size_t pos)
 {
@@ -23,7 +25,7 @@ void MOV_I2R::Disassemble(size_t pos)
     printf("\n");
 }
 
-void MOV_I2R::Execute(Binary_t& binary)
+void MOV_I2R::Execute(Binary_t& binary, bool)
 {
     auto& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
 
@@ -71,26 +73,30 @@ void INT::Disassemble(size_t pos)
 
     std::cout << std::hex << (int)frame.raw[1] << std::endl;
 }
-void INT::Execute(Binary_t& binary)
+void INT::Execute(Binary_t& binary, bool log)
 {
-    if(binary.bx == 0x0010)
-        throw std::runtime_error("exit");
-    else if(binary.bx == 0) {
-        printf("<write(1, %04x, %lx)", frame.decoded.type,
-               binary.dataSegmentSize - frame.decoded.type);
-        for(size_t i = frame.decoded.type; i < binary.dataSegmentSize; i++)
-            printf("%c", binary.data[i]);
-        printf("=> %lx>\n", binary.dataSegmentSize - frame.decoded.type);
+    message* mess = (message*)&binary.data[binary.bx];
+
+    switch(mess->m_type) {
+    case 1: // exit
+        if(log)
+            printf("<exit(%d)>\n", mess->m_m1.m1i1);
+        exit(mess->m_m1.m1i1);
+        break;
+    case 4: // write
+        uint16_t fd = mess->m_m1.m1i1;
+        uint16_t addr = mess->m_m1.m1p1;
+        uint16_t length = mess->m_m1.m1i2;
+        if(log)
+            fprintf(stderr, "<write(%d, 0x%04x, %d)", fd, addr, length);
+        int ret = write(fd, &binary.data[addr], length);
+        if(log)
+            fprintf(stderr, " => %d>\n", ret);
+
+        break;
     }
 }
-void INT::PrintStatus(Binary_t& bin)
-{
-    Command_t::PrintStatus(bin);
-    if(bin.bx == 0x0010)
-        printf("<exit(0)>\n");
-    // else if(binary.bx == 0)
-    //     printf("<\n");
-}
+void INT::PrintStatus(Binary_t& bin) { Command_t::PrintStatus(bin); }
 
 void MOV_MwA::Disassemble(size_t pos)
 {

@@ -1,4 +1,5 @@
 #include "binary.hpp"
+#include "message.hpp"
 #include <cstdio>
 
 int16_t& Binary_t::GetReg(uint8_t w, uint8_t reg)

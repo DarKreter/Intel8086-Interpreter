@@ -46,7 +46,7 @@ void Execute(Binary_t& binary, bool log)
         if(log)
             cmd->PrintStatus(binary);
         try {
-            cmd->Execute(binary);
+            cmd->Execute(binary, log);
         }
         catch(std::runtime_error& e) {
             break;

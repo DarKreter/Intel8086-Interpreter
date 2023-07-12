@@ -25,7 +25,7 @@ public:
     virtual void Read(uint8_t*);
     virtual void Disassemble(size_t pos);
     virtual void PrintStatus(Binary_t&);
-    virtual void Execute(Binary_t&);
+    virtual void Execute(Binary_t&, bool = false);
     virtual ~Command_t() = default;
 };
 
@@ -51,7 +51,7 @@ protected:
 public:
     MOV_I2R() : Command_t(size_max, "mov") { ; }
     void Disassemble(size_t) override;
-    void Execute(Binary_t&) override;
+    void Execute(Binary_t&, bool = false) override;
     ~MOV_I2R() = default;
 };
 
@@ -75,7 +75,7 @@ protected:
 public:
     INT() : Command_t(size_max, "int") { ; }
     void PrintStatus(Binary_t&) override;
-    void Execute(Binary_t&) override;
+    void Execute(Binary_t&, bool = false) override;
     void Disassemble(size_t) override;
     ~INT() = default;
 };
