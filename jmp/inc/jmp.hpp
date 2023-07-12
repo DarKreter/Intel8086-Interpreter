@@ -88,6 +88,7 @@ struct JE : public JMP_BASIC {
     // 01110100 disp(8)
     constexpr static std::string_view pattern = "01110100";
 
+    void Execute(Binary_t&, bool = false) override;
     JE() : JMP_BASIC("je") { ; }
     ~JE() = default;
 };

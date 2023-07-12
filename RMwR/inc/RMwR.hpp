@@ -28,8 +28,8 @@ protected:
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
     void PrintRM();
-    uint16_t& GetRM(Binary_t&);
-    uint16_t GetRM_addr(Binary_t&);
+    uint16_t& GetRM(Binary_t&, bool);
+    uint16_t GetRM_addr(Binary_t&, bool);
     RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
 
 public:
@@ -56,6 +56,7 @@ struct PUSH_RM : public RMwR_BASIC {
     // 11111111 mod(2) 110 r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "11111111XX110";
 
+    void Execute(Binary_t&, bool = false) override;
     PUSH_RM() : RMwR_BASIC("push") { ; }
     ~PUSH_RM() = default;
 };
@@ -161,6 +162,7 @@ struct OR_RMaR : public RMwR_BASIC_dw {
     // 000010d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "000010";
 
+    void Execute(Binary_t&, bool = false) override;
     OR_RMaR() : RMwR_BASIC_dw("or") { ; }
     ~OR_RMaR() = default;
 };

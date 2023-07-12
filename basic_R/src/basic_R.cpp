@@ -20,3 +20,18 @@ void PUSH_R::Execute(Binary_t& binary, bool)
     binary.stack[--binary.sp] = reg >> 8;
     binary.stack[--binary.sp] = reg;
 }
+
+void POP_R::Execute(Binary_t& binary, bool)
+{
+    uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
+
+    reg = binary.stack[binary.sp++];
+    reg += binary.stack[binary.sp++] << 8;
+}
+
+void DEC_R::Execute(Binary_t& binary, bool)
+{
+    uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
+
+    reg--;
+}

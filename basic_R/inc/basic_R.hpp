@@ -35,6 +35,7 @@ struct INC_R : public BASIC_R {
 struct POP_R : public BASIC_R {
     // 01011 reg(3)
     constexpr static std::string_view pattern = "01011";
+    void Execute(Binary_t&, bool = false) override;
 
     POP_R() : BASIC_R("pop") { ; }
     ~POP_R() = default;
@@ -43,6 +44,7 @@ struct DEC_R : public BASIC_R {
     // 01001 reg(3)
     constexpr static std::string_view pattern = "01001";
 
+    void Execute(Binary_t&, bool = false) override;
     DEC_R() : BASIC_R("dec") { ; }
     ~DEC_R() = default;
 };

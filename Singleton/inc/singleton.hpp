@@ -59,6 +59,7 @@ struct CWD : public Singleton {
 struct RET : public Singleton {
     // 11000011
     constexpr static std::string_view pattern = "11000011";
+    void Execute(Binary_t&, bool = false) override;
 
     RET() : Singleton("ret") { ; }
     ~RET() = default;

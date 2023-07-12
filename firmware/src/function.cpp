@@ -42,8 +42,11 @@ void Execute(Binary_t& binary, bool log)
             continue;
         }
         cmd->Read(binary.text);
+        // printf("%02x%02x\n", binary.stack[0xffac], binary.stack[0xffad]);
         if(log)
             cmd->PrintStatus(binary);
+        else
+            cmd->Disassemble(binary.textPos);
         try {
             cmd->Execute(binary, log);
         }
@@ -55,7 +58,8 @@ void Execute(Binary_t& binary, bool log)
             binary.text += cmd->GetFrameLength();
         delete cmd;
         cmd = nullptr;
-        std::cout << std::endl;
+        if(log)
+            std::cout << std::endl;
     }
 }
 

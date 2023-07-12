@@ -83,7 +83,8 @@ void INT::Disassemble(size_t pos)
 void INT::Execute(Binary_t& binary, bool log)
 {
     message* mess = (message*)&binary.stack[binary.bx];
-    printf("\n");
+    if(log)
+        printf("\n");
     switch(mess->m_type) {
     case 1: // exit
         if(log)
@@ -99,8 +100,12 @@ void INT::Execute(Binary_t& binary, bool log)
             fflush(stdout);
         }
         int ret = write(fd, &binary.stack[addr], length);
+        // (ret == -1) ? (mess->m_type = -errno) : (mess->m_type = ret);
+        mess->m_type = ret;
         if(log)
             printf(" => %d>", ret);
+
+        binary.ax = 0;
 
         break;
     }

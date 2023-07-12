@@ -56,3 +56,10 @@ void JNB::Execute(Binary_t& binary, bool b)
         JMP_BASIC::Execute(binary, b);
     }
 }
+
+void JE::Execute(Binary_t& binary, bool b)
+{
+    if(binary.ZF) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}

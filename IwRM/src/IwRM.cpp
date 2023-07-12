@@ -37,24 +37,26 @@ void I2RM_BASIC::PrintRM()
     }
 }
 
-uint16_t I2RM_BASIC::GetRM(Binary_t& binary)
+uint16_t I2RM_BASIC::GetRM(Binary_t& binary, bool log)
 {
     if(frame.decoded.mod == 0x03)
         // if mod == 11, rm is treated like reg
         return binary.GetReg(frame.decoded.w, frame.decoded.rm);
 
     else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
-        printf("[%02x%02x]", frame.decoded.disp.d[1], frame.decoded.disp.d[0]);
+        uint16_t addr =
+            frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
+        uint16_t* val = (uint16_t*)&binary.stack[addr];
+        if(log)
+            printf(" ;[%04x]%04x", addr, *val);
+        return *val;
     }
     else // mod == 00/01/10
     {
         int32_t disp = 0;
         switch(frame.decoded.mod) {
         case 1:
-            if(frame.decoded.disp.s < 0)
-                disp = (int)-frame.decoded.disp.s;
-            else
-                disp = (int)frame.decoded.disp.s;
+            disp = (int)frame.decoded.disp.s;
             break;
         case 2:
             union {
@@ -74,10 +76,12 @@ uint16_t I2RM_BASIC::GetRM(Binary_t& binary)
         }
         uint16_t addr = binary.GetRM_mem(frame.decoded.rm) + disp;
 
-        uint16_t val = frame.decoded.disp.d[0 + offset] +
-                       (frame.decoded.disp.d[0 + offset + 1] << 8);
-        printf(" ;[%04x]%04x", addr, val);
-        return (uint16_t)(binary.stack[addr] + (binary.stack[addr + 1] << 8));
+        // uint16_t val = frame.decoded.disp.d[0 + offset] +
+        //                (frame.decoded.disp.d[0 + offset + 1] >> 8);
+        uint16_t val = binary.stack[addr] + (binary.stack[addr + 1] << 8);
+        if(log)
+            printf(" ;[%04x]%04x", addr, val);
+        return val;
     }
     return binary.GetReg(frame.decoded.w, frame.decoded.rm);
 }
@@ -192,11 +196,11 @@ void I2RM_BASIC_s::Disassemble(size_t pos)
     }
 }
 
-void TEST_IaRM::Execute(Binary_t& binary, bool)
+void TEST_IaRM::Execute(Binary_t& binary, bool log)
 {
     uint16_t src = frame.decoded.disp.d[0 + offset] +
                    (frame.decoded.disp.d[0 + offset + 1] >> 8);
-    uint16_t dst = GetRM(binary);
+    uint16_t dst = GetRM(binary, log);
     int16_t val16;
     int8_t val8;
 
@@ -216,24 +220,24 @@ void TEST_IaRM::Execute(Binary_t& binary, bool)
     }
 }
 
-void CMP_IwRM::Execute(Binary_t& binary, bool)
+void CMP_IwRM::Execute(Binary_t& binary, bool log)
 {
     uint16_t src = frame.decoded.disp.d[0 + offset] +
                    (frame.decoded.disp.d[0 + offset + 1] << 8);
-    uint16_t dst = GetRM(binary);
+    uint16_t dst = GetRM(binary, log);
     int val;
     int16_t val16;
     int8_t val8;
 
-    // if(frame.decoded.w) { // signed
-    // val16 = val = (int16)dst - (char)src;
-    //     binary.ZF = (val16 == 0);
-    //     binary.SF = (val16 < 0);
-    //     binary.OF = (val16 != val);
-    //     binary.CF = (dst < (char)src);
-    // }
-    if(frame.decoded.w) { // 16-bit
-        val16 = val = (uint16_t)dst - (uint16_t)src;
+    if(frame.decoded.s) { // signed
+        val16 = val = (int16_t)dst - (int8_t)src;
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = (val16 != val);
+        binary.CF = (dst < (int8_t)src);
+    }
+    else if(frame.decoded.w) { // 16-bit
+        val16 = val = (int16_t)dst - (int16_t)src;
         // printf("\n%d %d %d", dst, src, val16);
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
@@ -241,7 +245,7 @@ void CMP_IwRM::Execute(Binary_t& binary, bool)
         binary.CF = (dst < src);
     }
     else {
-        val8 = val = (uint8_t)dst - (uint8_t)src;
+        val8 = val = (int8_t)dst - (int8_t)src;
         binary.ZF = ((val8 & 0xff) == 0);
         binary.SF = (val8 < 0);
         binary.OF = (val8 != val);
@@ -249,7 +253,7 @@ void CMP_IwRM::Execute(Binary_t& binary, bool)
     }
 }
 
-void SUB_IfRM::Execute(Binary_t& binary, bool)
+void SUB_IfRM::Execute(Binary_t& binary, bool log)
 {
     uint16_t src;
     if(frame.decoded.s == 0 && frame.decoded.w == 1)
@@ -257,34 +261,72 @@ void SUB_IfRM::Execute(Binary_t& binary, bool)
               (frame.decoded.disp.d[0 + offset + 1] << 8);
     else
         src = frame.decoded.disp.d[0 + offset];
-    uint16_t dst = GetRM(binary);
+    uint16_t dst = GetRM(binary, log);
     int val;
     int16_t val16;
-    // int8_t val8;
+    int8_t val8;
 
-    // if(frame.decoded.w) { // signed
-    val16 = val = (int16_t)dst - (int8_t)src;
-    SetRM(binary, val16);
-    binary.ZF = (val16 == 0);
-    binary.SF = (val16 < 0);
-    binary.OF = (val16 != val);
-    binary.CF = (dst < (int8_t)src);
+    if(frame.decoded.s) { // signed
+        val16 = val = (int16_t)dst - (int8_t)src;
+        SetRM(binary, val16);
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = (val16 != val);
+        binary.CF = (dst < (int8_t)src);
+    }
+    else if(frame.decoded.w) { // 16-bit
+        val16 = val = (uint16_t)dst - (uint16_t)src;
+        SetRM(binary, val16);
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = (val16 != val);
+        binary.CF = (dst < src);
+    }
+    else {
+        val8 = val = (uint8_t)dst - (uint8_t)src;
+        SetRM(binary, val8);
+        binary.ZF = (val8 == 0);
+        binary.SF = (val8 < 0);
+        binary.OF = (val8 != val);
+        binary.CF = (dst < src);
+    }
+}
 
-    // }
-    // if(frame.decoded.w) { // 16-bit
-    //     val16 = val = (uint16_t)dst - (uint16_t)src;
-    //     SetRM(binary, val16);
-    //     binary.ZF = (val16 == 0);
-    //     binary.SF = (val16 < 0);
-    //     binary.OF = (val16 != val);
-    //     binary.CF = (dst < src);
-    // }
-    // else {
-    //     val8 = val = (uint8_t)dst - (uint8_t)src;
-    //     SetRM(binary, val8);
-    //     binary.ZF = (val8 == 0);
-    //     binary.SF = (val8 < 0);
-    //     binary.OF = (val8 != val);
-    //     binary.CF = (dst < src);
-    // }
+void ADD_I2RM::Execute(Binary_t& binary, bool log)
+{
+    uint16_t src;
+    if(frame.decoded.s == 0 && frame.decoded.w == 1)
+        src = frame.decoded.disp.d[0 + offset] +
+              (frame.decoded.disp.d[0 + offset + 1] << 8);
+    else
+        src = frame.decoded.disp.d[0 + offset];
+    uint16_t dst = GetRM(binary, log);
+    int val;
+    int16_t val16;
+    int8_t val8;
+
+    if(frame.decoded.s) { // signed
+        val16 = val = (int16_t)dst + (int8_t)src;
+        SetRM(binary, val16);
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = (val16 != val);
+        binary.CF = (dst < (int8_t)src);
+    }
+    else if(frame.decoded.w) { // 16-bit
+        val16 = val = (int16_t)dst + (int16_t)src;
+        SetRM(binary, val16);
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = (val16 != val);
+        binary.CF = (dst < src);
+    }
+    else {
+        val8 = val = (int8_t)dst + (int8_t)src;
+        SetRM(binary, val8);
+        binary.ZF = (val8 == 0);
+        binary.SF = (val8 < 0);
+        binary.OF = (val8 != val);
+        binary.CF = (dst < src);
+    }
 }
