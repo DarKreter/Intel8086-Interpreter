@@ -56,10 +56,10 @@ void I2RM_BASIC::Disassemble(size_t pos)
     PrintRM();
 
     if(frame.decoded.w == 1)
-        printf(", %02x%02x\n", frame.decoded.disp.d[1 + offset],
+        printf(", %02x%02x", frame.decoded.disp.d[1 + offset],
                frame.decoded.disp.d[0 + offset]);
     else
-        printf(", %x\n", frame.decoded.disp.d[0 + offset]);
+        printf(", %x", frame.decoded.disp.d[0 + offset]);
 }
 void I2RM_BASIC_s::Disassemble(size_t pos)
 {
@@ -95,5 +95,4 @@ void I2RM_BASIC_s::Disassemble(size_t pos)
         else
             printf("%x", (int)u.i);
     }
-    printf("\n");
 }

@@ -56,6 +56,7 @@ void Execute(Binary_t& binary, bool log)
             binary.text += cmd->GetFrameLength();
         delete cmd;
         cmd = nullptr;
+        std::cout << std::endl;
     }
 }
 
@@ -90,6 +91,7 @@ void Analyze(Binary_t& binary)
             binary.text += cmd->GetFrameLength();
         delete cmd;
         cmd = nullptr;
+        std::cout << std::endl;
     }
 }
 

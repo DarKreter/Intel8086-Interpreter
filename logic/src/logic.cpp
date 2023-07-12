@@ -17,10 +17,9 @@ void LGC_BASIC::Disassemble(size_t pos)
 {
     PrintBase(pos);
 
-    printf(", %s\n", frame.decoded.v == 0 ? "1" : "cl");
+    printf(", %s", frame.decoded.v == 0 ? "1" : "cl");
 }
 void DIV::Disassemble(size_t pos)
 {
     PrintBase(pos);
-    printf("\n");
 }

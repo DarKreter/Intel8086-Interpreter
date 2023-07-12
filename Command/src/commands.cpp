@@ -21,8 +21,6 @@ void MOV_I2R::Disassemble(size_t pos)
     printf("%02x", frame.decoded.data[1]);
     if(frame.decoded.w == 1)
         printf("%02x", frame.decoded.data[0]);
-
-    printf("\n");
 }
 
 void MOV_I2R::Execute(Binary_t& binary, bool)
@@ -39,39 +37,38 @@ void RET_wSAI::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
 
-    printf("%02x%02x\n", frame.decoded.disp_high, frame.decoded.disp_low);
+    printf("%02x%02x", frame.decoded.disp_high, frame.decoded.disp_low);
 }
 void IN_PORT::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
 
     std::cout << (frame.decoded.w == 1 ? "ax, " : "al, ");
-    printf("%02x\n", frame.decoded.port);
+    printf("%02x", frame.decoded.port);
 }
 void IN_PORT_VAR::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
 
     std::cout << (frame.decoded.w == 1 ? "ax, " : "al, ");
-    printf("dx\n");
+    printf("dx");
 }
 void CALL_DS::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
-    printf("%04lx\n", frame.decoded.disp + pos + 3);
+    printf("%04lx", frame.decoded.disp + pos + 3);
 }
 void CALL_IS::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
 
-    cout << regs_16[frame.decoded.rm] << endl;
+    cout << regs_16[frame.decoded.rm];
 }
-
 void INT::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
 
-    std::cout << std::hex << (int)frame.raw[1] << std::endl;
+    std::cout << std::hex << (int)frame.raw[1];
 }
 void INT::Execute(Binary_t& binary, bool log)
 {
@@ -80,7 +77,7 @@ void INT::Execute(Binary_t& binary, bool log)
     switch(mess->m_type) {
     case 1: // exit
         if(log)
-            printf("<exit(%d)>\n", mess->m_m1.m1i1);
+            printf("<exit(%d)>", mess->m_m1.m1i1);
         exit(mess->m_m1.m1i1);
         break;
     case 4: // write
@@ -93,7 +90,7 @@ void INT::Execute(Binary_t& binary, bool log)
         }
         int ret = write(fd, &binary.data[addr], length);
         if(log)
-            printf(" => %d>\n", ret);
+            printf(" => %d>", ret);
 
         break;
     }
@@ -108,7 +105,7 @@ void MOV_MwA::Disassemble(size_t pos)
     else
         printf("ax, ");
 
-    printf("[%02x%02x]\n", frame.decoded.addr_high, frame.decoded.addr_low);
+    printf("[%02x%02x]", frame.decoded.addr_high, frame.decoded.addr_low);
 }
 
 Command_t::Command_t(uint8_t _frame_length, const char* _name)

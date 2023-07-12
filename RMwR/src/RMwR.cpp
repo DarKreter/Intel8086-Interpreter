@@ -93,7 +93,6 @@ void RMwR_BASIC::Disassemble(size_t pos)
     Command_t::Disassemble(pos);
 
     PrintRM();
-    std::cout << std::endl;
 }
 
 void RMwR_BASIC_w::Disassemble(size_t pos)
@@ -112,8 +111,7 @@ void RMwR_BASIC_w::Disassemble(size_t pos)
 
     std::cout << ", "
               << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
-                                       : regs_16[frame.decoded.reg])
-              << std::endl;
+                                       : regs_16[frame.decoded.reg]);
 }
 
 void RMwR_BASIC_dw::Disassemble(size_t pos)
@@ -132,15 +130,13 @@ void RMwR_BASIC_dw::Disassemble(size_t pos)
         PrintRM();
         std::cout << ", "
                   << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
-                                           : regs_16[frame.decoded.reg])
-                  << std::endl;
+                                           : regs_16[frame.decoded.reg]);
     }
     else { // to reg
         std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.reg]
                                            : regs_16[frame.decoded.reg])
                   << ", ";
         PrintRM();
-        std::cout << std::endl;
     }
 }
 
@@ -159,7 +155,6 @@ void LEA::Disassemble(size_t pos)
     std::cout << regs_16[frame.decoded.reg] << ", ";
 
     PrintRM();
-    std::cout << std::endl;
 }
 
 void XOR_RM2R::Execute(Binary_t& binary, bool)
@@ -194,7 +189,7 @@ void XOR_RM2R::Execute(Binary_t& binary, bool)
 
 void MOV_RM2R::Execute(Binary_t& binary, bool)
 {
-
+    printf("a");
     uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
     uint16_t& rm = GetRM(binary);
 

@@ -15,7 +15,7 @@ void IwA::Disassemble(size_t pos)
         printf("ax, ");
 
     if(frame.decoded.w == 1)
-        printf("%02x%02x\n", frame.decoded.data[1], frame.decoded.data[0]);
+        printf("%02x%02x", frame.decoded.data[1], frame.decoded.data[0]);
     else
-        printf("%x\n", frame.decoded.data[0]);
+        printf("%x", frame.decoded.data[0]);
 }
