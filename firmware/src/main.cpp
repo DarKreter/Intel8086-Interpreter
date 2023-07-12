@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main(int argc, char* argv[])
+int main(int argc, char* argv[], char** envp)
 {
     enum class Mode_e {
         int_nolog = 0,
@@ -29,9 +29,22 @@ int main(int argc, char* argv[])
         }
         count++;
     }
+    std::vector<std::string> _argv;
+    std::vector<std::string> _envp;
 
+    _argv.push_back(argv[count]);
     uint8_t* fileContent = ReadFile(argv[count++]);
+
+    for(; count < argc; count++)
+        _argv.push_back(argv[count]);
+    for(char** i = envp; *i != 0; i++)
+        _envp.push_back(*i);
+
+    _envp.clear();
+    _envp.push_back("PATH=/usr:/usr/bin");
+
     Binary_t binary(fileContent);
+    binary.StackInit(_argv, _envp);
     free(fileContent);
 
     if(mode == Mode_e::diss)

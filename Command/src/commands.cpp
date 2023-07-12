@@ -87,11 +87,13 @@ void INT::Execute(Binary_t& binary, bool log)
         uint16_t fd = mess->m_m1.m1i1;
         uint16_t addr = mess->m_m1.m1p1;
         uint16_t length = mess->m_m1.m1i2;
-        if(log)
-            fprintf(stderr, "<write(%d, 0x%04x, %d)", fd, addr, length);
+        if(log) {
+            printf("<write(%d, 0x%04x, %d)", fd, addr, length);
+            fflush(stdout);
+        }
         int ret = write(fd, &binary.data[addr], length);
         if(log)
-            fprintf(stderr, " => %d>\n", ret);
+            printf(" => %d>\n", ret);
 
         break;
     }
@@ -101,7 +103,6 @@ void INT::PrintStatus(Binary_t& bin) { Command_t::PrintStatus(bin); }
 void MOV_MwA::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
-
     if(frame.decoded.w == 0)
         printf("al, ");
     else

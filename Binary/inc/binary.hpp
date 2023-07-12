@@ -3,6 +3,8 @@
 
 #include <cstddef>
 #include <stdint.h>
+#include <string>
+#include <vector>
 
 #define TEXT_START_BYTE 32
 
@@ -12,43 +14,46 @@ struct Binary_t {
     size_t textPos;
     uint8_t* text;
     uint8_t* data;
+    static constexpr uint32_t STACK_SIZE = 0x10000;
+    uint8_t* stack;
 
     union {
-        int16_t ax;
+        uint16_t ax;
         struct {
             int8_t l;
             int8_t h;
         } a;
     };
     union {
-        int16_t bx;
+        uint16_t bx;
         struct {
             int8_t l;
             int8_t h;
         } b;
     };
     union {
-        int16_t cx;
+        uint16_t cx;
         struct {
             int8_t l;
             int8_t h;
         } c;
     };
     union {
-        int16_t dx;
+        uint16_t dx;
         struct {
             int8_t l;
             int8_t h;
         } d;
     };
-    int16_t sp, bp, si, di;
-    int16_t& GetReg(uint8_t w, uint8_t reg);
+    uint16_t sp, bp, si, di;
+    uint8_t OF : 1, DF : 1, SF : 1, ZF : 1, CF : 1;
+    uint16_t& GetReg(uint8_t w, uint8_t reg);
 
     void PrintStatus();
+    void StackInit(std::vector<std::string> argv,
+                   std::vector<std::string> envp);
     Binary_t(uint8_t*);
     ~Binary_t();
 };
-
-
 
 #endif // DATA_INT

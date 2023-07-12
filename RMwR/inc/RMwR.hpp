@@ -28,6 +28,7 @@ protected:
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
     void PrintRM();
+    uint16_t& GetRM(Binary_t&);
     RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
 
 public:
@@ -37,15 +38,15 @@ public:
 
 struct RMwR_BASIC_w : public RMwR_BASIC {
     // XXXXXXX w(1) mod(2) XXX r/m(3) disp(0/8/16)
-
     RMwR_BASIC_w(const char* _name) : RMwR_BASIC(_name) { ; }
+
     void Disassemble(size_t) override;
     ~RMwR_BASIC_w() = default;
 };
 struct RMwR_BASIC_dw : public RMwR_BASIC_w {
     // XXXXXX d(1)w(1) mod(2) XXX r/m(3) disp(0/8/16)
-
     RMwR_BASIC_dw(const char* _name) : RMwR_BASIC_w(_name) { ; }
+
     void Disassemble(size_t) override;
     ~RMwR_BASIC_dw() = default;
 };
@@ -142,6 +143,7 @@ struct XOR_RM2R : public RMwR_BASIC_dw {
     // 001100 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "001100";
 
+    void Execute(Binary_t&, bool = false) override;
     XOR_RM2R() : RMwR_BASIC_dw("xor") { ; }
     ~XOR_RM2R() = default;
 };
@@ -163,6 +165,7 @@ struct MOV_RM2R : public RMwR_BASIC_dw {
     // 100010 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "100010";
 
+    void Execute(Binary_t&, bool = false) override;
     MOV_RM2R() : RMwR_BASIC_dw("mov") { ; }
     ~MOV_RM2R() = default;
 };

@@ -50,7 +50,7 @@ typedef struct {
     // } m_u;
 } message;
 
-message* sysCall(uint8_t* data, uint32_t disp);
+// message* sysCall(uint8_t* data, uint32_t disp);
 // void MinixExit(uint16_t status);
 
 #endif // MESS_INT
