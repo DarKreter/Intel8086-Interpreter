@@ -172,9 +172,10 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    CALL_DS() : Command_t(size_max, "call") { ; }
-
+    // void Execute(Binary_t&, bool = false) override;
     void Disassemble(size_t) override;
+
+    CALL_DS() : Command_t(size_max, "call") { ; }
     ~CALL_DS() = default;
 };
 

@@ -47,6 +47,10 @@ int main(int argc, char* argv[], char** envp)
     binary.StackInit(_argv, _envp);
     free(fileContent);
 
+    // for(size_t i = 0; i < binary.dataSegmentSize; i++)
+    //     std::cout << (int)binary.data[i] << std::endl;
+    // exit(1);
+
     if(mode == Mode_e::diss)
         Analyze(binary);
     else if(mode == Mode_e::int_log)

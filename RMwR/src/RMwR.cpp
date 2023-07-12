@@ -47,17 +47,21 @@ uint16_t& RMwR_BASIC::GetRM(Binary_t& binary)
         return binary.GetReg(frame.decoded.w, frame.decoded.rm);
 
     else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
-        printf("[%02x%02x]", frame.decoded.disp.d[1], frame.decoded.disp.d[0]);
+        uint16_t addr =
+            frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
+        uint16_t* val = (uint16_t*)&binary.stack[addr];
+        printf(" ;[%04x]%04x", addr, *val);
+        return *val;
     }
     else // mod == 00/01/10
     {
-        std::cout << "[" << rm_memory[frame.decoded.rm];
+        int32_t disp = 0;
         switch(frame.decoded.mod) {
         case 1:
             if(frame.decoded.disp.s < 0)
-                printf("-%x", (int)-frame.decoded.disp.s);
+                disp = (int)-frame.decoded.disp.s;
             else
-                printf("+%x", (int)frame.decoded.disp.s);
+                disp = (int)frame.decoded.disp.s;
             break;
         case 2:
             union {
@@ -66,16 +70,60 @@ uint16_t& RMwR_BASIC::GetRM(Binary_t& binary)
             } u;
             u.u = frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
             if(u.i < 0)
-                printf("-%x", (int)-u.i);
+                disp = (int)-u.i;
             else
-                printf("+%x", (int)u.i);
+                disp = (int)u.i;
             break;
             break;
         case 0: // disp == 0
         default:
             break;
         }
-        std::cout << "]";
+        uint16_t addr = binary.GetRM_mem(frame.decoded.rm) + disp;
+        // uint16_t b = binary.stack[addr] + (binary.stack[addr + 1] >> 8);
+        uint16_t* val = (uint16_t*)&binary.stack[addr];
+        printf(" ;[%04x]%04x", addr, *val);
+        return *val;
+    }
+    return binary.GetReg(frame.decoded.w, frame.decoded.rm);
+}
+
+uint16_t RMwR_BASIC::GetRM_addr(Binary_t& binary)
+{
+    if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
+        printf("[%02x%02x]", frame.decoded.disp.d[1], frame.decoded.disp.d[0]);
+    }
+    else // mod == 00/01/10
+    {
+        int32_t disp = 0;
+        switch(frame.decoded.mod) {
+        case 1:
+            if(frame.decoded.disp.s < 0)
+                disp = (int)-frame.decoded.disp.s;
+            else
+                disp = (int)frame.decoded.disp.s;
+            break;
+        case 2:
+            union {
+                uint16_t u;
+                int16_t i;
+            } u;
+            u.u = frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
+            if(u.i < 0)
+                disp = (int)-u.i;
+            else
+                disp = (int)u.i;
+            break;
+            break;
+        case 0: // disp == 0
+        default:
+            break;
+        }
+        uint16_t addr = binary.GetRM_mem(frame.decoded.rm) + disp;
+        // uint16_t b = binary.stack[addr] + (binary.stack[addr + 1] >> 8);
+        uint16_t* val = (uint16_t*)&binary.stack[addr];
+        printf(" ;[%04x]%04x", addr, *val);
+        return addr;
     }
     return binary.GetReg(frame.decoded.w, frame.decoded.rm);
 }
@@ -187,9 +235,38 @@ void XOR_RM2R::Execute(Binary_t& binary, bool)
     }
 }
 
+void ADD_RMwR::Execute(Binary_t& binary, bool)
+{
+    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t& rm = GetRM(binary);
+    int16_t val;
+    if(frame.decoded.w)
+        val = reg + rm;
+
+    else
+        val = (uint8_t)reg + (uint8_t)rm;
+
+    if(frame.decoded.d == 0)
+        rm = val;
+    else
+        reg = val;
+
+    if(frame.decoded.w) {
+        binary.ZF = (val == 0);
+        binary.SF = (val < 0);
+        binary.OF = 0;
+        binary.CF = 0;
+    }
+    else {
+        binary.ZF = ((val & 0xff) == 0);
+        binary.SF = (((int8_t)val) < 0);
+        binary.OF = 0;
+        binary.CF = 0;
+    }
+}
+
 void MOV_RM2R::Execute(Binary_t& binary, bool)
 {
-    printf("a");
     uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
     uint16_t& rm = GetRM(binary);
 
@@ -197,4 +274,12 @@ void MOV_RM2R::Execute(Binary_t& binary, bool)
         rm = reg;
     else
         reg = rm;
+}
+
+void LEA::Execute(Binary_t& binary, bool)
+{
+    uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
+    uint16_t rm = GetRM_addr(binary);
+
+    reg = rm;
 }

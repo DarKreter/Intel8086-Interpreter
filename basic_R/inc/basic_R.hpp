@@ -50,6 +50,7 @@ struct PUSH_R : public BASIC_R {
     // 01010 reg(3)
     constexpr static std::string_view pattern = "01010";
 
+    void Execute(Binary_t&, bool = false) override;
     PUSH_R() : BASIC_R("push") { ; }
     ~PUSH_R() = default;
 };

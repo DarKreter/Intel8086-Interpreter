@@ -63,6 +63,7 @@ struct JNB : public JMP_BASIC {
     // 01110011 disp(8)
     constexpr static std::string_view pattern = "01110011";
 
+    void Execute(Binary_t&, bool = false) override;
     JNB() : JMP_BASIC("jnb") { ; }
     ~JNB() = default;
 };

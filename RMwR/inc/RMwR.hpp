@@ -29,6 +29,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
     void PrintRM();
     uint16_t& GetRM(Binary_t&);
+    uint16_t GetRM_addr(Binary_t&);
     RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
 
 public:
@@ -107,6 +108,7 @@ struct LEA : public RMwR_BASIC_w {
     constexpr static std::string_view pattern = "10001101";
 
     LEA() : RMwR_BASIC_w("lea") { ; }
+    void Execute(Binary_t&, bool = false) override;
     void Disassemble(size_t) override;
     ~LEA() = default;
 };
@@ -122,6 +124,7 @@ struct ADD_RMwR : public RMwR_BASIC_dw {
     // 000000 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "000000";
 
+    void Execute(Binary_t&, bool = false) override;
     ADD_RMwR() : RMwR_BASIC_dw("add") { ; }
     ~ADD_RMwR() = default;
 };

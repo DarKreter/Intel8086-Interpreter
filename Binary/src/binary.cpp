@@ -48,6 +48,30 @@ uint16_t& Binary_t::GetReg(uint8_t w, uint8_t reg)
     return ax;
 }
 
+uint16_t Binary_t::GetRM_mem(uint8_t rm)
+{
+    switch(rm) {
+    case 0:
+        return bx + si;
+    case 1:
+        return bx + di;
+    case 2:
+        return bp + si;
+    case 3:
+        return bp + di;
+    case 4:
+        return si;
+    case 5:
+        return di;
+    case 6:
+        return bp;
+    case 7:
+        return bx;
+    default:
+        return 0;
+    }
+}
+
 void Binary_t::PrintStatus()
 {
     printf("%04x %04x %04x %04x %04x %04x %04x %04x %c%c%c%c ", ax, bx, cx, dx,
@@ -58,6 +82,9 @@ void Binary_t::PrintStatus()
 void Binary_t::StackInit(std::vector<std::string> argv,
                          std::vector<std::string> envp)
 {
+    for(size_t i = 0; i < dataSegmentSize; i++)
+        stack[i] = data[i];
+
     std::vector<uint16_t> argv_addr;
     uint16_t env_addr;
     //          argc + arg_addresses   + NULL + env_addr + NULL
@@ -146,7 +173,9 @@ Binary_t::Binary_t(uint8_t* fileContent)
     for(size_t i = 0; i < dataSegmentSize; i++)
         data[i] = fileContent[i + TEXT_START_BYTE + textSegmentSize];
 
-    stack = new uint8_t[0xffff];
+    stack = new uint8_t[STACK_SIZE];
+    for(uint32_t i = 0; i < STACK_SIZE; i++)
+        stack[i] = 0;
 }
 
 Binary_t::~Binary_t()

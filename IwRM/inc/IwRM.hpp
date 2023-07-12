@@ -28,6 +28,8 @@ protected:
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
     void PrintRM();
+    uint16_t GetRM(Binary_t&);
+    uint16_t GetRM_addr(Binary_t&);
 
 public:
     I2RM_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
@@ -68,6 +70,7 @@ struct TEST_IaRM : public I2RM_BASIC {
     // 100000 s(1)w(1) mod(2) 101 r/m(3) data(8) (if sw == 01)data(8)
     constexpr static std::string_view pattern = "1111011XXX000";
 
+    void Execute(Binary_t&, bool = false) override;
     TEST_IaRM() : I2RM_BASIC("test") { ; }
     ~TEST_IaRM() = default;
 };
@@ -96,6 +99,7 @@ struct CMP_IwRM : public I2RM_BASIC_s {
     // 100000 s(1)w(1) mod(2) 111 r/m(3) data(8) (if sw == 01)data(8)
     constexpr static std::string_view pattern = "100000XXXX111";
 
+    void Execute(Binary_t&, bool = false) override;
     CMP_IwRM() : I2RM_BASIC_s("cmp") { ; }
     ~CMP_IwRM() = default;
 };
