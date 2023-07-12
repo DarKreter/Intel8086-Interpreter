@@ -41,7 +41,6 @@ void Execute(Binary_t& binary, bool log)
             binary.textPos++, binary.text++;
             continue;
         }
-
         cmd->Read(binary.text);
         if(log)
             cmd->PrintStatus(binary);

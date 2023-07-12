@@ -58,10 +58,7 @@ uint16_t& RMwR_BASIC::GetRM(Binary_t& binary)
         int32_t disp = 0;
         switch(frame.decoded.mod) {
         case 1:
-            if(frame.decoded.disp.s < 0)
-                disp = (int)-frame.decoded.disp.s;
-            else
-                disp = (int)frame.decoded.disp.s;
+            disp = (int)frame.decoded.disp.s;
             break;
         case 2:
             union {

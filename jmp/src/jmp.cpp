@@ -8,6 +8,11 @@ void JMP_BASIC::Disassemble(size_t pos)
     // + 2, because actual position is after jump(jump is 2 byte long)
     printf("%04x", (int)(frame.decoded.disp + pos + 2));
 }
+void JMP_BASIC::Execute(Binary_t& binary, bool)
+{
+    binary.textPos += (int)(frame.decoded.disp);
+    binary.text += (int)(frame.decoded.disp);
+}
 void JMP_DS::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
@@ -28,10 +33,26 @@ void JMP_IS::Disassemble(size_t pos)
         std::cout << regs_16[frame.decoded.rm];
 }
 
-void JNB::Execute(Binary_t& binary, bool)
+void JMP_DS::Execute(Binary_t& binary, bool)
+{
+
+    uint16_t disp = (frame.decoded.disp_low + (frame.decoded.disp_high << 8));
+    binary.textPos += (int)(disp);
+    binary.text += (int)(disp);
+}
+
+void JMP_DSS::Execute(Binary_t&, bool) { ; }
+
+void JNE::Execute(Binary_t& binary, bool b)
+{
+    if(!binary.ZF) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}
+
+void JNB::Execute(Binary_t& binary, bool b)
 {
     if(!binary.CF) {
-        binary.textPos += (int)(frame.decoded.disp + 2);
-        binary.text += (int)(frame.decoded.disp + 2);
+        JMP_BASIC::Execute(binary, b);
     }
 }

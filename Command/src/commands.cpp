@@ -23,6 +23,16 @@ void MOV_I2R::Disassemble(size_t pos)
         printf("%02x", frame.decoded.data[0]);
 }
 
+void CALL_DS::Execute(Binary_t& binary, bool)
+{
+    uint16_t pos = binary.textPos;
+    binary.stack[--binary.sp] = pos >> 8;
+    binary.stack[--binary.sp] = pos;
+
+    binary.textPos += (int)(frame.decoded.disp);
+    binary.text += (int)(frame.decoded.disp);
+}
+
 void MOV_I2R::Execute(Binary_t& binary, bool)
 {
     auto& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
@@ -72,12 +82,12 @@ void INT::Disassemble(size_t pos)
 }
 void INT::Execute(Binary_t& binary, bool log)
 {
-    message* mess = (message*)&binary.data[binary.bx];
-
+    message* mess = (message*)&binary.stack[binary.bx];
+    printf("\n");
     switch(mess->m_type) {
     case 1: // exit
         if(log)
-            printf("<exit(%d)>", mess->m_m1.m1i1);
+            printf("<exit(%d)>\n", mess->m_m1.m1i1);
         exit(mess->m_m1.m1i1);
         break;
     case 4: // write
@@ -88,7 +98,7 @@ void INT::Execute(Binary_t& binary, bool log)
             printf("<write(%d, 0x%04x, %d)", fd, addr, length);
             fflush(stdout);
         }
-        int ret = write(fd, &binary.data[addr], length);
+        int ret = write(fd, &binary.stack[addr], length);
         if(log)
             printf(" => %d>", ret);
 

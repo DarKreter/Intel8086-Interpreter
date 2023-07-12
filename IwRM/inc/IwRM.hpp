@@ -28,6 +28,7 @@ protected:
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
     void PrintRM();
+    void SetRM(Binary_t& binary, uint16_t val);
     uint16_t GetRM(Binary_t&);
     uint16_t GetRM_addr(Binary_t&);
 
@@ -92,6 +93,7 @@ struct SUB_IfRM : public I2RM_BASIC_s {
     // 100000 s(1)w(1) mod(2) 101 r/m(3) data(8) (if sw == 01)data(8)
     constexpr static std::string_view pattern = "100000XXXX101";
 
+    void Execute(Binary_t&, bool = false) override;
     SUB_IfRM() : I2RM_BASIC_s("sub") { ; }
     ~SUB_IfRM() = default;
 };

@@ -22,6 +22,8 @@ protected:
 
 public:
     void Disassemble(size_t) override;
+    void Execute(Binary_t&, bool = false) override;
+
     ~JMP_BASIC() = default;
 };
 
@@ -78,6 +80,7 @@ struct JNE : public JMP_BASIC {
     // 01110101 disp(8)
     constexpr static std::string_view pattern = "01110101";
 
+    void Execute(Binary_t&, bool = false) override;
     JNE() : JMP_BASIC("jne") { ; }
     ~JNE() = default;
 };
@@ -92,6 +95,7 @@ struct JMP_DSS : public JMP_BASIC {
     // 11101011 disp(8)
     constexpr static std::string_view pattern = "11101011";
 
+    void Execute(Binary_t&, bool = false) override;
     JMP_DSS() : JMP_BASIC("jmp short") { ; }
     ~JMP_DSS() = default;
 };
@@ -114,8 +118,9 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    JMP_DS() : JMP_BASIC("jmp", size_max) { ; }
     void Disassemble(size_t) override;
+    void Execute(Binary_t&, bool = false);
+    JMP_DS() : JMP_BASIC("jmp", size_max) { ; }
     ~JMP_DS() = default;
 };
 struct JNLE : public JMP_BASIC {
