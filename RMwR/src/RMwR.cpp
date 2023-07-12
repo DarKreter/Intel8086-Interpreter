@@ -57,30 +57,30 @@ uint16_t& RMwR_BASIC::GetRM(Binary_t& binary, bool log)
     else // mod == 00/01/10
     {
         int32_t disp = 0;
+        uint16_t addr;
+        uint16_t* val;
+
         switch(frame.decoded.mod) {
         case 1:
             disp = (int)frame.decoded.disp.s;
             break;
         case 2:
-            union {
-                uint16_t u;
-                int16_t i;
-            } u;
-            u.u = frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
-            if(u.i < 0)
-                disp = (int)-u.i;
-            else
-                disp = (int)u.i;
+            disp = frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
             break;
         case 0: // disp == 0
+            disp = 0;
         default:
             break;
         }
-        uint16_t addr = binary.GetRM_mem(frame.decoded.rm) + disp;
-
-        uint16_t* val = (uint16_t*)&binary.stack[addr];
-        if(log)
-            printf(" ;[%04x]%04x", addr, *val);
+        // printf("!%d!",frame.decoded.)
+        addr = binary.GetRM_mem(frame.decoded.rm) + disp;
+        val = (uint16_t*)&binary.stack[addr];
+        if(log) {
+            if(frame.decoded.w == 1)
+                printf(" ;[%04x]%04x", addr, *val);
+            else
+                printf(" ;[%04x]%02x", addr, *val);
+        }
         return *val;
     }
     return binary.GetReg(frame.decoded.w, frame.decoded.rm);
