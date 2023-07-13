@@ -217,31 +217,29 @@ void AND_I2RM::Execute(Binary_t& binary, bool log)
     uint16_t dst = GetRM(binary, log);
     int16_t val16;
     int8_t val8;
-
     if(frame.decoded.s) {
         val16 = (int16_t)dst & (int8_t)src;
-        // SetRM(binary, val16, false);
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
         binary.OF = false;
         binary.CF = false;
+        SetRM(binary, val16, false);
     }
     else if(frame.decoded.w) { // 16-bit
         val16 = (int16_t)dst & (int16_t)src;
-        // printf("!%04x!", val16);
-        SetRM(binary, val16, false);
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
         binary.OF = false;
         binary.CF = false;
+        SetRM(binary, val16, false);
     }
     else {
         val8 = (int8_t)dst & (int8_t)src;
-        // SetRM(binary, val8, false);
         binary.ZF = (val8 == 0);
         binary.SF = (val8 < 0);
         binary.OF = false;
         binary.CF = false;
+        SetRM(binary, val8, false);
     }
 }
 void OR_I2RM::Execute(Binary_t& binary, bool log)
@@ -301,10 +299,10 @@ void CMP_IwRM::Execute(Binary_t& binary, bool log)
     else {
         val8 = val = (int8_t)dst - (int8_t)src;
         // printf("!%x %x!", (int8_t)dst, (int8_t)src);
-        binary.ZF = ((val8 & 0xff) == 0);
+        binary.ZF = (val8 == 0);
         binary.SF = (val8 < 0);
         binary.OF = (val8 != val);
-        binary.CF = (int8_t)dst < (int8_t)src;
+        binary.CF = dst < src;
     }
 }
 
@@ -360,28 +358,29 @@ void ADD_I2RM::Execute(Binary_t& binary, bool log)
     int8_t val8;
 
     if(frame.decoded.s) { // signed
+        // printf("siema");
         val16 = val = (int16_t)dst + (int8_t)src;
-        SetRM(binary, val16);
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
         binary.OF = (val16 != val);
-        binary.CF = (dst < (int8_t)src);
+        binary.CF = (dst + ((uint16_t)(int8_t)src)) >= 0x10000;
+        SetRM(binary, val16);
     }
     else if(frame.decoded.w) { // 16-bit
         val16 = val = (int16_t)dst + (int16_t)src;
-        SetRM(binary, val16);
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
         binary.OF = (val16 != val);
-        binary.CF = (dst < src);
+        binary.CF = dst + src >= 0x1000;
+        SetRM(binary, val16);
     }
     else {
         val8 = val = (int8_t)dst + (int8_t)src;
-        SetRM(binary, val8);
         binary.ZF = (val8 == 0);
         binary.SF = (val8 < 0);
         binary.OF = (val8 != val);
-        binary.CF = (dst < src);
+        binary.CF = (int8_t)dst + (int8_t)src >= 0x100;
+        SetRM(binary, val8);
     }
 }
 

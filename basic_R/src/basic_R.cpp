@@ -56,11 +56,12 @@ void DEC_R::Execute(Binary_t& binary, bool)
     uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
     int16_t val16;
     int32_t val;
-    val16 = val = reg - 1;
-    reg = val16;
+    val16 = val = (int16_t)reg - 1;
 
     binary.ZF = (val16 == 0);
     binary.SF = (val16 < 0);
     binary.OF = (val16 != val);
     binary.CF = binary.CF;
+
+    reg = val16;
 }

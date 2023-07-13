@@ -55,6 +55,21 @@ void MOV_I2R::Execute(Binary_t& binary, bool)
     else
         reg = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
 }
+void RET_wSAI::Execute(Binary_t& binary, bool)
+{
+    uint16_t pos;
+    uint16_t disp = frame.decoded.disp_low;
+    disp += (frame.decoded.disp_high << 8);
+
+    pos = binary.stack[binary.sp++];
+    pos += binary.stack[binary.sp++] << 8;
+    pos -= 3;
+    binary.sp += disp;
+
+    // printf("!%x!", pos);
+    binary.text += pos - binary.textPos;
+    binary.textPos = pos;
+}
 
 void RET_wSAI::Disassemble(size_t pos)
 {

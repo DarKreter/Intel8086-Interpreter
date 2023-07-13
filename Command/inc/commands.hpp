@@ -199,7 +199,7 @@ protected:
 
 public:
     void Disassemble(size_t) override;
-    // void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&, bool = false) override;
 
     RET_wSAI() : Command_t(size_max, "ret") { ; }
     ~RET_wSAI() = default;

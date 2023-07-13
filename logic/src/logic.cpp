@@ -40,28 +40,82 @@ void DIV::Execute(Binary_t& binary, bool)
         binary.a.h = rem;
     }
 }
+void SAR::Execute(Binary_t& binary, bool)
+{
+    int16_t& reg = (int16_t&)binary.GetReg(frame.decoded.w, frame.decoded.rm);
+    int32_t val;
+    int16_t val16;
+    int8_t val8;
+    auto c_rshift = [](uint16_t value, uint16_t count) -> uint8_t {
+        return count ? (value >> (count - 1)) & 1 : 0;
+    };
+    if(frame.decoded.w) {
+        if(frame.decoded.v) {
+            if(binary.c.l) {
+                // printf("!%d!", reg);
+                val16 = val = reg >> (binary.c.l & 0x1f);
+                binary.ZF = (val16 == 0);
+                binary.SF = (val16 < 0);
+                binary.OF = binary.OF;
+                binary.CF = c_rshift(reg, (binary.c.l & 0x1f));
 
+                reg = val16;
+            }
+        }
+        else {
+            val16 = val = reg >> 1;
+            reg = val16;
+
+            binary.ZF = (val16 == 0);
+            binary.SF = (val16 < 0);
+            binary.OF = false;
+            binary.CF = c_rshift(reg, 1);
+        }
+    }
+    else {
+        if(frame.decoded.v) {
+            if(binary.c.l) {
+                val8 = val = (uint8_t)reg >> (binary.c.l & 0x1f);
+                (uint8_t&)reg = val8;
+
+                binary.ZF = (val8 == 0);
+                binary.SF = (val8 < 0);
+                binary.OF = binary.OF;
+                binary.CF = c_rshift(reg, (binary.c.l & 0x1f));
+            }
+        }
+        else {
+            val8 = val = (uint8_t)reg >> 1;
+            (uint8_t&)reg = val8;
+            binary.ZF = (val8 == 0);
+            binary.SF = (val8 < 0);
+            binary.OF = false;
+            binary.CF = c_rshift(reg, 1);
+        }
+    }
+}
 void SHL::Execute(Binary_t& binary, bool)
 {
     uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.rm);
     int16_t val16;
     int32_t val;
-    auto c_lshift = [](uint8_t value, uint8_t count) -> uint8_t {
-        return count ? ((value << (count - 1)) >> 7) & 1 : 0;
-    };
 
     if(frame.decoded.w) {
+        auto c_lshift = [](uint16_t value, uint16_t count) -> uint8_t {
+            return count ? ((value << (count - 1)) >> 15) & 1 : 0;
+        };
+
         if(frame.decoded.v) {
             if(binary.c.l) {
                 val16 = val = (reg << (binary.c.l & 0x1f));
-                reg = val16;
 
                 uint8_t carry = c_lshift(reg, (binary.c.l & 0x1f));
-
                 binary.ZF = (val16 == 0);
                 binary.SF = (val16 < 0);
                 binary.OF = ((val16 >> 15) & 1) != carry;
                 binary.CF = carry;
+
+                reg = val16;
             }
         }
         else {
@@ -77,6 +131,9 @@ void SHL::Execute(Binary_t& binary, bool)
     }
     else {
         std::cout << "AAAAAAAAAA - SHL\n";
+        // auto c_lshift = [](uint8_t value, uint8_t count) -> uint8_t {
+        //     return count ? ((value << (count - 1)) >> 7) & 1 : 0;
+        // };
         // uchar dst = readEA(&opcode);
         // if(opcode.v) {
         //     if(CL) {

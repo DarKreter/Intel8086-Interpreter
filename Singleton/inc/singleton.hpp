@@ -40,6 +40,7 @@ struct CLD : public Singleton {
     // 11111100
     constexpr static std::string_view pattern = "11111100";
 
+    void Execute(Binary_t&, bool = false) override;
     CLD() : Singleton("cld") { ; }
     ~CLD() = default;
 };

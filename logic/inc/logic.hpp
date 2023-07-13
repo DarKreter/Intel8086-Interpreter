@@ -56,6 +56,7 @@ struct SAR : public LGC_BASIC {
     // 110100 v(1)w(1) mod(2) 111 r/m(3)
     constexpr static std::string_view pattern = "110100XXXX111";
 
+    void Execute(Binary_t&, bool = false) override;
     SAR() : LGC_BASIC("sar") { ; }
     ~SAR() = default;
 };

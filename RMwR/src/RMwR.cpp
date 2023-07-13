@@ -506,6 +506,33 @@ void PUSH_RM::Execute(Binary_t& binary, bool log)
     binary.stack[--binary.sp] = rm;
 }
 
+void DEC_RM::Execute(Binary_t& binary, bool log)
+{
+    uint16_t& rm = GetRM(binary, log);
+    int32_t val;
+    int16_t val16;
+    int8_t val8;
+
+    if(frame.decoded.w) {
+        val16 = val = (int16_t)rm - 1;
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = (val != val16);
+        binary.CF = binary.CF;
+
+        rm = val16;
+    }
+    else {
+        val8 = val = (int8_t)rm - 1;
+        binary.ZF = (val8 == 0);
+        binary.SF = (val8 < 0);
+        binary.OF = (val != val8);
+        binary.CF = binary.CF;
+
+        rm = val8;
+    }
+}
+
 void INC_RM::Execute(Binary_t& binary, bool log)
 {
     uint16_t& rm = GetRM(binary, log);

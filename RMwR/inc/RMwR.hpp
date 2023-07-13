@@ -65,6 +65,7 @@ struct DEC_RM : public RMwR_BASIC {
     // 11111111 mod(2) 001 r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "1111111XXX001";
 
+    void Execute(Binary_t&, bool = false) override;
     DEC_RM() : RMwR_BASIC("dec") { ; }
     ~DEC_RM() = default;
 };

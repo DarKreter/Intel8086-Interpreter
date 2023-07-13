@@ -12,6 +12,11 @@ void RET::Execute(Binary_t& binary, bool)
     binary.textPos = pos;
 }
 
+void CLD::Execute(Binary_t&, bool)
+{
+    // TODO
+}
+
 void CBW::Execute(Binary_t& binary, bool)
 {
     uint16_t& src = binary.GetReg(0, 0);
