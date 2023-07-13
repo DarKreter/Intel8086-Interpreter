@@ -10,7 +10,7 @@
 
 typedef struct {
     uint16_t m1i1, m1i2, m1i3;
-    uint16_t m1p1, m1p2, m1p3;
+    uint16_t m1p1, m1p2, m1p3, m1p4, m1p5;
 } mess_1;
 typedef struct {
     int m2i1, m2i2, m2i3;

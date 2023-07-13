@@ -84,3 +84,30 @@ void JBE::Execute(Binary_t& binary, bool b)
         JMP_BASIC::Execute(binary, b);
     }
 }
+
+void JNL::Execute(Binary_t& binary, bool b)
+{
+    if(binary.SF == binary.OF) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}
+
+void JNLE::Execute(Binary_t& binary, bool b)
+{
+    if(!binary.ZF && (binary.SF == binary.OF)) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}
+
+void JLE::Execute(Binary_t& binary, bool b)
+{
+    if(binary.ZF || (binary.SF != binary.OF)) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}
+void JL::Execute(Binary_t& binary, bool b)
+{
+    if(binary.SF != binary.OF) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}

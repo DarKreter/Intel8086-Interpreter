@@ -83,6 +83,8 @@ void INT::Disassemble(size_t pos)
 void INT::Execute(Binary_t& binary, bool log)
 {
     message* mess = (message*)&binary.stack[binary.bx];
+    uint16_t addr, fd, request, length;
+    int ret;
     if(log)
         printf("\n");
     switch(mess->m_type) {
@@ -92,18 +94,32 @@ void INT::Execute(Binary_t& binary, bool log)
         exit(mess->m_m1.m1i1);
         break;
     case 4: // write
-        uint16_t fd = mess->m_m1.m1i1;
-        uint16_t addr = mess->m_m1.m1p1;
-        uint16_t length = mess->m_m1.m1i2;
+        fd = mess->m_m1.m1i1;
+        addr = mess->m_m1.m1p1;
+        length = mess->m_m1.m1i2;
         if(log) {
             printf("<write(%d, 0x%04x, %d)", fd, addr, length);
             fflush(stdout);
         }
-        int ret = write(fd, &binary.stack[addr], length);
+        ret = write(fd, &binary.stack[addr], length);
         // (ret == -1) ? (mess->m_type = -errno) : (mess->m_type = ret);
         mess->m_type = ret;
         if(log)
             printf(" => %d>", ret);
+
+        binary.ax = 0;
+
+        break;
+    case 54:
+        fd = mess->m_m1.m1i1;
+        request = mess->m_m1.m1i3;
+        addr = mess->m_m1.m1p5;
+
+        if(log)
+            printf("<ioctl(%d, 0x%04x, 0x%04x)>", fd, request, addr);
+        errno = EINVAL;
+
+        mess->m_type = -errno;
 
         binary.ax = 0;
 
