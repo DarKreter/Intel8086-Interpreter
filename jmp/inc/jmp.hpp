@@ -103,7 +103,7 @@ struct JMP_DSS : public JMP_BASIC {
     // 11101011 disp(8)
     constexpr static std::string_view pattern = "11101011";
 
-    void Execute(Binary_t&, bool = false) override;
+    // void Execute(Binary_t&, bool = false) override;
     JMP_DSS() : JMP_BASIC("jmp short") { ; }
     ~JMP_DSS() = default;
 };

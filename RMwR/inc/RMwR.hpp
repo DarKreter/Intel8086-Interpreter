@@ -80,6 +80,7 @@ struct NEG : public RMwR_BASIC {
     // 1111011 w(1) mod(2) 011 r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "1111011XXX011";
 
+    void Execute(Binary_t&, bool = false) override;
     NEG() : RMwR_BASIC("neg") { ; }
     ~NEG() = default;
 };
@@ -142,6 +143,7 @@ struct CMP_RMaR : public RMwR_BASIC_dw {
     // 001110 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "001110";
 
+    void Execute(Binary_t&, bool = false) override;
     CMP_RMaR() : RMwR_BASIC_dw("cmp") { ; }
     ~CMP_RMaR() = default;
 };

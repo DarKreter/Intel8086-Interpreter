@@ -110,6 +110,30 @@ void INT::Execute(Binary_t& binary, bool log)
         binary.ax = 0;
 
         break;
+    case 17: // brk
+        addr = mess->m_m1.m1p1;
+        binary.ax = 0;
+
+        if(log)
+            printf("<brk(0x%04x) => ", addr);
+
+        if(addr < binary.dataSegmentSize ||
+           (addr >= ((binary.sp & ~0x3ff) - 0x400))) {
+            errno = ENOMEM;
+            if(log)
+                printf("ENOMEM>");
+
+            mess->m_type = -errno;
+        }
+        else {
+            if(log)
+                printf("0>");
+
+            mess->m_type = 0;
+            mess->m_m1.m1p5 = addr;
+        }
+
+        break;
     case 54:
         fd = mess->m_m1.m1i1;
         request = mess->m_m1.m1i3;
@@ -118,7 +142,6 @@ void INT::Execute(Binary_t& binary, bool log)
         if(log)
             printf("<ioctl(%d, 0x%04x, 0x%04x)>", fd, request, addr);
         errno = EINVAL;
-
         mess->m_type = -errno;
 
         binary.ax = 0;

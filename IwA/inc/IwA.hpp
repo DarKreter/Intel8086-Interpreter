@@ -38,6 +38,7 @@ struct CMP_IwA : public IwA {
     // 0011110 w(1) data(8) (if w == 1)data(8)
     constexpr static std::string_view pattern = "0011110";
 
+    void Execute(Binary_t&, bool = false) override;
     CMP_IwA() : IwA("cmp") { ; }
     ~CMP_IwA() = default;
 };

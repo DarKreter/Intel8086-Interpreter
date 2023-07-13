@@ -32,8 +32,15 @@ void POP_R::Execute(Binary_t& binary, bool)
 void INC_R::Execute(Binary_t& binary, bool)
 {
     uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
+    int32_t val;
+    int16_t val16;
 
-    reg++;
+    val16 = val = (int16_t)reg + 1;
+    reg = val16;
+    binary.ZF = (val16 == 0);
+    binary.SF = (val16 < 0);
+    binary.OF = (val != val16);
+    binary.CF = binary.CF;
 }
 
 void DEC_R::Execute(Binary_t& binary, bool)

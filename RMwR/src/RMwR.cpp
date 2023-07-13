@@ -286,6 +286,50 @@ void XOR_RM2R::Execute(Binary_t& binary, bool log)
     }
 }
 
+void CMP_RMaR::Execute(Binary_t& binary, bool log)
+{
+    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t& rm = GetRM(binary, log);
+    int32_t val;
+    int16_t val16;
+    int16_t val8;
+
+    if(!frame.decoded.d) // to reg
+    {
+        if(frame.decoded.w) {
+            // printf("!%x %x!", rm, reg);
+            val16 = val = (int16_t)rm - (int16_t)reg;
+            binary.ZF = (val16 == 0);
+            binary.SF = (val16 < 0);
+            binary.OF = (val16 != val);
+            binary.CF = (rm < reg);
+        }
+        else {
+            val8 = val = (int8_t)rm - (int8_t)reg;
+            binary.ZF = (val8 == 0);
+            binary.SF = (val8 < 0);
+            binary.OF = (val8 != val);
+            binary.CF = (rm < reg);
+        }
+    }
+    else { // from reg
+        if(frame.decoded.w) {
+            val16 = val = (int16_t)reg - (int16_t)rm;
+            binary.ZF = (val16 == 0);
+            binary.SF = (val16 < 0);
+            binary.OF = (val16 != val);
+            binary.CF = (reg < rm);
+        }
+        else {
+            val8 = val = (int8_t)rm - (int8_t)reg;
+            binary.ZF = (val8 == 0);
+            binary.SF = (val8 < 0);
+            binary.OF = (val8 != val);
+            binary.CF = (reg < rm);
+        }
+    }
+}
+
 void ADD_RMwR::Execute(Binary_t& binary, bool log)
 {
     uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
@@ -342,13 +386,14 @@ void PUSH_RM::Execute(Binary_t& binary, bool log)
 void INC_RM::Execute(Binary_t& binary, bool log)
 {
     uint16_t& rm = GetRM(binary, log);
-    int16_t val;
+    int32_t val;
     int16_t val16;
     int8_t val8;
 
     if(frame.decoded.w) {
         val16 = val = (int16_t)rm + 1;
         rm = val16;
+        // printf("!%x!", val16);
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
         binary.OF = (val != val16);
@@ -361,6 +406,31 @@ void INC_RM::Execute(Binary_t& binary, bool log)
         binary.SF = (val8 < 0);
         binary.OF = (val != val8);
         binary.CF = binary.CF;
+    }
+}
+
+void NEG::Execute(Binary_t& binary, bool log)
+{
+    uint16_t& rm = GetRM(binary, log);
+    int16_t val;
+    int16_t val16;
+    int8_t val8;
+
+    if(frame.decoded.w) {
+        val16 = val = -rm;
+        rm = val16;
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = (val != val16);
+        binary.CF = (rm != 0);
+    }
+    else {
+        val8 = val = -rm;
+        rm = val8;
+        binary.ZF = (val8 == 0);
+        binary.SF = (val8 < 0);
+        binary.OF = (val != val8);
+        binary.CF = (rm != 0);
     }
 }
 

@@ -37,7 +37,7 @@ void Execute(Binary_t& binary, bool log)
             ;
         else {
             // cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
-            printf("%04lx: %02x\t\t(undefined)", binary.textPos, *binary.text);
+            printf("%04x: %02x\t\t(undefined)", binary.textPos, *binary.text);
             binary.textPos++, binary.text++;
             continue;
         }
@@ -83,7 +83,7 @@ void Analyze(Binary_t& binary)
             ;
         else {
             // cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
-            printf("%04lx: %02x\t\t(undefined)", binary.textPos, *binary.text);
+            printf("%04x: %02x\t\t(undefined)", binary.textPos, *binary.text);
             binary.textPos++, binary.text++;
             continue;
         }
