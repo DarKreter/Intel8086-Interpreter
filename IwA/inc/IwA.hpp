@@ -31,6 +31,7 @@ struct SUB_IfA : public IwA {
     // 0010110 w(1) data(8) (if w == 1)data(8)
     constexpr static std::string_view pattern = "0010110";
 
+    void Execute(Binary_t&, bool = false) override;
     SUB_IfA() : IwA("sub") { ; }
     ~SUB_IfA() = default;
 };

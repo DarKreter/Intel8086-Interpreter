@@ -42,7 +42,14 @@ void JMP_DS::Execute(Binary_t& binary, bool)
     binary.text = start + binary.textPos;
 }
 
-// void JMP_DSS::Execute(Binary_t&, bool) { ; }
+void JMP_IS::Execute(Binary_t& binary, bool)
+{
+    uint16_t disp = binary.GetReg(1, frame.decoded.rm) - 2;
+
+    uint8_t* start = binary.text - binary.textPos; // Start of allocated memory
+    binary.textPos = (int)(disp);
+    binary.text = start + binary.textPos;
+}
 
 void JNE::Execute(Binary_t& binary, bool b)
 {

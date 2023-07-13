@@ -46,3 +46,33 @@ void CMP_IwA::Execute(Binary_t& binary, bool)
         binary.CF = binary.ax < data;
     }
 }
+
+void SUB_IfA::Execute(Binary_t& binary, bool)
+{
+    int32_t val;
+    int16_t val16;
+    int8_t val8;
+
+    if(frame.decoded.w == 0) {
+        uint8_t al = binary.a.l;
+        uint8_t rm = frame.decoded.data[0];
+        val8 = val = (char)al - (char)rm;
+        binary.a.l = val8;
+
+        binary.ZF = (val8 == 0);
+        binary.SF = (val8 < 0);
+        binary.OF = (val != val8);
+        binary.CF = al < rm;
+    }
+    else {
+        uint16_t ax = binary.ax;
+        uint16_t rm = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
+        val16 = val = (int16_t)ax - (int16_t)rm;
+        binary.ax = val16;
+
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = (val != val16);
+        binary.CF = ax < rm;
+    }
+}

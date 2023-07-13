@@ -13,6 +13,14 @@ void XCHG_RwA::Disassemble(size_t pos)
     std::cout << regs_16[frame.decoded.reg] << ", ax";
 }
 
+void XCHG_RwA::Execute(Binary_t& binary, bool)
+{
+    uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
+    uint16_t tmp = reg;
+    reg = binary.ax;
+    binary.ax = tmp;
+}
+
 void PUSH_R::Execute(Binary_t& binary, bool)
 {
     uint16_t& reg = binary.GetReg(1, frame.decoded.reg);

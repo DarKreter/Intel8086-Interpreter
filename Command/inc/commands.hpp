@@ -198,8 +198,10 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    RET_wSAI() : Command_t(size_max, "ret") { ; }
     void Disassemble(size_t) override;
+    // void Execute(Binary_t&, bool = false) override;
+
+    RET_wSAI() : Command_t(size_max, "ret") { ; }
     ~RET_wSAI() = default;
 };
 struct MOV_MwA : public Command_t {

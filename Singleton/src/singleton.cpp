@@ -11,3 +11,18 @@ void RET::Execute(Binary_t& binary, bool)
     binary.text += pos - binary.textPos;
     binary.textPos = pos;
 }
+
+void CBW::Execute(Binary_t& binary, bool)
+{
+    uint16_t& src = binary.GetReg(0, 0);
+    uint16_t& dst = binary.GetReg(1, 0);
+
+    uint16_t v = (int8_t)src;
+    dst = v;
+}
+
+void CWD::Execute(Binary_t& binary, bool)
+{
+    int32_t val = (int16_t)binary.ax;
+    binary.dx = (val >> 16);
+}

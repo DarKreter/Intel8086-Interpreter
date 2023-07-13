@@ -61,8 +61,9 @@ struct XCHG_RwA : public BASIC_R {
     // 10010 reg(3)
     constexpr static std::string_view pattern = "10010";
 
-    XCHG_RwA() : BASIC_R("xchg") { ; }
     void Disassemble(size_t) override;
+    void Execute(Binary_t&, bool = false) override;
+    XCHG_RwA() : BASIC_R("xchg") { ; }
     ~XCHG_RwA() = default;
 };
 

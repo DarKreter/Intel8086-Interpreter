@@ -32,6 +32,7 @@ struct CBW : public Singleton {
     // 10011000
     constexpr static std::string_view pattern = "10011000";
 
+    void Execute(Binary_t&, bool = false) override;
     CBW() : Singleton("cbw") { ; }
     ~CBW() = default;
 };
@@ -53,14 +54,15 @@ struct CWD : public Singleton {
     // 10011001
     constexpr static std::string_view pattern = "10011001";
 
+    void Execute(Binary_t&, bool = false) override;
     CWD() : Singleton("cwd") { ; }
     ~CWD() = default;
 };
 struct RET : public Singleton {
     // 11000011
     constexpr static std::string_view pattern = "11000011";
-    void Execute(Binary_t&, bool = false) override;
 
+    void Execute(Binary_t&, bool = false) override;
     RET() : Singleton("ret") { ; }
     ~RET() = default;
 };

@@ -21,6 +21,26 @@ void LGC_BASIC::Disassemble(size_t pos)
 }
 void DIV::Disassemble(size_t pos) { PrintBase(pos); }
 
+void DIV::Execute(Binary_t& binary, bool)
+{
+    int32_t val;
+    if(frame.decoded.w) {
+        uint16_t num = binary.GetReg(frame.decoded.w, frame.decoded.rm);
+        uint32_t numerator = (uint32_t)(binary.dx << 16 | binary.ax);
+        uint16_t quot = val = numerator / num;
+        uint16_t rem = numerator % num;
+        binary.ax = quot;
+        binary.dx = rem;
+    }
+    else {
+        uint8_t num = binary.GetReg(frame.decoded.w, frame.decoded.rm);
+        uint8_t quot = (uint16_t)binary.ax / num;
+        uint8_t rem = (uint16_t)binary.ax % num;
+        binary.a.l = quot;
+        binary.a.h = rem;
+    }
+}
+
 void SHL::Execute(Binary_t& binary, bool)
 {
     uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.rm);

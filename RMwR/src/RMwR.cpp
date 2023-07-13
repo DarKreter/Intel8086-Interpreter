@@ -156,18 +156,10 @@ uint16_t RMwR_BASIC::GetRM_addr(Binary_t& binary, bool log)
             disp = (int)frame.decoded.disp.s;
             break;
         case 2:
-            union {
-                uint16_t u;
-                int16_t i;
-            } u;
-            u.u = frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
-            if(u.i < 0)
-                disp = (int)-u.i;
-            else
-                disp = (int)u.i;
-            break;
+            disp = frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
             break;
         case 0: // disp == 0
+            disp = 0;
         default:
             break;
         }
@@ -295,6 +287,53 @@ void XOR_RM2R::Execute(Binary_t& binary, bool log)
     }
 }
 
+void AND_RMaR::Execute(Binary_t& binary, bool log)
+{
+    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t& rm = GetRM(binary, log);
+    int16_t val;
+
+    if(frame.decoded.w) {
+        val = (int16_t)reg & (int16_t)rm;
+        if(frame.decoded.d == 0)
+            rm = val;
+        else
+            reg = val;
+    }
+    else {
+        val = (int8_t)reg & (int8_t)rm;
+        if(frame.decoded.d == 0)
+            (int8_t&)rm = val;
+        else
+            (int8_t&)reg = val;
+    }
+
+    // printf("!%x!", val);
+
+    if(frame.decoded.w) {
+        binary.ZF = (val == 0);
+        binary.SF = (val < 0);
+        binary.OF = 0;
+        binary.CF = 0;
+    }
+    else {
+        binary.ZF = (((uint8_t)val & 0xff) == 0);
+        binary.SF = (((int8_t)val) < 0);
+        binary.OF = 0;
+        binary.CF = 0;
+    }
+}
+
+void XCHG_RMwR::Execute(Binary_t& binary, bool log)
+{
+    int16_t tmp;
+    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t& rm = GetRM(binary, log);
+    tmp = reg;
+    reg = rm;
+    rm = tmp;
+}
+
 void CMP_RMaR::Execute(Binary_t& binary, bool log)
 {
     uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
@@ -336,6 +375,30 @@ void CMP_RMaR::Execute(Binary_t& binary, bool log)
             binary.OF = (val8 != val);
             binary.CF = (reg < rm);
         }
+    }
+}
+
+void TEST_RMwR::Execute(Binary_t& binary, bool log)
+{
+    int16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    int16_t rm = GetRM(binary, log);
+    int32_t val;
+    int16_t val16;
+    int8_t val8;
+
+    if(frame.decoded.w) {
+        val16 = val = rm & reg;
+        binary.ZF = (val16 == 0);
+        binary.SF = (val16 < 0);
+        binary.OF = 0;
+        binary.CF = 0;
+    }
+    else {
+        val8 = val = (int8_t)rm & (int8_t)reg;
+        binary.ZF = (val8 == 0);
+        binary.SF = (val8 < 0);
+        binary.OF = 0;
+        binary.CF = 0;
     }
 }
 
@@ -425,14 +488,14 @@ void MOV_RM2R::Execute(Binary_t& binary, bool log)
         if(frame.decoded.w)
             rm = reg;
         else
-            (uint8_t&)rm = reg;
+            (uint8_t&)rm = (uint8_t)reg;
     }
 
     else {
         if(frame.decoded.w)
             reg = rm;
         else
-            reg = (uint8_t)rm;
+            (uint8_t&)reg = (uint8_t)rm;
     }
 }
 

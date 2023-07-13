@@ -89,6 +89,7 @@ struct XCHG_RMwR : public RMwR_BASIC_w {
     // 1000011 w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "1000011";
 
+    void Execute(Binary_t&, bool = false) override;
     XCHG_RMwR() : RMwR_BASIC_w("xchg") { ; }
     ~XCHG_RMwR() = default;
 };
@@ -103,6 +104,7 @@ struct TEST_RMwR : public RMwR_BASIC_w {
     // 1000010 w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "1000010";
 
+    void Execute(Binary_t&, bool = false) override;
     TEST_RMwR() : RMwR_BASIC_w("test") { ; }
     ~TEST_RMwR() = default;
 };
@@ -183,6 +185,7 @@ struct AND_RMaR : public RMwR_BASIC_dw {
     // 001000 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "001000";
 
+    void Execute(Binary_t&, bool = false) override;
     AND_RMaR() : RMwR_BASIC_dw("and") { ; }
     ~AND_RMaR() = default;
 };

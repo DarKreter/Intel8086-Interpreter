@@ -175,8 +175,10 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    JMP_IS() : Command_t(size_max, "jmp") { ; }
     void Disassemble(size_t) override;
+    void Execute(Binary_t&, bool = false) override;
+
+    JMP_IS() : Command_t(size_max, "jmp") { ; }
     ~JMP_IS() = default;
 };
 
