@@ -50,6 +50,13 @@ void JNE::Execute(Binary_t& binary, bool b)
     }
 }
 
+void JB::Execute(Binary_t& binary, bool b)
+{
+    if(binary.CF) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}
+
 void JNB::Execute(Binary_t& binary, bool b)
 {
     if(!binary.CF) {
@@ -57,9 +64,23 @@ void JNB::Execute(Binary_t& binary, bool b)
     }
 }
 
+void JNBE::Execute(Binary_t& binary, bool b)
+{
+    if(!binary.CF && !binary.ZF) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}
+
 void JE::Execute(Binary_t& binary, bool b)
 {
     if(binary.ZF) {
+        JMP_BASIC::Execute(binary, b);
+    }
+}
+
+void JBE::Execute(Binary_t& binary, bool b)
+{
+    if(binary.CF && binary.ZF) {
         JMP_BASIC::Execute(binary, b);
     }
 }

@@ -29,6 +29,7 @@ struct INC_R : public BASIC_R {
     // 01000 reg(3)
     constexpr static std::string_view pattern = "01000";
 
+    void Execute(Binary_t&, bool = false) override;
     INC_R() : BASIC_R("inc") { ; }
     ~INC_R() = default;
 };

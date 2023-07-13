@@ -29,6 +29,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
     void PrintRM();
     uint16_t& GetRM(Binary_t&, bool);
+    void SetRM(Binary_t&, uint16_t, bool);
     uint16_t GetRM_addr(Binary_t&, bool);
     RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
 
@@ -71,6 +72,7 @@ struct INC_RM : public RMwR_BASIC {
     // 11111111 mod(2) 000 r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "1111111XXX000";
 
+    void Execute(Binary_t&, bool = false) override;
     INC_RM() : RMwR_BASIC("inc") { ; }
     ~INC_RM() = default;
 };

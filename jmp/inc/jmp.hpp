@@ -31,6 +31,7 @@ struct JNBE : public JMP_BASIC {
     // 01110111 disp(8)
     constexpr static std::string_view pattern = "01110111";
 
+    void Execute(Binary_t&, bool = false) override;
     JNBE() : JMP_BASIC("jnbe") { ; }
     ~JNBE() = default;
 };
@@ -38,6 +39,7 @@ struct JBE : public JMP_BASIC {
     // 01110110 disp(8)
     constexpr static std::string_view pattern = "01110110";
 
+    void Execute(Binary_t&, bool = false) override;
     JBE() : JMP_BASIC("jbe") { ; }
     ~JBE() = default;
 };
@@ -58,6 +60,7 @@ struct JB : public JMP_BASIC {
     // 01110010 disp(8)
     constexpr static std::string_view pattern = "01110010";
 
+    void Execute(Binary_t&, bool = false) override;
     JB() : JMP_BASIC("jb") { ; }
     ~JB() = default;
 };
