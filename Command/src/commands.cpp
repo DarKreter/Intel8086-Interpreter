@@ -25,12 +25,25 @@ void MOV_I2R::Disassemble(size_t pos)
 
 void CALL_DS::Execute(Binary_t& binary, bool)
 {
-    uint16_t pos = binary.textPos;
+    uint16_t pos = binary.textPos + 3;
     binary.stack[--binary.sp] = pos >> 8;
     binary.stack[--binary.sp] = pos;
+    // printf("!CAD:%x!", pos);
 
     binary.textPos += (int)(frame.decoded.disp);
     binary.text += (int)(frame.decoded.disp);
+}
+
+void CALL_IS::Execute(Binary_t& binary, bool)
+{
+    uint16_t pos = binary.textPos + 2;
+    uint16_t disp = binary.GetReg(1, frame.decoded.rm);
+    binary.stack[--binary.sp] = pos >> 8;
+    binary.stack[--binary.sp] = pos;
+
+    uint8_t* begin = binary.text - binary.textPos;
+    binary.textPos = (int)(disp - 2);
+    binary.text = begin + binary.textPos;
 }
 
 void MOV_I2R::Execute(Binary_t& binary, bool)
@@ -74,6 +87,7 @@ void CALL_IS::Disassemble(size_t pos)
 
     cout << regs_16[frame.decoded.rm];
 }
+
 void INT::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);

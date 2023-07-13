@@ -136,6 +136,7 @@ struct SUB_RM2R : public RMwR_BASIC_dw {
     // 001010 d(1)w(1) mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "001010";
 
+    void Execute(Binary_t&, bool = false) override;
     SUB_RM2R() : RMwR_BASIC_dw("sub") { ; }
     ~SUB_RM2R() = default;
 };

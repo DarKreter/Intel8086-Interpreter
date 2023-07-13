@@ -48,6 +48,7 @@ struct SHL : public LGC_BASIC {
     // 110100v(1)w(1) mod(2)100r/m(3)
     constexpr static std::string_view pattern = "110100XXXX100";
 
+    void Execute(Binary_t&, bool = false) override;
     SHL() : LGC_BASIC("shl") { ; }
     ~SHL() = default;
 };

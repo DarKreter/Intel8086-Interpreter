@@ -19,7 +19,62 @@ void LGC_BASIC::Disassemble(size_t pos)
 
     printf(", %s", frame.decoded.v == 0 ? "1" : "cl");
 }
-void DIV::Disassemble(size_t pos)
+void DIV::Disassemble(size_t pos) { PrintBase(pos); }
+
+void SHL::Execute(Binary_t& binary, bool)
 {
-    PrintBase(pos);
+    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.rm);
+    int16_t val16;
+    int32_t val;
+    auto c_lshift = [](uint8_t value, uint8_t count) -> uint8_t {
+        return count ? ((value << (count - 1)) >> 7) & 1 : 0;
+    };
+
+    if(frame.decoded.w) {
+        if(frame.decoded.v) {
+            if(binary.c.l) {
+                val16 = val = (reg << (binary.c.l & 0x1f));
+                reg = val16;
+
+                uint8_t carry = c_lshift(reg, (binary.c.l & 0x1f));
+
+                binary.ZF = (val16 == 0);
+                binary.SF = (val16 < 0);
+                binary.OF = ((val16 >> 15) & 1) != carry;
+                binary.CF = carry;
+            }
+        }
+        else {
+            val16 = val = (reg << 1);
+            reg = val16;
+            uint8_t carry = c_lshift(reg, 1);
+
+            binary.ZF = (val16 == 0);
+            binary.SF = (val16 < 0);
+            binary.OF = ((val16 >> 15) & 1) != carry;
+            binary.CF = carry;
+        }
+    }
+    else {
+        std::cout << "AAAAAAAAAA - SHL\n";
+        // uchar dst = readEA(&opcode);
+        // if(opcode.v) {
+        //     if(CL) {
+        //         val8 = val = (dst << (CL & 0x1f));
+        //         ;
+        //         writeEA(&opcode, val8);
+        //         // for making the same as 7run
+        //         uchar carry = c_lshift(dst, 1);
+        //         setZSOC((val8 == 0), (val8 < 0), ((val8 >> 7) & 1) != carry,
+        //                 carry);
+        //     }
+        // }
+        // else {
+        //     val8 = val = (dst << 1);
+        //     writeEA(&opcode, val8);
+        //     uchar carry = c_lshift(dst, 1);
+        //     setZSOC((val8 == 0), (val8 < 0), ((val8 >> 7) & 1) != carry,
+        //     carry);
+        // }
+    }
 }

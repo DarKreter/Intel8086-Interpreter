@@ -150,7 +150,7 @@ protected:
 
 public:
     CALL_IS() : Command_t(size_max, "call") { ; }
-
+    void Execute(Binary_t&, bool = false) override;
     void Disassemble(size_t) override;
     ~CALL_IS() = default;
 };

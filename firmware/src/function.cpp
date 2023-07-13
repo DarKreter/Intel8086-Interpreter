@@ -42,7 +42,7 @@ void Execute(Binary_t& binary, bool log)
             continue;
         }
         cmd->Read(binary.text);
-        // printf("%02x%02x\n", binary.stack[0xffac], binary.stack[0xffad]);
+        // printf("!%x %x!", binary.stack[0xffba], binary.stack[0xffbb]);
         if(log)
             cmd->PrintStatus(binary);
         else
