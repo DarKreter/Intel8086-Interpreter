@@ -19,13 +19,15 @@ protected:
 
     uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
-    BASIC_R(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
     void PrintBase(size_t pos);
-
+    
 public:
     void Disassemble(size_t) const override;
+
+    BASIC_R(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
     ~BASIC_R() = default;
 };
+
 struct INC_R : public BASIC_R {
     // 01000 reg(3)
     constexpr static std::string_view pattern = "01000";
@@ -47,6 +49,7 @@ struct DEC_R : public BASIC_R {
     constexpr static std::string_view pattern = "01001";
 
     void Execute(Binary_t&) override;
+    
     DEC_R() : BASIC_R("dec") { ; }
     ~DEC_R() = default;
 };
@@ -55,6 +58,7 @@ struct PUSH_R : public BASIC_R {
     constexpr static std::string_view pattern = "01010";
 
     void Execute(Binary_t&) override;
+
     PUSH_R() : BASIC_R("push") { ; }
     ~PUSH_R() = default;
 };
@@ -64,6 +68,7 @@ struct XCHG_RwA : public BASIC_R {
 
     void Disassemble(size_t) const override;
     void Execute(Binary_t&) override;
+
     XCHG_RwA() : BASIC_R("xchg") { ; }
     ~XCHG_RwA() = default;
 };
