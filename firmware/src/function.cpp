@@ -12,8 +12,6 @@
 #include "rep.hpp"
 #include "singleton.hpp"
 
-// #include <bitset>
-
 using namespace std;
 
 void Execute(Binary_t& binary)
