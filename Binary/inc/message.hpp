@@ -3,11 +3,6 @@
 
 #include <cstdint>
 
-#define M1 1
-#define M3 3
-#define M4 4
-#define M3_STRING 14
-
 typedef struct {
     uint16_t m1i1, m1i2, m1i3;
     uint16_t m1p1, m1p2, m1p3, m1p4, m1p5;

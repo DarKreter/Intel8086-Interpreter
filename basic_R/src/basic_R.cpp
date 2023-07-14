@@ -32,23 +32,23 @@ void POP_R::Execute(Binary_t& binary)
 void INC_R::Execute(Binary_t& binary)
 {
     int16_t reg = binary.GetReg(1, frame.decoded.reg);
-    int16_t val16 = reg + 1;
+    int16_t _16bit = reg + 1;
 
-    binary.ZF = (val16 == 0);
-    binary.SF = (val16 < 0);
+    binary.ZF = (_16bit == 0);
+    binary.SF = (_16bit < 0);
     binary.OF = (reg == INT16_MAX);
 
-    binary.SetReg(1, frame.decoded.reg, val16);
+    binary.SetReg(1, frame.decoded.reg, _16bit);
 }
 
 void DEC_R::Execute(Binary_t& binary)
 {
     int16_t reg = binary.GetReg(1, frame.decoded.reg);
-    int16_t val16 = reg - 1;
+    int16_t _16bit = reg - 1;
 
-    binary.ZF = (val16 == 0);
-    binary.SF = (val16 < 0);
+    binary.ZF = (_16bit == 0);
+    binary.SF = (_16bit < 0);
     binary.OF = (reg == INT16_MIN);
 
-    binary.SetReg(1, frame.decoded.reg, val16);
+    binary.SetReg(1, frame.decoded.reg, _16bit);
 }

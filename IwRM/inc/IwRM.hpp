@@ -25,13 +25,16 @@ protected:
 
         } decoded;
     } frame;
-    void Read(uint8_t*) override;
     uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
-    void PrintRM() const;
+
+    void Read(uint8_t*) override;
+
     void SetRM(Binary_t& binary, uint16_t val, bool = true);
     uint16_t GetRM(Binary_t&);
     uint16_t GetRM_addr(Binary_t&);
+    void PrintRM() const;
+    void _I2RM(Binary_t& binary, auto& op);
 
 public:
     I2RM_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
@@ -41,6 +44,7 @@ public:
 
 struct I2RM_BASIC_s : public I2RM_BASIC {
     // XXXXXXs(1)w(1) mod(2)XXXr/m(3) data(8) (if sw == 01)data(8)
+
     void Disassemble(size_t) const override;
     ~I2RM_BASIC_s() = default;
 
@@ -61,6 +65,7 @@ struct OR_I2RM : public I2RM_BASIC {
     constexpr static std::string_view pattern = "1000000XXX001";
 
     void Execute(Binary_t&) override;
+
     OR_I2RM() : I2RM_BASIC("or") { ; }
     ~OR_I2RM() = default;
 };
@@ -69,6 +74,7 @@ struct AND_I2RM : public I2RM_BASIC {
     constexpr static std::string_view pattern = "1000000XXX100";
 
     void Execute(Binary_t&) override;
+
     AND_I2RM() : I2RM_BASIC("and") { ; }
     ~AND_I2RM() = default;
 };
@@ -77,6 +83,7 @@ struct TEST_IaRM : public I2RM_BASIC {
     constexpr static std::string_view pattern = "1111011XXX000";
 
     void Execute(Binary_t&) override;
+
     TEST_IaRM() : I2RM_BASIC("test") { ; }
     ~TEST_IaRM() = default;
 };
@@ -85,6 +92,7 @@ struct ADD_I2RM : public I2RM_BASIC_s {
     constexpr static std::string_view pattern = "100000XXXX000";
 
     void Execute(Binary_t&) override;
+
     ADD_I2RM() : I2RM_BASIC_s("add") { ; }
     ~ADD_I2RM() = default;
 };
@@ -100,6 +108,7 @@ struct SUB_IfRM : public I2RM_BASIC_s {
     constexpr static std::string_view pattern = "100000XXXX101";
 
     void Execute(Binary_t&) override;
+
     SUB_IfRM() : I2RM_BASIC_s("sub") { ; }
     ~SUB_IfRM() = default;
 };
@@ -108,6 +117,7 @@ struct CMP_IwRM : public I2RM_BASIC_s {
     constexpr static std::string_view pattern = "100000XXXX111";
 
     void Execute(Binary_t&) override;
+
     CMP_IwRM() : I2RM_BASIC_s("cmp") { ; }
     ~CMP_IwRM() = default;
 };
