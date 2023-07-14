@@ -24,12 +24,14 @@ protected:
 
     uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
-    LGC_BASIC(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
+
     void PrintBase(size_t pos) const;
     void Read(uint8_t*) override;
 
 public:
     void Disassemble(size_t) const override;
+
+    LGC_BASIC(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
     ~LGC_BASIC() = default;
 };
 struct RCL : public LGC_BASIC {
@@ -68,6 +70,7 @@ struct DIV : public LGC_BASIC {
 
     void Disassemble(size_t) const override;
     void Execute(Binary_t&) override;
+
     DIV() : LGC_BASIC("div") { ; }
     ~DIV() = default;
 };
