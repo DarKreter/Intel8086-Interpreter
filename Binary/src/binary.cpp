@@ -220,8 +220,9 @@ uint16_t Binary_t::Pop()
 }
 void Binary_t::JumpDS(int16_t disp)
 {
-    textPos += disp;
-    text += disp;
+    uint8_t* start = text - textPos; // Start of allocated memory
+    textPos += (int)(disp);
+    text = start + textPos;
 }
 void Binary_t::JumpIS(int16_t disp)
 {

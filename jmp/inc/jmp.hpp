@@ -97,6 +97,7 @@ struct JE : public JMP_BASIC {
     constexpr static std::string_view pattern = "01110100";
 
     void Execute(Binary_t&) override;
+
     JE() : JMP_BASIC("je") { ; }
     ~JE() = default;
 };
@@ -130,6 +131,7 @@ protected:
 public:
     void Disassemble(size_t) const override;
     void Execute(Binary_t&);
+
     JMP_DS() : JMP_BASIC("jmp", size_max) { ; }
     ~JMP_DS() = default;
 };
