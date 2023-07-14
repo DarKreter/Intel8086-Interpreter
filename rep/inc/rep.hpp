@@ -19,11 +19,12 @@ protected:
         } decoded;
     } frame;
 
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+    uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
+    void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
     REP(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
 
 public:
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     ~REP() = default;
 };
 struct REP_MOVS : public REP {
@@ -55,7 +56,7 @@ struct CMPS : public REP {
     constexpr static std::string_view pattern = "1010011";
 
     CMPS() : REP("cmps", size_max) { ; }
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     ~CMPS() = default;
 };
 

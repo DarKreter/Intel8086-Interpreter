@@ -26,15 +26,17 @@ protected:
         } decoded;
     } frame;
 
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-    void PrintRM();
+    uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
+    void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
+    void PrintRM() const;
+    void Read(uint8_t*) override;
     uint16_t& GetRM(Binary_t&);
     void SetRM(Binary_t&, uint16_t);
     uint16_t GetRM_addr(Binary_t&);
     RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
 
 public:
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     ~RMwR_BASIC() = default;
 };
 
@@ -42,14 +44,16 @@ struct RMwR_BASIC_w : public RMwR_BASIC {
     // XXXXXXX w(1) mod(2) XXX r/m(3) disp(0/8/16)
     RMwR_BASIC_w(const char* _name) : RMwR_BASIC(_name) { ; }
 
-    void Disassemble(size_t) override;
+    void Read(uint8_t*) override;
+    void Disassemble(size_t) const override;
     ~RMwR_BASIC_w() = default;
 };
 struct RMwR_BASIC_dw : public RMwR_BASIC_w {
     // XXXXXX d(1)w(1) mod(2) XXX r/m(3) disp(0/8/16)
     RMwR_BASIC_dw(const char* _name) : RMwR_BASIC_w(_name) { ; }
 
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
+    void Read(uint8_t*) override;
     ~RMwR_BASIC_dw() = default;
 };
 
@@ -115,8 +119,9 @@ struct LEA : public RMwR_BASIC_w {
     constexpr static std::string_view pattern = "10001101";
 
     LEA() : RMwR_BASIC_w("lea") { ; }
+    void Read(uint8_t*) override;
     void Execute(Binary_t&) override;
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     ~LEA() = default;
 };
 

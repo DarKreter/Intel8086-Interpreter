@@ -12,8 +12,7 @@ struct Binary_t {
     size_t textSegmentSize;
     size_t dataSegmentSize;
     uint16_t textPos;
-    uint8_t* text;
-    uint8_t* data;
+    uint8_t *text, *text_mem_start, *data;
     static constexpr uint32_t STACK_SIZE = 0x10000;
     uint8_t* stack;
 

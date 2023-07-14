@@ -22,12 +22,14 @@ protected:
         } decoded;
     } frame;
 
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+    uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
+    void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
     LGC_BASIC(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
-    void PrintBase(size_t pos);
+    void PrintBase(size_t pos) const;
+    void Read(uint8_t*) override;
 
 public:
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     ~LGC_BASIC() = default;
 };
 struct RCL : public LGC_BASIC {
@@ -64,7 +66,7 @@ struct DIV : public LGC_BASIC {
     // 1111011 w(1) mod(2) 110 r/m(3)
     constexpr static std::string_view pattern = "1111011XXX110";
 
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     void Execute(Binary_t&) override;
     DIV() : LGC_BASIC("div") { ; }
     ~DIV() = default;

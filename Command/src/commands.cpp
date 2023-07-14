@@ -10,7 +10,7 @@ using namespace std;
 
 void Command_t::Execute(Binary_t&) { ; }
 
-void MOV_I2R::Disassemble(size_t pos)
+void MOV_I2R::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 
@@ -69,38 +69,38 @@ void RET_wSAI::Execute(Binary_t& binary)
     binary.textPos = pos;
 }
 
-void RET_wSAI::Disassemble(size_t pos)
+void RET_wSAI::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 
     printf("%02x%02x", frame.decoded.disp_high, frame.decoded.disp_low);
 }
-void IN_PORT::Disassemble(size_t pos)
+void IN_PORT::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 
     std::cout << (frame.decoded.w == 1 ? "ax, " : "al, ");
     printf("%02x", frame.decoded.port);
 }
-void IN_PORT_VAR::Disassemble(size_t pos)
+void IN_PORT_VAR::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 
     std::cout << (frame.decoded.w == 1 ? "ax, " : "al, ");
     printf("dx");
 }
-void CALL_DS::Disassemble(size_t pos)
+void CALL_DS::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
     printf("%04lx", frame.decoded.disp + pos + 3);
 }
-void CALL_IS::Disassemble(size_t pos)
+void CALL_IS::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 
     cout << regs_16[frame.decoded.rm];
 }
-void INT::Disassemble(size_t pos)
+void INT::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 
@@ -111,13 +111,14 @@ void INT::Execute(Binary_t& binary)
     message* mess = (message*)&binary.stack[binary.bx];
     uint16_t addr, fd, request, length;
     int ret;
+    // printf("%d\n", mess->m_type);
     if(LOG)
         printf("\n");
     switch(mess->m_type) {
     case 1: // exit
         if(LOG)
             printf("<exit(%d)>\n", mess->m_m1.m1i1);
-        exit(mess->m_m1.m1i1);
+        throw(int) mess->m_m1.m1i1;
         break;
     case 4: // write
         fd = mess->m_m1.m1i1;
@@ -128,6 +129,7 @@ void INT::Execute(Binary_t& binary)
             fflush(stdout);
         }
         ret = write(fd, &binary.stack[addr], length);
+
         // (ret == -1) ? (mess->m_type = -errno) : (mess->m_type = ret);
         mess->m_type = ret;
         if(LOG)
@@ -172,9 +174,11 @@ void INT::Execute(Binary_t& binary)
         binary.ax = 0;
 
         break;
+    default:
+        printf("Unkown system call - %d\n", mess->m_type);
     }
 }
-void MOV_MwA::Disassemble(size_t pos)
+void MOV_MwA::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
     if(frame.decoded.w == 0)
@@ -196,7 +200,7 @@ void Command_t::PrintStatus(Binary_t& binary)
     Disassemble(binary.textPos);
 }
 
-void Command_t::Disassemble(size_t pos)
+void Command_t::Disassemble(size_t pos) const
 {
     printf("%04lx: ", pos); // Print position
 
@@ -206,19 +210,11 @@ void Command_t::Disassemble(size_t pos)
         sprintf(hexBuffer + strlen(hexBuffer), "%02x", GetFramePart(i));
 
     printf("%-*s %s ", 13, hexBuffer, name);
-
-    // printf("%04lx:", pos);
-    // std::stringstream temp;
-    // for(uint8_t i = 0; i < frame_length; i++)
-    //     temp << std::hex << std::setfill('0') << std::setw(2)
-    //          << (int)GetFramePart(i);
-    // std::cout << std::left << std::setfill(' ') << std::setw(13) <<
-    // temp.str();
 }
 void Command_t::Read(uint8_t* tab)
 {
     for(int i = 0; i < frame_length; i++)
-        GetFramePart(i) = *(tab++);
+        SetFramePart(i, *(tab++));
 }
 std::map<uint8_t, std::string> regs_8 = {{0, "al"}, {1, "cl"}, {2, "dl"},
                                          {3, "bl"}, {4, "ah"}, {5, "ch"},

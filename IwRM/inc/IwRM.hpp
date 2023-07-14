@@ -7,7 +7,7 @@ struct I2RM_BASIC : public Command_t {
     constexpr static size_t size_min = 3;
 
 protected:
-    uint8_t offset = 0;
+    mutable uint8_t offset = 0;
     // XXXXXXs(1)w(1) mod(2)XXXr/m(3) data(8) (if sw == 01)data(8)
     union {
         uint8_t raw[size_max];
@@ -25,25 +25,27 @@ protected:
 
         } decoded;
     } frame;
-
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
-    void PrintRM();
+    void Read(uint8_t*) override;
+    uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
+    void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
+    void PrintRM() const;
     void SetRM(Binary_t& binary, uint16_t val, bool = true);
     uint16_t GetRM(Binary_t&);
     uint16_t GetRM_addr(Binary_t&);
 
 public:
     I2RM_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     ~I2RM_BASIC() = default;
 };
 
 struct I2RM_BASIC_s : public I2RM_BASIC {
     // XXXXXXs(1)w(1) mod(2)XXXr/m(3) data(8) (if sw == 01)data(8)
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     ~I2RM_BASIC_s() = default;
 
 protected:
+    void Read(uint8_t*) override;
     I2RM_BASIC_s(const char* _name) : I2RM_BASIC(_name) { ; }
 };
 struct MOV_I2RM : public I2RM_BASIC {

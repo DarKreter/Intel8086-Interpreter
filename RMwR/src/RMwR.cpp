@@ -1,6 +1,6 @@
 #include "RMwR.hpp"
 
-void RMwR_BASIC::PrintRM()
+void RMwR_BASIC::PrintRM() const
 {
     if(frame.decoded.mod == 0x03)
         // if mod == 11, rm is treated like reg
@@ -30,7 +30,6 @@ void RMwR_BASIC::PrintRM()
                 printf("-%x", (int)-u.i);
             else
                 printf("+%x", (int)u.i);
-            break;
             break;
         case 0: // disp == 0
         default:
@@ -71,22 +70,18 @@ uint16_t& RMwR_BASIC::GetRM(Binary_t& binary)
         default:
             break;
         }
-        // printf("!%d!",frame.decoded.)
         addr = binary.GetRM_mem(frame.decoded.rm) + disp;
-        // printf("!%d!", frame.decoded.w);
-        if(LOG) {
-            if(frame.decoded.w == 1) {
-                uint16_t* val = (uint16_t*)&binary.stack[addr];
-                // printf("!%x %x!", binary.stack[addr], binary.stack[addr +
-                // 1]);
+        if(frame.decoded.w == 1) {
+            uint16_t* val = (uint16_t*)&binary.stack[addr];
+            if(LOG)
                 printf(" ;[%04x]%04x", addr, *val);
-                return *val;
-            }
-            else {
-                uint8_t* val = (uint8_t*)&binary.stack[addr];
+            return *val;
+        }
+        else {
+            uint8_t* val = (uint8_t*)&binary.stack[addr];
+            if(LOG)
                 printf(" ;[%04x]%02x", addr, *val);
-                return (uint16_t&)*val;
-            }
+            return (uint16_t&)*val;
         }
     }
     return binary.GetReg(frame.decoded.w, frame.decoded.rm);
@@ -124,9 +119,7 @@ void RMwR_BASIC::SetRM(Binary_t& binary, uint16_t val)
         default:
             break;
         }
-        // printf("!%d!",frame.decoded.)
         addr = binary.GetRM_mem(frame.decoded.rm) + disp;
-        // printf("!%d!", frame.decoded.w);
         if(LOG) {
             if(frame.decoded.w == 1) {
                 uint16_t* value = (uint16_t*)&binary.stack[addr];
@@ -173,8 +166,10 @@ uint16_t RMwR_BASIC::GetRM_addr(Binary_t& binary)
     return binary.GetReg(frame.decoded.w, frame.decoded.rm);
 }
 
-void RMwR_BASIC::Disassemble(size_t pos)
+void RMwR_BASIC::Read(uint8_t* t)
 {
+    Command_t::Read(t);
+
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
         frame_length = 4;
@@ -182,14 +177,19 @@ void RMwR_BASIC::Disassemble(size_t pos)
         frame_length = 3;
     else
         frame_length = 2;
+}
 
+void RMwR_BASIC::Disassemble(size_t pos) const
+{
     Command_t::Disassemble(pos);
 
     PrintRM();
 }
 
-void RMwR_BASIC_w::Disassemble(size_t pos)
+void RMwR_BASIC_w::Read(uint8_t* t)
 {
+    Command_t::Read(t);
+
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
         frame_length = 4;
@@ -197,7 +197,10 @@ void RMwR_BASIC_w::Disassemble(size_t pos)
         frame_length = 3;
     else
         frame_length = 2;
+}
 
+void RMwR_BASIC_w::Disassemble(size_t pos) const
+{
     Command_t::Disassemble(pos);
 
     PrintRM();
@@ -207,8 +210,10 @@ void RMwR_BASIC_w::Disassemble(size_t pos)
                                        : regs_16[frame.decoded.reg]);
 }
 
-void RMwR_BASIC_dw::Disassemble(size_t pos)
+void RMwR_BASIC_dw::Read(uint8_t* t)
 {
+    Command_t::Read(t);
+
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
         frame_length = 4;
@@ -216,7 +221,10 @@ void RMwR_BASIC_dw::Disassemble(size_t pos)
         frame_length = 3;
     else
         frame_length = 2;
+}
 
+void RMwR_BASIC_dw::Disassemble(size_t pos) const
+{
     Command_t::Disassemble(pos);
 
     if(frame.decoded.d == 0) { // from reg
@@ -233,8 +241,10 @@ void RMwR_BASIC_dw::Disassemble(size_t pos)
     }
 }
 
-void LEA::Disassemble(size_t pos)
+void LEA::Read(uint8_t* t)
 {
+    Command_t::Read(t);
+
     if(frame.decoded.mod == 2 ||
        (frame.decoded.mod == 0 && frame.decoded.rm == 6))
         frame_length = 4;
@@ -242,7 +252,10 @@ void LEA::Disassemble(size_t pos)
         frame_length = 3;
     else
         frame_length = 2;
+}
 
+void LEA::Disassemble(size_t pos) const
+{
     Command_t::Disassemble(pos);
 
     std::cout << regs_16[frame.decoded.reg] << ", ";
@@ -271,7 +284,6 @@ void XOR_RM2R::Execute(Binary_t& binary)
             (int8_t&)reg = val;
     }
 
-    // printf("!%x!", val);
 
     if(frame.decoded.w) {
         binary.ZF = (val == 0);
@@ -308,8 +320,6 @@ void AND_RMaR::Execute(Binary_t& binary)
             (int8_t&)reg = val;
     }
 
-    // printf("!%x!", val);
-
     if(frame.decoded.w) {
         binary.ZF = (val == 0);
         binary.SF = (val < 0);
@@ -345,7 +355,6 @@ void CMP_RMaR::Execute(Binary_t& binary)
     if(!frame.decoded.d) // to reg
     {
         if(frame.decoded.w) {
-            // printf("!%x %x!", rm, reg);
             val16 = val = (int16_t)rm - (int16_t)reg;
             binary.ZF = (val16 == 0);
             binary.SF = (val16 < 0);
@@ -543,7 +552,7 @@ void INC_RM::Execute(Binary_t& binary)
     if(frame.decoded.w) {
         val16 = val = (int16_t)rm + 1;
         rm = val16;
-        // printf("!%x!", val16);
+
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
         binary.OF = (val != val16);

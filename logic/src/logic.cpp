@@ -1,25 +1,30 @@
 #include "logic.hpp"
 
-void LGC_BASIC::PrintBase(size_t pos)
+void LGC_BASIC::Read(uint8_t* t)
 {
+    Command_t::Read(t);
+
     if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
         frame_length = 4;
     else
         frame_length = 2;
+}
 
+void LGC_BASIC::PrintBase(size_t pos) const
+{
     Command_t::Disassemble(pos);
 
     if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg
         std::cout << (frame.decoded.w == 0 ? regs_8[frame.decoded.rm]
                                            : regs_16[frame.decoded.rm]);
 }
-void LGC_BASIC::Disassemble(size_t pos)
+void LGC_BASIC::Disassemble(size_t pos) const
 {
     PrintBase(pos);
 
     printf(", %s", frame.decoded.v == 0 ? "1" : "cl");
 }
-void DIV::Disassemble(size_t pos) { PrintBase(pos); }
+void DIV::Disassemble(size_t pos) const { PrintBase(pos); }
 
 void DIV::Execute(Binary_t& binary)
 {
@@ -52,7 +57,6 @@ void SAR::Execute(Binary_t& binary)
     if(frame.decoded.w) {
         if(frame.decoded.v) {
             if(binary.c.l) {
-                // printf("!%d!", reg);
                 val16 = val = reg >> (binary.c.l & 0x1f);
                 binary.ZF = (val16 == 0);
                 binary.SF = (val16 < 0);

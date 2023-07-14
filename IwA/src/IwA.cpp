@@ -3,14 +3,14 @@
 void IwA::Read(uint8_t* t)
 {
     Command_t::Read(t);
-    
+
     if(frame.decoded.w == 1)
         frame_length = 3;
     else
         frame_length = 2;
 }
 
-void IwA::Disassemble(size_t pos)
+void IwA::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 

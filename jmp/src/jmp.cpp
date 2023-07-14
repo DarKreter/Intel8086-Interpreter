@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void JMP_BASIC::Disassemble(size_t pos)
+void JMP_BASIC::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
     // + 2, because actual position is after jump(jump is 2 byte long)
@@ -13,20 +13,26 @@ void JMP_BASIC::Execute(Binary_t& binary)
     binary.textPos += (int)(frame.decoded.disp);
     binary.text += (int)(frame.decoded.disp);
 }
-void JMP_DS::Disassemble(size_t pos)
+void JMP_DS::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 
     printf("%04x", (uint16_t)(frame.decoded.disp_low +
                               (frame.decoded.disp_high << 8) + pos + 3));
 }
-void JMP_IS::Disassemble(size_t pos)
+
+void JMP_IS::Read(uint8_t* t)
 {
+    Command_t::Read(t);
+
     if(frame.decoded.mod == 0 && frame.decoded.rm == 6)
         frame_length = 4;
     else
         frame_length = 2;
+}
 
+void JMP_IS::Disassemble(size_t pos) const
+{
     Command_t::Disassemble(pos);
 
     if(frame.decoded.mod == 0x03) // if mod == 11, rm is treated like reg

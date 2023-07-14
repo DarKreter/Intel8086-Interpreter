@@ -46,10 +46,15 @@ int main(int argc, char* argv[], char** envp)
     binary.StackInit(_argv, _envp);
     free(fileContent);
 
-    if(run)
-        Execute(binary);
-    else
-        Analyze(binary);
+    try {
+        if(run)
+            Execute(binary);
+        else
+            Analyze(binary);
+    }
+    catch(int& e) {
+        return e;
+    }
 
     return 0;
 }

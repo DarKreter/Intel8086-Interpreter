@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void I2RM_BASIC::PrintRM()
+void I2RM_BASIC::PrintRM() const
 {
     if(frame.decoded.mod == 0x03)
         // if mod == 11, rm is treated like reg
@@ -11,21 +11,21 @@ void I2RM_BASIC::PrintRM()
 
     else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
         printf("[%02x%02x]", frame.decoded.disp.d[1], frame.decoded.disp.d[0]);
-        offset += 2;
+        // offset += 2;
     }
     else // mod == 00/01/10
     {
         std::cout << "[" << rm_memory[frame.decoded.rm];
         switch(frame.decoded.mod) {
         case 1:
-            offset += 1;
+            // offset += 1;
             if(frame.decoded.disp.s < 0)
                 printf("-%x", (int)-frame.decoded.disp.s);
             else
                 printf("+%x", (int)frame.decoded.disp.s);
             break;
         case 2:
-            offset += 2;
+            // offset += 2;
             printf("+%x", (int)(frame.decoded.disp.d[0] +
                                 (frame.decoded.disp.d[1] << 8)));
             break;
@@ -68,21 +68,20 @@ uint16_t I2RM_BASIC::GetRM(Binary_t& binary)
         }
         uint16_t addr = binary.GetRM_mem(frame.decoded.rm) + disp;
 
-        if(LOG) {
-            if(frame.decoded.w == 1) {
-                // printf("!%x %x!", binary.stack[addr], binary.stack[addr +
-                // 1]);
-                uint16_t* val = (uint16_t*)&binary.stack[addr];
+        if(frame.decoded.w == 1) {
+            uint16_t* val = (uint16_t*)&binary.stack[addr];
+            if(LOG)
                 printf(" ;[%04x]%04x", addr, *val);
-                return *val;
-            }
-            else {
-                uint8_t* val = (uint8_t*)&binary.stack[addr];
+            return *val;
+        }
+        else {
+            uint8_t* val = (uint8_t*)&binary.stack[addr];
+            if(LOG)
                 printf(" ;[%04x]%02x", addr, *val);
-                return (uint16_t&)*val;
-            }
+            return (uint16_t&)*val;
         }
     }
+
     return binary.GetReg(frame.decoded.w, frame.decoded.rm);
 }
 void I2RM_BASIC::SetRM(Binary_t& binary, uint16_t val, bool log)
@@ -124,8 +123,10 @@ void I2RM_BASIC::SetRM(Binary_t& binary, uint16_t val, bool log)
     }
 }
 
-void I2RM_BASIC::Disassemble(size_t pos)
+void I2RM_BASIC::Read(uint8_t* t)
 {
+    Command_t::Read(t);
+
     frame_length = 3;
     if(frame.decoded.w == 1)
         frame_length += 1;
@@ -135,6 +136,25 @@ void I2RM_BASIC::Disassemble(size_t pos)
     else if(frame.decoded.mod == 1)
         frame_length++;
 
+    if(frame.decoded.mod == 0x03)
+        offset = offset;
+    else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
+        offset += 2;
+    }
+    else {
+        switch(frame.decoded.mod) {
+        case 1:
+            offset += 1;
+            break;
+        case 2:
+            offset += 2;
+            break;
+        }
+    }
+}
+
+void I2RM_BASIC::Disassemble(size_t pos) const
+{
     Command_t::Disassemble(pos);
 
     if(frame.decoded.w != 1 &&
@@ -150,8 +170,10 @@ void I2RM_BASIC::Disassemble(size_t pos)
         printf(", %x", frame.decoded.disp.d[0 + offset]);
 }
 
-void I2RM_BASIC_s::Disassemble(size_t pos)
+void I2RM_BASIC_s::Read(uint8_t* t)
 {
+    Command_t::Read(t);
+
     frame_length = 3;
     if(frame.decoded.s == 0 && frame.decoded.w == 1)
         frame_length++;
@@ -161,6 +183,25 @@ void I2RM_BASIC_s::Disassemble(size_t pos)
     else if(frame.decoded.mod == 1)
         frame_length++;
 
+    if(frame.decoded.mod == 0x03)
+        offset = offset;
+    else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
+        offset += 2;
+    }
+    else {
+        switch(frame.decoded.mod) {
+        case 1:
+            offset += 1;
+            break;
+        case 2:
+            offset += 2;
+            break;
+        }
+    }
+}
+
+void I2RM_BASIC_s::Disassemble(size_t pos) const
+{
     Command_t::Disassemble(pos);
 
     if(frame.decoded.w != 1 &&
@@ -188,9 +229,9 @@ void I2RM_BASIC_s::Disassemble(size_t pos)
 
 void TEST_IaRM::Execute(Binary_t& binary)
 {
+    uint16_t dst = GetRM(binary);
     uint16_t src = frame.decoded.disp.d[0 + offset] +
                    (frame.decoded.disp.d[0 + offset + 1] << 8);
-    uint16_t dst = GetRM(binary);
     int16_t val16;
     int8_t val8;
 

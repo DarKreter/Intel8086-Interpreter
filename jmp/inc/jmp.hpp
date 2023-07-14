@@ -17,11 +17,12 @@ protected:
         } decoded;
     } frame;
 
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+    uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
+    void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
     JMP_BASIC(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
 
 public:
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     void Execute(Binary_t&) override;
 
     ~JMP_BASIC() = default;
@@ -123,10 +124,11 @@ protected:
         } decoded;
     } frame;
 
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+    uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
+    void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
 
 public:
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     void Execute(Binary_t&);
     JMP_DS() : JMP_BASIC("jmp", size_max) { ; }
     ~JMP_DS() = default;
@@ -172,10 +174,12 @@ protected:
         } decoded;
     } frame;
 
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+    uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
+    void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
+    void Read(uint8_t*) override;
 
 public:
-    void Disassemble(size_t) override;
+    void Disassemble(size_t) const override;
     void Execute(Binary_t&) override;
 
     JMP_IS() : Command_t(size_max, "jmp") { ; }

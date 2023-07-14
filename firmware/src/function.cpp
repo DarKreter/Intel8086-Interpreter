@@ -44,13 +44,15 @@ void Execute(Binary_t& binary)
         cmd->Read(binary.text);
         if(LOG)
             cmd->PrintStatus(binary);
-        else
-            cmd->Disassemble(binary.textPos);
         try {
             cmd->Execute(binary);
         }
         catch(std::runtime_error& e) {
             break;
+        }
+        catch(int exit) {
+            delete cmd;
+            throw exit;
         }
 
         binary.textPos += cmd->GetFrameLength(),
@@ -118,9 +120,6 @@ bool CheckPattern(uint8_t* tab, size_t sizeLeft, std::string_view pattern)
 {
     for(unsigned int i = 0; i < pattern.length(); i++) {
         bool bit = (*tab << (i % 8)) & 0x80;
-        // if(pattern[i] == 'X') {
-        // std::cout << (int)bit << "\n";
-        // }
         if((pattern[i] == '1' && !bit) || (pattern[i] == '0' && bit))
             return false;
 
@@ -137,14 +136,13 @@ unsigned char* ReadFile(char* fileName)
 {
     FILE* fptr;
 
-    // printf("Reading file %s\n", argv[1]);
     if((fptr = fopen(fileName, "rb")) == NULL) {
         printf("Cannot open file!");
         exit(3);
     }
     fseek(fptr, 0L, SEEK_END);
     int sz = ftell(fptr);
-    // printf("%d\n", sz);
+
     fseek(fptr, 0L, SEEK_SET);
 
     uint8_t* tab = reinterpret_cast<uint8_t*>(malloc(sz * sizeof(uint8_t)));
@@ -152,7 +150,6 @@ unsigned char* ReadFile(char* fileName)
 
     fclose(fptr);
 
-    // printf("%s", tab);
     return tab;
 }
 

@@ -13,12 +13,12 @@ protected:
         uint8_t raw[size_max];
     } frame;
 
-    uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
+    uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
+    void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
     Singleton(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
     void PrintBase(size_t pos);
 
 public:
-    void Disassemble(size_t) override;
     ~Singleton() = default;
 };
 struct HLT : public Singleton {

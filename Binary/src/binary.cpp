@@ -149,15 +149,11 @@ void Binary_t::StackInit(std::vector<std::string> argv,
     while(sp != 0)
         stack[sp++] = 0;
     sp = sp - len;
-
-    // for(uint16_t i = sp; i != 0; i++)
-    //     printf("%d ", (int)stack[i]);
-    // printf("\n");
 }
 
 Binary_t::Binary_t(uint8_t* fileContent)
-    : textPos{}, ax{}, bx{}, cx{}, dx{}, sp{uint16_t(0xffd6)}, bp{}, si{}, di{},
-      OF{}, DF{}, SF{}, ZF{}, CF{}
+    : textPos{}, ax{}, bx{}, cx{}, dx{}, sp{}, bp{}, si{}, di{}, OF{}, DF{},
+      SF{}, ZF{}, CF{}
 {
 
     textSegmentSize = (fileContent[11] << 24) + (fileContent[10] << 16) +
@@ -165,7 +161,7 @@ Binary_t::Binary_t(uint8_t* fileContent)
     dataSegmentSize = (fileContent[15] << 24) + (fileContent[14] << 16) +
                       (fileContent[13] << 8) + fileContent[12];
 
-    text = new uint8_t[textSegmentSize];
+    text_mem_start = text = new uint8_t[textSegmentSize];
     for(size_t i = 0; i < textSegmentSize; i++)
         text[i] = fileContent[i + TEXT_START_BYTE];
 
@@ -180,8 +176,7 @@ Binary_t::Binary_t(uint8_t* fileContent)
 
 Binary_t::~Binary_t()
 {
-    text -= textPos;
-    delete[] text;
+    delete[] text_mem_start;
     delete[] data;
     delete[] stack;
 }
