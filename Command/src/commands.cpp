@@ -47,12 +47,13 @@ void CALL_IS::Execute(Binary_t& binary)
 
 void MOV_I2R::Execute(Binary_t& binary)
 {
-    auto& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-
+    uint16_t value;
     if(frame.decoded.w == 0)
-        reg = frame.decoded.data[0];
+        value = frame.decoded.data[0];
     else
-        reg = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
+        value = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
+
+    binary.SetReg(frame.decoded.w, frame.decoded.reg, value);
 }
 void RET_wSAI::Execute(Binary_t& binary)
 {

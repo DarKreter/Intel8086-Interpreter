@@ -30,9 +30,9 @@ protected:
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
     void PrintRM() const;
     void Read(uint8_t*) override;
-    uint16_t& GetRM(Binary_t&);
-    void SetRM(Binary_t&, uint16_t);
-    uint16_t GetRM_addr(Binary_t&);
+    uint16_t GetRM(const Binary_t&) const;
+    void SetRM(Binary_t&, uint16_t, bool = true);
+    uint16_t GetRM_addr(const Binary_t&) const;
     RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
 
 public:

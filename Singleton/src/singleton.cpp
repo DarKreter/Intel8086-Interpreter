@@ -17,11 +17,10 @@ void CLD::Execute(Binary_t&)
 
 void CBW::Execute(Binary_t& binary)
 {
-    uint16_t& src = binary.GetReg(0, 0);
-    uint16_t& dst = binary.GetReg(1, 0);
+    int8_t src = binary.GetReg(0, 0);
 
-    uint16_t v = (int8_t)src;
-    dst = v;
+    uint16_t v = src;
+    binary.SetReg(1, 0, v);
 }
 
 void CWD::Execute(Binary_t& binary)

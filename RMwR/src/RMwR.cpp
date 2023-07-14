@@ -39,7 +39,7 @@ void RMwR_BASIC::PrintRM() const
     }
 }
 
-uint16_t& RMwR_BASIC::GetRM(Binary_t& binary)
+uint16_t RMwR_BASIC::GetRM(const Binary_t& binary) const
 {
     if(frame.decoded.mod == 0x03)
         // if mod == 11, rm is treated like reg
@@ -84,23 +84,23 @@ uint16_t& RMwR_BASIC::GetRM(Binary_t& binary)
             return (uint16_t&)*val;
         }
     }
-    return binary.GetReg(frame.decoded.w, frame.decoded.rm);
+    return 0xFFFF;
 }
 
-void RMwR_BASIC::SetRM(Binary_t& binary, uint16_t val)
+void RMwR_BASIC::SetRM(Binary_t& binary, uint16_t val, bool log)
 {
     if(frame.decoded.mod == 0x03)
         // if mod == 11, rm is treated like reg
-        binary.GetReg(frame.decoded.w, frame.decoded.rm) = val;
+        binary.SetReg(frame.decoded.w, frame.decoded.rm, val);
 
     else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
-        std::cout << "AAAAAAAAAA!!!\n";
-        // uint16_t addr =
-        //     frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
-        // uint16_t* val = (uint16_t*)&binary.stack[addr];
-        // if(LOG)
-        //     printf(" ;[%04x]%04x", addr, *val);
-        // return *val;
+        uint16_t addr =
+            frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
+        uint16_t* on_stack = (uint16_t*)&binary.stack[addr];
+        if(LOG && log)
+            printf(" ;[%04x]%04x", addr, *on_stack);
+        binary.stack[addr] = val;
+        binary.stack[addr + 1] = ((val) >> 8);
     }
     else // mod == 00/01/10
     {
@@ -120,23 +120,23 @@ void RMwR_BASIC::SetRM(Binary_t& binary, uint16_t val)
             break;
         }
         addr = binary.GetRM_mem(frame.decoded.rm) + disp;
-        if(LOG) {
-            if(frame.decoded.w == 1) {
-                uint16_t* value = (uint16_t*)&binary.stack[addr];
-                printf(" ;[%04x]%04x", addr, *value);
-                binary.stack[addr] = *value;
-                binary.stack[addr + 1] = ((*value) >> 8);
-            }
-            else {
-                uint8_t* value = (uint8_t*)&binary.stack[addr];
-                printf(" ;[%04x]%02x", addr, *value);
-                binary.stack[addr] = *value;
-            }
+        if(frame.decoded.w == 1) {
+            uint16_t* on_stack = (uint16_t*)&binary.stack[addr];
+            if(LOG && log)
+                printf(" ;[%04x]%04x", addr, *on_stack);
+            binary.stack[addr] = val;
+            binary.stack[addr + 1] = ((val) >> 8);
+        }
+        else {
+            uint8_t* on_stack = (uint8_t*)&binary.stack[addr];
+            if(LOG && log)
+                printf(" ;[%04x]%02x", addr, *on_stack);
+            binary.stack[addr] = val;
         }
     }
 }
 
-uint16_t RMwR_BASIC::GetRM_addr(Binary_t& binary)
+uint16_t RMwR_BASIC::GetRM_addr(const Binary_t& binary) const
 {
     if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
         printf("[%02x%02x]", frame.decoded.disp.d[1], frame.decoded.disp.d[0]);
@@ -265,25 +265,24 @@ void LEA::Disassemble(size_t pos) const
 
 void XOR_RM2R::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    uint16_t& rm = GetRM(binary);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t rm = GetRM(binary);
     int16_t val;
 
     if(frame.decoded.w) {
         val = (int16_t)reg ^ (int16_t)rm;
         if(frame.decoded.d == 0)
-            rm = val;
+            SetRM(binary, val);
         else
-            reg = val;
+            binary.SetReg(frame.decoded.w, frame.decoded.reg, val);
     }
     else {
         val = (int8_t)reg ^ (int8_t)rm;
         if(frame.decoded.d == 0)
-            (int8_t&)rm = val;
+            SetRM(binary, (int8_t)val);
         else
-            (int8_t&)reg = val;
+            binary.SetReg(frame.decoded.w, frame.decoded.reg, (int8_t)val);
     }
-
 
     if(frame.decoded.w) {
         binary.ZF = (val == 0);
@@ -301,23 +300,23 @@ void XOR_RM2R::Execute(Binary_t& binary)
 
 void AND_RMaR::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    uint16_t& rm = GetRM(binary);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t rm = GetRM(binary);
     int16_t val;
 
     if(frame.decoded.w) {
         val = (int16_t)reg & (int16_t)rm;
         if(frame.decoded.d == 0)
-            rm = val;
+            SetRM(binary, val);
         else
-            reg = val;
+            binary.SetReg(frame.decoded.w, frame.decoded.reg, val);
     }
     else {
         val = (int8_t)reg & (int8_t)rm;
         if(frame.decoded.d == 0)
-            (int8_t&)rm = val;
+            SetRM(binary, (int8_t)val);
         else
-            (int8_t&)reg = val;
+            binary.SetReg(frame.decoded.w, frame.decoded.reg, (int8_t)val);
     }
 
     if(frame.decoded.w) {
@@ -337,17 +336,17 @@ void AND_RMaR::Execute(Binary_t& binary)
 void XCHG_RMwR::Execute(Binary_t& binary)
 {
     int16_t tmp;
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    uint16_t& rm = GetRM(binary);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t rm = GetRM(binary);
     tmp = reg;
-    reg = rm;
-    rm = tmp;
+    binary.SetReg(frame.decoded.w, frame.decoded.reg, rm);
+    SetRM(binary, tmp);
 }
 
 void CMP_RMaR::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    uint16_t& rm = GetRM(binary);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t rm = GetRM(binary);
     int32_t val;
     int16_t val16;
     int16_t val8;
@@ -413,8 +412,8 @@ void TEST_RMwR::Execute(Binary_t& binary)
 
 void SUB_RM2R::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    uint16_t& rm = GetRM(binary);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t rm = GetRM(binary);
     int32_t val;
     int16_t val16;
     int16_t val8;
@@ -427,7 +426,7 @@ void SUB_RM2R::Execute(Binary_t& binary)
             binary.SF = (val16 < 0);
             binary.OF = (val16 != val);
             binary.CF = (rm < reg);
-            rm = val16;
+            SetRM(binary, val16);
         }
         else {
             val8 = val = (int8_t)rm - (int8_t)reg;
@@ -435,7 +434,7 @@ void SUB_RM2R::Execute(Binary_t& binary)
             binary.SF = (val8 < 0);
             binary.OF = (val8 != val);
             binary.CF = (rm & 0xff) < (reg & 0xff);
-            rm = val8;
+            SetRM(binary, val8);
         }
     }
     else { // from reg
@@ -445,7 +444,7 @@ void SUB_RM2R::Execute(Binary_t& binary)
             binary.SF = (val16 < 0);
             binary.OF = (val16 != val);
             binary.CF = (reg < rm);
-            reg = val16;
+            binary.SetReg(frame.decoded.w, frame.decoded.reg, val16);
         }
         else {
             val8 = val = (int8_t)rm - (int8_t)reg;
@@ -453,15 +452,15 @@ void SUB_RM2R::Execute(Binary_t& binary)
             binary.SF = (val8 < 0);
             binary.OF = (val8 != val);
             binary.CF = (reg & 0xff) < (rm & 0xff);
-            reg = val8;
+            binary.SetReg(frame.decoded.w, frame.decoded.reg, val8);
         }
     }
 }
 
 void ADD_RMwR::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    uint16_t& rm = GetRM(binary);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t rm = GetRM(binary);
     int16_t val;
     if(frame.decoded.w)
         val = reg + rm;
@@ -470,9 +469,9 @@ void ADD_RMwR::Execute(Binary_t& binary)
         val = (uint8_t)reg + (uint8_t)rm;
 
     if(frame.decoded.d == 0)
-        rm = val;
+        SetRM(binary, val, false);
     else
-        reg = val;
+        binary.SetReg(frame.decoded.w, frame.decoded.reg, val);
 
     if(frame.decoded.w) {
         binary.ZF = (val == 0);
@@ -490,21 +489,21 @@ void ADD_RMwR::Execute(Binary_t& binary)
 
 void MOV_RM2R::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    uint16_t& rm = GetRM(binary);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t rm = GetRM(binary);
 
     if(frame.decoded.d == 0) {
         if(frame.decoded.w)
-            rm = reg;
+            SetRM(binary, reg, false);
         else
-            (uint8_t&)rm = (uint8_t)reg;
+            SetRM(binary, (uint8_t)reg, false);
     }
 
     else {
         if(frame.decoded.w)
-            reg = rm;
+            binary.SetReg(frame.decoded.w, frame.decoded.reg, rm);
         else
-            (uint8_t&)reg = (uint8_t)rm;
+            binary.SetReg(frame.decoded.w, frame.decoded.reg, (uint8_t)rm);
     }
 }
 
@@ -517,7 +516,7 @@ void PUSH_RM::Execute(Binary_t& binary)
 
 void DEC_RM::Execute(Binary_t& binary)
 {
-    uint16_t& rm = GetRM(binary);
+    uint16_t rm = GetRM(binary);
     int32_t val;
     int16_t val16;
     int8_t val8;
@@ -529,7 +528,7 @@ void DEC_RM::Execute(Binary_t& binary)
         binary.OF = (val != val16);
         binary.CF = binary.CF;
 
-        rm = val16;
+        SetRM(binary, val16, false);
     }
     else {
         val8 = val = (int8_t)rm - 1;
@@ -538,20 +537,20 @@ void DEC_RM::Execute(Binary_t& binary)
         binary.OF = (val != val8);
         binary.CF = binary.CF;
 
-        rm = val8;
+        SetRM(binary, val8, false);
     }
 }
 
 void INC_RM::Execute(Binary_t& binary)
 {
-    uint16_t& rm = GetRM(binary);
+    uint16_t rm = GetRM(binary);
     int32_t val;
     int16_t val16;
     int8_t val8;
 
     if(frame.decoded.w) {
         val16 = val = (int16_t)rm + 1;
-        rm = val16;
+        SetRM(binary, val16, false);
 
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
@@ -560,7 +559,7 @@ void INC_RM::Execute(Binary_t& binary)
     }
     else {
         val8 = val = (int8_t)rm + 1;
-        rm = val8;
+        SetRM(binary, val8, false);
         binary.ZF = (val8 == 0);
         binary.SF = (val8 < 0);
         binary.OF = (val != val8);
@@ -570,14 +569,14 @@ void INC_RM::Execute(Binary_t& binary)
 
 void NEG::Execute(Binary_t& binary)
 {
-    uint16_t& rm = GetRM(binary);
+    uint16_t rm = GetRM(binary);
     int16_t val;
     int16_t val16;
     int8_t val8;
 
     if(frame.decoded.w) {
         val16 = val = -rm;
-        rm = val16;
+        SetRM(binary, val16);
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
         binary.OF = (val != val16);
@@ -585,7 +584,7 @@ void NEG::Execute(Binary_t& binary)
     }
     else {
         val8 = val = -rm;
-        rm = val8;
+        SetRM(binary, val8);
         binary.ZF = (val8 == 0);
         binary.SF = (val8 < 0);
         binary.OF = (val != val8);
@@ -595,16 +594,16 @@ void NEG::Execute(Binary_t& binary)
 
 void LEA::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
+    // uint16_t reg = binary.GetReg(1, frame.decoded.reg);
     uint16_t rm = GetRM_addr(binary);
 
-    reg = rm;
+    binary.SetReg(1, frame.decoded.reg, rm);
 }
 
 void OR_RMaR::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
-    uint16_t& rm = GetRM(binary);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
+    uint16_t rm = GetRM(binary);
     int val;
     int16_t val16;
     int8_t val8;
@@ -615,9 +614,9 @@ void OR_RMaR::Execute(Binary_t& binary)
         val8 = val = (uint8_t)reg | (uint8_t)rm;
 
     if(frame.decoded.d == 0)
-        rm = val;
+        SetRM(binary, val);
     else
-        reg = val;
+        binary.SetReg(1, frame.decoded.reg, val);
 
     if(frame.decoded.w) { // 16-bit
         binary.ZF = (val16 == 0);

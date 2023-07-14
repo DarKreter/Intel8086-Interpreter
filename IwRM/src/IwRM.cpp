@@ -88,7 +88,7 @@ void I2RM_BASIC::SetRM(Binary_t& binary, uint16_t val, bool log)
 {
     if(frame.decoded.mod == 0x03)
         // if mod == 11, rm is treated like reg
-        binary.GetReg(frame.decoded.w, frame.decoded.rm) = val;
+        binary.SetReg(frame.decoded.w, frame.decoded.rm, val);
     else if(frame.decoded.mod == 0 && frame.decoded.rm == 6) {
         uint16_t addr =
             frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);

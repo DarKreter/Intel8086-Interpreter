@@ -47,7 +47,7 @@ void DIV::Execute(Binary_t& binary)
 }
 void SAR::Execute(Binary_t& binary)
 {
-    int16_t& reg = (int16_t&)binary.GetReg(frame.decoded.w, frame.decoded.rm);
+    int16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.rm);
     int32_t val;
     int16_t val16;
     int8_t val8;
@@ -63,12 +63,12 @@ void SAR::Execute(Binary_t& binary)
                 binary.OF = binary.OF;
                 binary.CF = c_rshift(reg, (binary.c.l & 0x1f));
 
-                reg = val16;
+                binary.SetReg(frame.decoded.w, frame.decoded.rm, val16);
             }
         }
         else {
             val16 = val = reg >> 1;
-            reg = val16;
+            binary.SetReg(frame.decoded.w, frame.decoded.rm, val16);
 
             binary.ZF = (val16 == 0);
             binary.SF = (val16 < 0);
@@ -80,7 +80,7 @@ void SAR::Execute(Binary_t& binary)
         if(frame.decoded.v) {
             if(binary.c.l) {
                 val8 = val = (uint8_t)reg >> (binary.c.l & 0x1f);
-                (uint8_t&)reg = val8;
+                binary.SetReg(frame.decoded.w, frame.decoded.rm, val8);
 
                 binary.ZF = (val8 == 0);
                 binary.SF = (val8 < 0);
@@ -90,7 +90,7 @@ void SAR::Execute(Binary_t& binary)
         }
         else {
             val8 = val = (uint8_t)reg >> 1;
-            (uint8_t&)reg = val8;
+            binary.SetReg(frame.decoded.w, frame.decoded.rm, val8);
             binary.ZF = (val8 == 0);
             binary.SF = (val8 < 0);
             binary.OF = false;
@@ -100,7 +100,7 @@ void SAR::Execute(Binary_t& binary)
 }
 void SHL::Execute(Binary_t& binary)
 {
-    uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.rm);
+    uint16_t reg = binary.GetReg(frame.decoded.w, frame.decoded.rm);
     int16_t val16;
     int32_t val;
 
@@ -119,12 +119,12 @@ void SHL::Execute(Binary_t& binary)
                 binary.OF = ((val16 >> 15) & 1) != carry;
                 binary.CF = carry;
 
-                reg = val16;
+                binary.SetReg(frame.decoded.w, frame.decoded.rm, val16);
             }
         }
         else {
             val16 = val = (reg << 1);
-            reg = val16;
+            binary.SetReg(frame.decoded.w, frame.decoded.rm, val16);
             uint8_t carry = c_lshift(reg, 1);
 
             binary.ZF = (val16 == 0);

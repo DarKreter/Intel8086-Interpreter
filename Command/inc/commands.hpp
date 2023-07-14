@@ -141,10 +141,12 @@ struct CALL_IS : public Command_t {
 
 protected:
     // 11111111 mod(2)010r/m(3)
+    // Last bit of pattern is always 1, and we need to assume 1 for w
     union {
         uint8_t raw[size_max];
         struct {
-            uint8_t : 8;
+            uint8_t : 7;
+            uint8_t w : 1;
             uint8_t rm : 3;
             uint8_t : 3;
             uint8_t mod : 2;

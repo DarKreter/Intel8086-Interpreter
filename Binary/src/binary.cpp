@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <iostream>
 
-uint16_t& Binary_t::GetReg(uint8_t w, uint8_t reg)
+uint16_t Binary_t::GetReg(const uint8_t& w, const uint8_t& reg) const
 {
     if(w == 1) {
         switch(reg) {
@@ -28,27 +28,86 @@ uint16_t& Binary_t::GetReg(uint8_t w, uint8_t reg)
     else {
         switch(reg) {
         case 0:
-            return reinterpret_cast<uint16_t&>(a.l);
+            return a.l;
         case 1:
-            return reinterpret_cast<uint16_t&>(c.l);
+            return c.l;
         case 2:
-            return reinterpret_cast<uint16_t&>(d.l);
+            return d.l;
         case 3:
-            return reinterpret_cast<uint16_t&>(b.l);
+            return b.l;
         case 4:
-            return reinterpret_cast<uint16_t&>(a.h);
+            return a.h;
         case 5:
-            return reinterpret_cast<uint16_t&>(c.h);
+            return c.h;
         case 6:
-            return reinterpret_cast<uint16_t&>(d.h);
+            return d.h;
         case 7:
-            return reinterpret_cast<uint16_t&>(b.h);
+            return b.h;
         }
     }
-    return ax;
+    return 0xFFFF;
 }
 
-uint16_t Binary_t::GetRM_mem(uint8_t rm)
+void Binary_t::SetReg(const uint8_t& w, const uint8_t& reg, uint16_t val)
+{
+    if(w == 1) {
+        switch(reg) {
+        case 0:
+            ax = val;
+            break;
+        case 1:
+            cx = val;
+            break;
+        case 2:
+            dx = val;
+            break;
+        case 3:
+            bx = val;
+            break;
+        case 4:
+            sp = val;
+            break;
+        case 5:
+            bp = val;
+            break;
+        case 6:
+            si = val;
+            break;
+        case 7:
+            di = val;
+            break;
+        }
+    }
+    else {
+        switch(reg) {
+        case 0:
+            a.l = static_cast<uint8_t>(val);
+            break;
+        case 1:
+            c.l = static_cast<uint8_t>(val);
+            break;
+        case 2:
+            d.l = static_cast<uint8_t>(val);
+            break;
+        case 3:
+            b.l = static_cast<uint8_t>(val);
+            break;
+        case 4:
+            a.h = static_cast<uint8_t>(val);
+            break;
+        case 5:
+            c.h = static_cast<uint8_t>(val);
+            break;
+        case 6:
+            d.h = static_cast<uint8_t>(val);
+            break;
+        case 7:
+            b.h = static_cast<uint8_t>(val);
+        }
+    }
+}
+
+uint16_t Binary_t::GetRM_mem(uint8_t rm) const
 {
     switch(rm) {
     case 0:
