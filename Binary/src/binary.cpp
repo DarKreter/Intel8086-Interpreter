@@ -3,6 +3,36 @@
 #include <cstdio>
 #include <iostream>
 
+void Binary_t::PrintStatus() const
+{
+    printf("%04x %04x %04x %04x %04x %04x %04x %04x %c%c%c%c ", ax, bx, cx, dx,
+           sp, bp, si, di, ((OF) ? 'O' : '-'), ((SF) ? 'S' : '-'),
+           ((ZF) ? 'Z' : '-'), ((CF) ? 'C' : '-'));
+}
+
+uint16_t Binary_t::GetRM_mem(uint8_t rm) const
+{
+    switch(rm) {
+    case 0:
+        return bx + si;
+    case 1:
+        return bx + di;
+    case 2:
+        return bp + si;
+    case 3:
+        return bp + di;
+    case 4:
+        return si;
+    case 5:
+        return di;
+    case 6:
+        return bp;
+    case 7:
+        return bx;
+    default:
+        return 0;
+    }
+}
 uint16_t Binary_t::GetReg(const uint8_t& w, const uint8_t& reg) const
 {
     if(w == 1) {
@@ -47,8 +77,7 @@ uint16_t Binary_t::GetReg(const uint8_t& w, const uint8_t& reg) const
     }
     return 0xFFFF;
 }
-
-void Binary_t::SetReg(const uint8_t& w, const uint8_t& reg, uint16_t val)
+void Binary_t::SetReg(const uint8_t& w, const uint8_t& reg, const uint16_t& val)
 {
     if(w == 1) {
         switch(reg) {
@@ -107,39 +136,8 @@ void Binary_t::SetReg(const uint8_t& w, const uint8_t& reg, uint16_t val)
     }
 }
 
-uint16_t Binary_t::GetRM_mem(uint8_t rm) const
-{
-    switch(rm) {
-    case 0:
-        return bx + si;
-    case 1:
-        return bx + di;
-    case 2:
-        return bp + si;
-    case 3:
-        return bp + di;
-    case 4:
-        return si;
-    case 5:
-        return di;
-    case 6:
-        return bp;
-    case 7:
-        return bx;
-    default:
-        return 0;
-    }
-}
-
-void Binary_t::PrintStatus()
-{
-    printf("%04x %04x %04x %04x %04x %04x %04x %04x %c%c%c%c ", ax, bx, cx, dx,
-           sp, bp, si, di, ((OF) ? 'O' : '-'), ((SF) ? 'S' : '-'),
-           ((ZF) ? 'Z' : '-'), ((CF) ? 'C' : '-'));
-}
-
-void Binary_t::StackInit(std::vector<std::string> argv,
-                         std::vector<std::string> envp)
+void Binary_t::StackInit(const std::vector<std::string>& argv,
+                         const std::vector<std::string>& envp)
 {
     for(size_t i = 0; i < dataSegmentSize; i++)
         stack[i] = data[i];
@@ -208,6 +206,28 @@ void Binary_t::StackInit(std::vector<std::string> argv,
     while(sp != 0)
         stack[sp++] = 0;
     sp = sp - len;
+}
+
+void Binary_t::Push(uint16_t value)
+{
+    stack[--sp] = value >> 8;
+    stack[--sp] = value;
+}
+uint16_t Binary_t::Pop()
+{
+    uint16_t temp = stack[sp++];
+    return temp | (stack[sp++] << 8);
+}
+void Binary_t::JumpDS(int16_t disp)
+{
+    textPos += disp;
+    text += disp;
+}
+void Binary_t::JumpIS(int16_t disp)
+{
+    auto* begin = text - textPos;
+    textPos = disp;
+    text = begin + textPos;
 }
 
 Binary_t::Binary_t(uint8_t* fileContent)

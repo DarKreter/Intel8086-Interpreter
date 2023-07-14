@@ -48,14 +48,19 @@ struct Binary_t {
     uint16_t sp, bp, si, di;
     // flags
     uint8_t OF : 1, DF : 1, SF : 1, ZF : 1, CF : 1;
+
+    void PrintStatus() const;
     uint16_t GetRM_mem(uint8_t rm) const;
-
     uint16_t GetReg(const uint8_t& w, const uint8_t& reg) const;
-    void SetReg(const uint8_t& w, const uint8_t& reg, uint16_t val);
+    void SetReg(const uint8_t& w, const uint8_t& reg, const uint16_t& val);
 
-    void PrintStatus();
-    void StackInit(std::vector<std::string> argv,
-                   std::vector<std::string> envp);
+    void StackInit(const std::vector<std::string>& argv,
+                   const std::vector<std::string>& envp);
+
+    void Push(uint16_t);
+    uint16_t Pop();
+    void JumpDS(int16_t);
+    void JumpIS(int16_t);
 
     Binary_t(uint8_t*);
     ~Binary_t();

@@ -22,54 +22,6 @@ void MOV_I2R::Disassemble(size_t pos) const
     if(frame.decoded.w == 1)
         printf("%02x", frame.decoded.data[0]);
 }
-
-void CALL_DS::Execute(Binary_t& binary)
-{
-    uint16_t pos = binary.textPos + 3;
-    binary.stack[--binary.sp] = pos >> 8;
-    binary.stack[--binary.sp] = pos;
-
-    binary.textPos += (int)(frame.decoded.disp);
-    binary.text += (int)(frame.decoded.disp);
-}
-
-void CALL_IS::Execute(Binary_t& binary)
-{
-    uint16_t pos = binary.textPos + 2;
-    uint16_t disp = binary.GetReg(1, frame.decoded.rm);
-    binary.stack[--binary.sp] = pos >> 8;
-    binary.stack[--binary.sp] = pos;
-
-    uint8_t* begin = binary.text - binary.textPos;
-    binary.textPos = (int)(disp - 2);
-    binary.text = begin + binary.textPos;
-}
-
-void MOV_I2R::Execute(Binary_t& binary)
-{
-    uint16_t value;
-    if(frame.decoded.w == 0)
-        value = frame.decoded.data[0];
-    else
-        value = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
-
-    binary.SetReg(frame.decoded.w, frame.decoded.reg, value);
-}
-void RET_wSAI::Execute(Binary_t& binary)
-{
-    uint16_t pos;
-    uint16_t disp = frame.decoded.disp_low;
-    disp += (frame.decoded.disp_high << 8);
-
-    pos = binary.stack[binary.sp++];
-    pos += binary.stack[binary.sp++] << 8;
-    pos -= 3;
-    binary.sp += disp;
-
-    binary.text += pos - binary.textPos;
-    binary.textPos = pos;
-}
-
 void RET_wSAI::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
@@ -107,12 +59,55 @@ void INT::Disassemble(size_t pos) const
 
     std::cout << std::hex << (int)frame.raw[1];
 }
+void MOV_MwA::Disassemble(size_t pos) const
+{
+    Command_t::Disassemble(pos);
+    if(frame.decoded.w == 0)
+        printf("al, ");
+    else
+        printf("ax, ");
+
+    printf("[%02x%02x]", frame.decoded.addr_high, frame.decoded.addr_low);
+}
+
+void CALL_DS::Execute(Binary_t& binary)
+{
+    // Mark return position to position after CALL
+    // Push return address into stack
+    binary.Push(binary.textPos + frame_length);
+
+    // Move program to new position
+    binary.JumpDS(frame.decoded.disp);
+}
+void CALL_IS::Execute(Binary_t& binary)
+{
+    // Mark return position to position after CALL
+    binary.Push(binary.textPos + frame_length);
+
+    uint16_t disp = binary.GetReg(1, frame.decoded.rm);
+
+    // Move program to new position
+    binary.JumpIS(disp - frame_length);
+}
+void MOV_I2R::Execute(Binary_t& binary)
+{
+    uint16_t value = frame.decoded.data[0];
+    if(frame.decoded.w)
+        value += (frame.decoded.data[1] << 8);
+
+    binary.SetReg(frame.decoded.w, frame.decoded.reg, value);
+}
+void RET_wSAI::Execute(Binary_t& binary)
+{
+    binary.JumpIS(binary.Pop() - frame_length);
+
+    binary.sp += (frame.decoded.disp_low | (frame.decoded.disp_high << 8));
+}
 void INT::Execute(Binary_t& binary)
 {
     message* mess = (message*)&binary.stack[binary.bx];
     uint16_t addr, fd, request, length;
     int ret;
-    // printf("%d\n", mess->m_type);
     if(LOG)
         printf("\n");
     switch(mess->m_type) {
@@ -130,8 +125,6 @@ void INT::Execute(Binary_t& binary)
             fflush(stdout);
         }
         ret = write(fd, &binary.stack[addr], length);
-
-        // (ret == -1) ? (mess->m_type = -errno) : (mess->m_type = ret);
         mess->m_type = ret;
         if(LOG)
             printf(" => %d>", ret);
@@ -179,26 +172,22 @@ void INT::Execute(Binary_t& binary)
         printf("Unkown system call - %d\n", mess->m_type);
     }
 }
-void MOV_MwA::Disassemble(size_t pos) const
-{
-    Command_t::Disassemble(pos);
-    if(frame.decoded.w == 0)
-        printf("al, ");
-    else
-        printf("ax, ");
-
-    printf("[%02x%02x]", frame.decoded.addr_high, frame.decoded.addr_low);
-}
 
 Command_t::Command_t(uint8_t _frame_length, const char* _name)
     : frame_length{_frame_length}, name{_name}
 {
 }
 
-void Command_t::PrintStatus(Binary_t& binary)
+void Command_t::PrintStatus(const Binary_t& binary) const
 {
     binary.PrintStatus();
     Disassemble(binary.textPos);
+}
+
+void Command_t::Read(uint8_t* tab)
+{
+    for(int i = 0; i < frame_length; i++)
+        SetFramePart(i, *(tab++));
 }
 
 void Command_t::Disassemble(size_t pos) const
@@ -212,11 +201,7 @@ void Command_t::Disassemble(size_t pos) const
 
     printf("%-*s %s ", 13, hexBuffer, name);
 }
-void Command_t::Read(uint8_t* tab)
-{
-    for(int i = 0; i < frame_length; i++)
-        SetFramePart(i, *(tab++));
-}
+
 std::map<uint8_t, std::string> regs_8 = {{0, "al"}, {1, "cl"}, {2, "dl"},
                                          {3, "bl"}, {4, "ah"}, {5, "ch"},
                                          {6, "dh"}, {7, "bh"}};

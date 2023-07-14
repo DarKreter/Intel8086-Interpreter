@@ -23,11 +23,13 @@ protected:
     virtual void SetFramePart(uint8_t, uint8_t) = 0;
 
 public:
-    virtual uint8_t GetFrameLength() { return frame_length; }
+    uint8_t GetFrameLength() { return frame_length; }
+    void PrintStatus(const Binary_t&) const;
+
     virtual void Read(uint8_t*);
     virtual void Disassemble(size_t pos) const;
-    void PrintStatus(Binary_t&);
     virtual void Execute(Binary_t&);
+
     virtual ~Command_t() = default;
 };
 
@@ -52,9 +54,10 @@ protected:
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
 
 public:
-    MOV_I2R() : Command_t(size_max, "mov") { ; }
     void Disassemble(size_t) const override;
     void Execute(Binary_t&) override;
+
+    MOV_I2R() : Command_t(size_max, "mov") { ; }
     ~MOV_I2R() = default;
 };
 
@@ -77,9 +80,10 @@ protected:
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
 
 public:
-    INT() : Command_t(size_max, "int") { ; }
-    void Execute(Binary_t&) override;
     void Disassemble(size_t) const override;
+    void Execute(Binary_t&) override;
+
+    INT() : Command_t(size_max, "int") { ; }
     ~INT() = default;
 };
 
@@ -103,9 +107,9 @@ protected:
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
 
 public:
-    IN_PORT() : Command_t(size_max, "in") { ; }
-
     void Disassemble(size_t) const override;
+
+    IN_PORT() : Command_t(size_max, "in") { ; }
     ~IN_PORT() = default;
 };
 struct IN_PORT_VAR : public Command_t {
@@ -128,9 +132,9 @@ protected:
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
 
 public:
-    IN_PORT_VAR() : Command_t(size_max, "in") { ; }
-
     void Disassemble(size_t) const override;
+
+    IN_PORT_VAR() : Command_t(size_max, "in") { ; }
     ~IN_PORT_VAR() = default;
 };
 
@@ -157,9 +161,10 @@ protected:
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
 
 public:
-    CALL_IS() : Command_t(size_max, "call") { ; }
     void Execute(Binary_t&) override;
     void Disassemble(size_t) const override;
+
+    CALL_IS() : Command_t(size_max, "call") { ; }
     ~CALL_IS() = default;
 };
 struct CALL_DS : public Command_t {
@@ -236,8 +241,9 @@ protected:
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
 
 public:
-    MOV_MwA() : Command_t(size_max, "mov") { ; }
     void Disassemble(size_t) const override;
+
+    MOV_MwA() : Command_t(size_max, "mov") { ; }
     ~MOV_MwA() = default;
 };
 
