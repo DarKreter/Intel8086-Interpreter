@@ -2,7 +2,7 @@
 
 void Singleton::Disassemble(size_t pos) { Command_t::Disassemble(pos); }
 
-void RET::Execute(Binary_t& binary, bool)
+void RET::Execute(Binary_t& binary)
 {
     uint16_t pos = binary.stack[binary.sp++];
     pos += (binary.stack[binary.sp++] << 8);
@@ -12,12 +12,12 @@ void RET::Execute(Binary_t& binary, bool)
     binary.textPos = pos;
 }
 
-void CLD::Execute(Binary_t&, bool)
+void CLD::Execute(Binary_t&)
 {
     // TODO
 }
 
-void CBW::Execute(Binary_t& binary, bool)
+void CBW::Execute(Binary_t& binary)
 {
     uint16_t& src = binary.GetReg(0, 0);
     uint16_t& dst = binary.GetReg(1, 0);
@@ -26,7 +26,7 @@ void CBW::Execute(Binary_t& binary, bool)
     dst = v;
 }
 
-void CWD::Execute(Binary_t& binary, bool)
+void CWD::Execute(Binary_t& binary)
 {
     int32_t val = (int16_t)binary.ax;
     binary.dx = (val >> 16);

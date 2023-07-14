@@ -13,7 +13,7 @@ void XCHG_RwA::Disassemble(size_t pos)
     std::cout << regs_16[frame.decoded.reg] << ", ax";
 }
 
-void XCHG_RwA::Execute(Binary_t& binary, bool)
+void XCHG_RwA::Execute(Binary_t& binary)
 {
     uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
     uint16_t tmp = reg;
@@ -21,7 +21,7 @@ void XCHG_RwA::Execute(Binary_t& binary, bool)
     binary.ax = tmp;
 }
 
-void PUSH_R::Execute(Binary_t& binary, bool)
+void PUSH_R::Execute(Binary_t& binary)
 {
     uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
 
@@ -29,7 +29,7 @@ void PUSH_R::Execute(Binary_t& binary, bool)
     binary.stack[--binary.sp] = reg;
 }
 
-void POP_R::Execute(Binary_t& binary, bool)
+void POP_R::Execute(Binary_t& binary)
 {
     uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
 
@@ -37,7 +37,7 @@ void POP_R::Execute(Binary_t& binary, bool)
     reg += binary.stack[binary.sp++] << 8;
 }
 
-void INC_R::Execute(Binary_t& binary, bool)
+void INC_R::Execute(Binary_t& binary)
 {
     uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
     int32_t val;
@@ -51,7 +51,7 @@ void INC_R::Execute(Binary_t& binary, bool)
     binary.CF = binary.CF;
 }
 
-void DEC_R::Execute(Binary_t& binary, bool)
+void DEC_R::Execute(Binary_t& binary)
 {
     uint16_t& reg = binary.GetReg(1, frame.decoded.reg);
     int16_t val16;

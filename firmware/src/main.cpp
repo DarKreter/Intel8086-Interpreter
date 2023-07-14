@@ -7,12 +7,9 @@ using namespace std;
 
 int main(int argc, char* argv[], char** envp)
 {
-    enum class Mode_e {
-        int_nolog = 0,
-        int_log,
-        diss
-    } mode = Mode_e::int_nolog;
     uint8_t count = 1;
+    bool run = false;
+    LOG = false;
 
     if(argc < 2) {
         printf("No command-line arguments!\n");
@@ -20,9 +17,9 @@ int main(int argc, char* argv[], char** envp)
     }
     while(argv[count][0] == '-') {
         if(strcmp(argv[count], "-d") == 0)
-            mode = Mode_e::diss;
+            LOG = true;
         else if(strcmp(argv[count], "-m") == 0)
-            mode = Mode_e::int_log;
+            LOG = run = true;
         else {
             printf("Unkown flag: %s\n", argv[count]);
             exit(5);
@@ -47,20 +44,10 @@ int main(int argc, char* argv[], char** envp)
     binary.StackInit(_argv, _envp);
     free(fileContent);
 
-    // for(size_t i = 0; i < binary.dataSegmentSize; i++)
-    //     std::cout << (int)binary.data[i] << std::endl;
-    // exit(1);
-
-    if(mode == Mode_e::diss)
-        Analyze(binary);
-    else if(mode == Mode_e::int_log)
-        Execute(binary, (bool)mode);
-    else if(mode == Mode_e::int_nolog)
+    if(run)
         Execute(binary);
-    else {
-        std::cout << "Unkown error!" << std::endl;
-        exit(2);
-    }
+    else
+        Analyze(binary);
 
     return 0;
 }

@@ -44,7 +44,7 @@ struct REP_SCAS : public REP {
     // 1111001 z(1) 1010111 w(1)
     constexpr static std::string_view pattern = "111100101010111";
 
-    // void Execute(Binary_t&, bool = false) override;
+    // void Execute(Binary_t& ) override;
     REP_SCAS() : REP("rep scas") { ; }
     ~REP_SCAS() = default;
 };

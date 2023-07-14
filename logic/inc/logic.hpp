@@ -48,7 +48,7 @@ struct SHL : public LGC_BASIC {
     // 110100v(1)w(1) mod(2)100r/m(3)
     constexpr static std::string_view pattern = "110100XXXX100";
 
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     SHL() : LGC_BASIC("shl") { ; }
     ~SHL() = default;
 };
@@ -56,7 +56,7 @@ struct SAR : public LGC_BASIC {
     // 110100 v(1)w(1) mod(2) 111 r/m(3)
     constexpr static std::string_view pattern = "110100XXXX111";
 
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     SAR() : LGC_BASIC("sar") { ; }
     ~SAR() = default;
 };
@@ -65,7 +65,7 @@ struct DIV : public LGC_BASIC {
     constexpr static std::string_view pattern = "1111011XXX110";
 
     void Disassemble(size_t) override;
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     DIV() : LGC_BASIC("div") { ; }
     ~DIV() = default;
 };

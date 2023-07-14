@@ -10,6 +10,7 @@
 extern std::map<uint8_t, std::string> regs_8;
 extern std::map<uint8_t, std::string> regs_16;
 extern std::map<uint8_t, std::string> rm_memory;
+extern bool LOG;
 
 class Command_t {
 protected:
@@ -25,7 +26,7 @@ public:
     virtual void Read(uint8_t*);
     virtual void Disassemble(size_t pos);
     virtual void PrintStatus(Binary_t&);
-    virtual void Execute(Binary_t&, bool = false);
+    virtual void Execute(Binary_t&);
     virtual ~Command_t() = default;
 };
 
@@ -51,7 +52,7 @@ protected:
 public:
     MOV_I2R() : Command_t(size_max, "mov") { ; }
     void Disassemble(size_t) override;
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     ~MOV_I2R() = default;
 };
 
@@ -75,7 +76,7 @@ protected:
 public:
     INT() : Command_t(size_max, "int") { ; }
     void PrintStatus(Binary_t&) override;
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     void Disassemble(size_t) override;
     ~INT() = default;
 };
@@ -150,7 +151,7 @@ protected:
 
 public:
     CALL_IS() : Command_t(size_max, "call") { ; }
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     void Disassemble(size_t) override;
     ~CALL_IS() = default;
 };
@@ -172,7 +173,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
 
 public:
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     void Disassemble(size_t) override;
 
     CALL_DS() : Command_t(size_max, "call") { ; }
@@ -199,7 +200,7 @@ protected:
 
 public:
     void Disassemble(size_t) override;
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
 
     RET_wSAI() : Command_t(size_max, "ret") { ; }
     ~RET_wSAI() = default;

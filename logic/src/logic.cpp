@@ -21,7 +21,7 @@ void LGC_BASIC::Disassemble(size_t pos)
 }
 void DIV::Disassemble(size_t pos) { PrintBase(pos); }
 
-void DIV::Execute(Binary_t& binary, bool)
+void DIV::Execute(Binary_t& binary)
 {
     int32_t val;
     if(frame.decoded.w) {
@@ -40,7 +40,7 @@ void DIV::Execute(Binary_t& binary, bool)
         binary.a.h = rem;
     }
 }
-void SAR::Execute(Binary_t& binary, bool)
+void SAR::Execute(Binary_t& binary)
 {
     int16_t& reg = (int16_t&)binary.GetReg(frame.decoded.w, frame.decoded.rm);
     int32_t val;
@@ -94,7 +94,7 @@ void SAR::Execute(Binary_t& binary, bool)
         }
     }
 }
-void SHL::Execute(Binary_t& binary, bool)
+void SHL::Execute(Binary_t& binary)
 {
     uint16_t& reg = binary.GetReg(frame.decoded.w, frame.decoded.rm);
     int16_t val16;

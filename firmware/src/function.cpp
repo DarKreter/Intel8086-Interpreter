@@ -16,10 +16,10 @@
 
 using namespace std;
 
-void Execute(Binary_t& binary, bool log)
+void Execute(Binary_t& binary)
 {
     Command_t* cmd = nullptr;
-    if(log)
+    if(LOG)
         printf(" AX   BX   CX   DX   SP   BP   SI   DI  FLAGS IP\n");
     while(binary.textPos < binary.textSegmentSize) {
         cmd = CheckAllCommands<
@@ -43,12 +43,12 @@ void Execute(Binary_t& binary, bool log)
         }
         cmd->Read(binary.text);
         // printf("!%x %x!", binary.stack[0xffba], binary.stack[0xffbb]);
-        if(log)
+        if(LOG)
             cmd->PrintStatus(binary);
         else
             cmd->Disassemble(binary.textPos);
         try {
-            cmd->Execute(binary, log);
+            cmd->Execute(binary);
         }
         catch(std::runtime_error& e) {
             break;
@@ -58,7 +58,7 @@ void Execute(Binary_t& binary, bool log)
             binary.text += cmd->GetFrameLength();
         delete cmd;
         cmd = nullptr;
-        if(log)
+        if(LOG)
             std::cout << std::endl;
     }
 }
@@ -82,7 +82,6 @@ void Analyze(Binary_t& binary)
         if(cmd != nullptr)
             ;
         else {
-            // cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
             printf("%04x: %02x\t\t(undefined)", binary.textPos, *binary.text);
             binary.textPos++, binary.text++;
             continue;

@@ -8,7 +8,7 @@ void JMP_BASIC::Disassemble(size_t pos)
     // + 2, because actual position is after jump(jump is 2 byte long)
     printf("%04x", (int)(frame.decoded.disp + pos + 2));
 }
-void JMP_BASIC::Execute(Binary_t& binary, bool)
+void JMP_BASIC::Execute(Binary_t& binary)
 {
     binary.textPos += (int)(frame.decoded.disp);
     binary.text += (int)(frame.decoded.disp);
@@ -33,7 +33,7 @@ void JMP_IS::Disassemble(size_t pos)
         std::cout << regs_16[frame.decoded.rm];
 }
 
-void JMP_DS::Execute(Binary_t& binary, bool)
+void JMP_DS::Execute(Binary_t& binary)
 {
     uint16_t disp = (frame.decoded.disp_low + (frame.decoded.disp_high << 8));
     // printf("!%x!", disp);
@@ -42,7 +42,7 @@ void JMP_DS::Execute(Binary_t& binary, bool)
     binary.text = start + binary.textPos;
 }
 
-void JMP_IS::Execute(Binary_t& binary, bool)
+void JMP_IS::Execute(Binary_t& binary)
 {
     uint16_t disp = binary.GetReg(1, frame.decoded.rm) - 2;
 
@@ -51,71 +51,71 @@ void JMP_IS::Execute(Binary_t& binary, bool)
     binary.text = start + binary.textPos;
 }
 
-void JNE::Execute(Binary_t& binary, bool b)
+void JNE::Execute(Binary_t& binary)
 {
     if(!binary.ZF) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
 
-void JB::Execute(Binary_t& binary, bool b)
+void JB::Execute(Binary_t& binary)
 {
     if(binary.CF) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
 
-void JNB::Execute(Binary_t& binary, bool b)
+void JNB::Execute(Binary_t& binary)
 {
     if(!binary.CF) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
 
-void JNBE::Execute(Binary_t& binary, bool b)
+void JNBE::Execute(Binary_t& binary)
 {
     if(!binary.CF && !binary.ZF) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
 
-void JE::Execute(Binary_t& binary, bool b)
+void JE::Execute(Binary_t& binary)
 {
     if(binary.ZF) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
 
-void JBE::Execute(Binary_t& binary, bool b)
+void JBE::Execute(Binary_t& binary)
 {
     if(binary.CF || binary.ZF) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
 
-void JNL::Execute(Binary_t& binary, bool b)
+void JNL::Execute(Binary_t& binary)
 {
     if(binary.SF == binary.OF) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
 
-void JNLE::Execute(Binary_t& binary, bool b)
+void JNLE::Execute(Binary_t& binary)
 {
     if(!binary.ZF && (binary.SF == binary.OF)) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
 
-void JLE::Execute(Binary_t& binary, bool b)
+void JLE::Execute(Binary_t& binary)
 {
     if(binary.ZF || (binary.SF != binary.OF)) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }
-void JL::Execute(Binary_t& binary, bool b)
+void JL::Execute(Binary_t& binary)
 {
     if(binary.SF != binary.OF) {
-        JMP_BASIC::Execute(binary, b);
+        JMP_BASIC::Execute(binary);
     }
 }

@@ -20,7 +20,7 @@ void IwA::Disassemble(size_t pos)
         printf("%x", frame.decoded.data[0]);
 }
 
-void CMP_IwA::Execute(Binary_t& binary, bool)
+void CMP_IwA::Execute(Binary_t& binary)
 {
     uint16_t data;
     int32_t val;
@@ -47,7 +47,7 @@ void CMP_IwA::Execute(Binary_t& binary, bool)
     }
 }
 
-void SUB_IfA::Execute(Binary_t& binary, bool)
+void SUB_IfA::Execute(Binary_t& binary)
 {
     int32_t val;
     int16_t val16;

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void Command_t::Execute(Binary_t&, bool) { ; }
+void Command_t::Execute(Binary_t&) { ; }
 
 void MOV_I2R::Disassemble(size_t pos)
 {
@@ -23,18 +23,17 @@ void MOV_I2R::Disassemble(size_t pos)
         printf("%02x", frame.decoded.data[0]);
 }
 
-void CALL_DS::Execute(Binary_t& binary, bool)
+void CALL_DS::Execute(Binary_t& binary)
 {
     uint16_t pos = binary.textPos + 3;
     binary.stack[--binary.sp] = pos >> 8;
     binary.stack[--binary.sp] = pos;
-    // printf("!CAD:%x!", pos);
 
     binary.textPos += (int)(frame.decoded.disp);
     binary.text += (int)(frame.decoded.disp);
 }
 
-void CALL_IS::Execute(Binary_t& binary, bool)
+void CALL_IS::Execute(Binary_t& binary)
 {
     uint16_t pos = binary.textPos + 2;
     uint16_t disp = binary.GetReg(1, frame.decoded.rm);
@@ -46,7 +45,7 @@ void CALL_IS::Execute(Binary_t& binary, bool)
     binary.text = begin + binary.textPos;
 }
 
-void MOV_I2R::Execute(Binary_t& binary, bool)
+void MOV_I2R::Execute(Binary_t& binary)
 {
     auto& reg = binary.GetReg(frame.decoded.w, frame.decoded.reg);
 
@@ -55,7 +54,7 @@ void MOV_I2R::Execute(Binary_t& binary, bool)
     else
         reg = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
 }
-void RET_wSAI::Execute(Binary_t& binary, bool)
+void RET_wSAI::Execute(Binary_t& binary)
 {
     uint16_t pos;
     uint16_t disp = frame.decoded.disp_low;
@@ -66,7 +65,6 @@ void RET_wSAI::Execute(Binary_t& binary, bool)
     pos -= 3;
     binary.sp += disp;
 
-    // printf("!%x!", pos);
     binary.text += pos - binary.textPos;
     binary.textPos = pos;
 }
@@ -102,23 +100,22 @@ void CALL_IS::Disassemble(size_t pos)
 
     cout << regs_16[frame.decoded.rm];
 }
-
 void INT::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
 
     std::cout << std::hex << (int)frame.raw[1];
 }
-void INT::Execute(Binary_t& binary, bool log)
+void INT::Execute(Binary_t& binary)
 {
     message* mess = (message*)&binary.stack[binary.bx];
     uint16_t addr, fd, request, length;
     int ret;
-    if(log)
+    if(LOG)
         printf("\n");
     switch(mess->m_type) {
     case 1: // exit
-        if(log)
+        if(LOG)
             printf("<exit(%d)>\n", mess->m_m1.m1i1);
         exit(mess->m_m1.m1i1);
         break;
@@ -126,14 +123,14 @@ void INT::Execute(Binary_t& binary, bool log)
         fd = mess->m_m1.m1i1;
         addr = mess->m_m1.m1p1;
         length = mess->m_m1.m1i2;
-        if(log) {
+        if(LOG) {
             printf("<write(%d, 0x%04x, %d)", fd, addr, length);
             fflush(stdout);
         }
         ret = write(fd, &binary.stack[addr], length);
         // (ret == -1) ? (mess->m_type = -errno) : (mess->m_type = ret);
         mess->m_type = ret;
-        if(log)
+        if(LOG)
             printf(" => %d>", ret);
 
         binary.ax = 0;
@@ -143,19 +140,19 @@ void INT::Execute(Binary_t& binary, bool log)
         addr = mess->m_m1.m1p1;
         binary.ax = 0;
 
-        if(log)
+        if(LOG)
             printf("<brk(0x%04x) => ", addr);
 
         if(addr < binary.dataSegmentSize ||
            (addr >= ((binary.sp & ~0x3ff) - 0x400))) {
             errno = ENOMEM;
-            if(log)
+            if(LOG)
                 printf("ENOMEM>");
 
             mess->m_type = -errno;
         }
         else {
-            if(log)
+            if(LOG)
                 printf("0>");
 
             mess->m_type = 0;
@@ -168,7 +165,7 @@ void INT::Execute(Binary_t& binary, bool log)
         request = mess->m_m1.m1i3;
         addr = mess->m_m1.m1p5;
 
-        if(log)
+        if(LOG)
             printf("<ioctl(%d, 0x%04x, 0x%04x)>", fd, request, addr);
         errno = EINVAL;
         mess->m_type = -errno;
@@ -179,7 +176,6 @@ void INT::Execute(Binary_t& binary, bool log)
     }
 }
 void INT::PrintStatus(Binary_t& bin) { Command_t::PrintStatus(bin); }
-
 void MOV_MwA::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
@@ -223,5 +219,6 @@ std::map<uint8_t, std::string> regs_16 = {{0, "ax"}, {1, "cx"}, {2, "dx"},
 std::map<uint8_t, std::string> rm_memory = {
     {0, "bx+si"}, {1, "bx+di"}, {2, "bp+si"}, {3, "bp+di"},
     {4, "si"},    {5, "di"},    {6, "bp"},    {7, "bx"}};
+bool LOG;
 
 #endif // COMMANDS_DISASSEMBLY

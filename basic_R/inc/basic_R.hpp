@@ -29,14 +29,14 @@ struct INC_R : public BASIC_R {
     // 01000 reg(3)
     constexpr static std::string_view pattern = "01000";
 
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     INC_R() : BASIC_R("inc") { ; }
     ~INC_R() = default;
 };
 struct POP_R : public BASIC_R {
     // 01011 reg(3)
     constexpr static std::string_view pattern = "01011";
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
 
     POP_R() : BASIC_R("pop") { ; }
     ~POP_R() = default;
@@ -45,7 +45,7 @@ struct DEC_R : public BASIC_R {
     // 01001 reg(3)
     constexpr static std::string_view pattern = "01001";
 
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     DEC_R() : BASIC_R("dec") { ; }
     ~DEC_R() = default;
 };
@@ -53,7 +53,7 @@ struct PUSH_R : public BASIC_R {
     // 01010 reg(3)
     constexpr static std::string_view pattern = "01010";
 
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     PUSH_R() : BASIC_R("push") { ; }
     ~PUSH_R() = default;
 };
@@ -62,7 +62,7 @@ struct XCHG_RwA : public BASIC_R {
     constexpr static std::string_view pattern = "10010";
 
     void Disassemble(size_t) override;
-    void Execute(Binary_t&, bool = false) override;
+    void Execute(Binary_t&) override;
     XCHG_RwA() : BASIC_R("xchg") { ; }
     ~XCHG_RwA() = default;
 };

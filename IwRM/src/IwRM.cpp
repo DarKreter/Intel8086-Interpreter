@@ -37,7 +37,7 @@ void I2RM_BASIC::PrintRM()
     }
 }
 
-uint16_t I2RM_BASIC::GetRM(Binary_t& binary, bool log)
+uint16_t I2RM_BASIC::GetRM(Binary_t& binary)
 {
     if(frame.decoded.mod == 0x03)
         // if mod == 11, rm is treated like reg
@@ -47,7 +47,7 @@ uint16_t I2RM_BASIC::GetRM(Binary_t& binary, bool log)
         uint16_t addr =
             frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
         uint16_t* val = (uint16_t*)&binary.stack[addr];
-        if(log)
+        if(LOG)
             printf(" ;[%04x]%04x", addr, *val);
         return *val;
     }
@@ -68,7 +68,7 @@ uint16_t I2RM_BASIC::GetRM(Binary_t& binary, bool log)
         }
         uint16_t addr = binary.GetRM_mem(frame.decoded.rm) + disp;
 
-        if(log) {
+        if(LOG) {
             if(frame.decoded.w == 1) {
                 // printf("!%x %x!", binary.stack[addr], binary.stack[addr +
                 // 1]);
@@ -85,7 +85,7 @@ uint16_t I2RM_BASIC::GetRM(Binary_t& binary, bool log)
     }
     return binary.GetReg(frame.decoded.w, frame.decoded.rm);
 }
-void I2RM_BASIC::SetRM(Binary_t& binary, uint16_t val, bool log)
+void I2RM_BASIC::SetRM(Binary_t& binary, uint16_t val)
 {
     if(frame.decoded.mod == 0x03)
         // if mod == 11, rm is treated like reg
@@ -95,7 +95,7 @@ void I2RM_BASIC::SetRM(Binary_t& binary, uint16_t val, bool log)
             frame.decoded.disp.d[0] + (frame.decoded.disp.d[1] << 8);
         uint16_t imm = frame.decoded.disp.d[2] + (frame.decoded.disp.d[3] << 8);
         uint16_t* val = (uint16_t*)&binary.stack[addr];
-        if(log)
+        if(LOG)
             printf(" ;[%04x]%04x", addr, *val);
         *val = imm;
     }
@@ -116,7 +116,7 @@ void I2RM_BASIC::SetRM(Binary_t& binary, uint16_t val, bool log)
         }
         uint16_t addr = binary.GetRM_mem(frame.decoded.rm) + disp;
         uint16_t prev_val = binary.stack[addr] + (binary.stack[addr + 1] << 8);
-        if(log)
+        if(LOG)
             printf(" ;[%04x]%04x", addr, prev_val);
 
         binary.stack[addr] = val;
@@ -186,11 +186,11 @@ void I2RM_BASIC_s::Disassemble(size_t pos)
     }
 }
 
-void TEST_IaRM::Execute(Binary_t& binary, bool log)
+void TEST_IaRM::Execute(Binary_t& binary)
 {
     uint16_t src = frame.decoded.disp.d[0 + offset] +
                    (frame.decoded.disp.d[0 + offset + 1] << 8);
-    uint16_t dst = GetRM(binary, log);
+    uint16_t dst = GetRM(binary);
     int16_t val16;
     int8_t val8;
 
@@ -210,11 +210,11 @@ void TEST_IaRM::Execute(Binary_t& binary, bool log)
     }
 }
 
-void AND_I2RM::Execute(Binary_t& binary, bool log)
+void AND_I2RM::Execute(Binary_t& binary)
 {
     uint16_t src = frame.decoded.disp.d[0 + offset] +
                    (frame.decoded.disp.d[0 + offset + 1] << 8);
-    uint16_t dst = GetRM(binary, log);
+    uint16_t dst = GetRM(binary);
     int16_t val16;
     int8_t val8;
     if(frame.decoded.s) {
@@ -223,7 +223,9 @@ void AND_I2RM::Execute(Binary_t& binary, bool log)
         binary.SF = (val16 < 0);
         binary.OF = false;
         binary.CF = false;
-        SetRM(binary, val16, false);
+        LOG = false;
+        SetRM(binary, val16);
+        LOG = true;
     }
     else if(frame.decoded.w) { // 16-bit
         val16 = (int16_t)dst & (int16_t)src;
@@ -231,7 +233,9 @@ void AND_I2RM::Execute(Binary_t& binary, bool log)
         binary.SF = (val16 < 0);
         binary.OF = false;
         binary.CF = false;
-        SetRM(binary, val16, false);
+        LOG = false;
+        SetRM(binary, val16);
+        LOG = true;
     }
     else {
         val8 = (int8_t)dst & (int8_t)src;
@@ -239,22 +243,24 @@ void AND_I2RM::Execute(Binary_t& binary, bool log)
         binary.SF = (val8 < 0);
         binary.OF = false;
         binary.CF = false;
-        SetRM(binary, val8, false);
+        LOG = false;
+        SetRM(binary, val8);
+        LOG = true;
     }
 }
-void OR_I2RM::Execute(Binary_t& binary, bool log)
+void OR_I2RM::Execute(Binary_t& binary)
 {
     uint16_t src = frame.decoded.disp.d[0 + offset] +
                    (frame.decoded.disp.d[0 + offset + 1] << 8);
-    uint16_t dst = GetRM(binary, log);
+    uint16_t dst = GetRM(binary);
     int16_t val16;
     int8_t val8;
 
     if(frame.decoded.w) { // 16-bit
         val16 = dst | src;
-        // printf("!%x %x!", dst, src);
-        SetRM(binary, val16, false);
-        // printf("!%x!", val16);
+        LOG = false;
+        SetRM(binary, val16);
+        LOG = true;
         // dst = val16;
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
@@ -271,11 +277,11 @@ void OR_I2RM::Execute(Binary_t& binary, bool log)
     }
 }
 
-void CMP_IwRM::Execute(Binary_t& binary, bool log)
+void CMP_IwRM::Execute(Binary_t& binary)
 {
     uint16_t src = frame.decoded.disp.d[0 + offset] +
                    (frame.decoded.disp.d[0 + offset + 1] << 8);
-    uint16_t dst = GetRM(binary, log);
+    uint16_t dst = GetRM(binary);
     int val;
     int16_t val16;
     int8_t val8;
@@ -302,11 +308,11 @@ void CMP_IwRM::Execute(Binary_t& binary, bool log)
         binary.ZF = (val8 == 0);
         binary.SF = (val8 < 0);
         binary.OF = (val8 != val);
-        binary.CF = dst < src;
+        binary.CF = (int8_t)dst < (int8_t)src;
     }
 }
 
-void SUB_IfRM::Execute(Binary_t& binary, bool log)
+void SUB_IfRM::Execute(Binary_t& binary)
 {
     uint16_t src;
     if(frame.decoded.s == 0 && frame.decoded.w == 1)
@@ -314,7 +320,7 @@ void SUB_IfRM::Execute(Binary_t& binary, bool log)
               (frame.decoded.disp.d[0 + offset + 1] << 8);
     else
         src = frame.decoded.disp.d[0 + offset];
-    uint16_t dst = GetRM(binary, log);
+    uint16_t dst = GetRM(binary);
     int val;
     int16_t val16;
     int8_t val8;
@@ -344,7 +350,7 @@ void SUB_IfRM::Execute(Binary_t& binary, bool log)
     }
 }
 
-void ADD_I2RM::Execute(Binary_t& binary, bool log)
+void ADD_I2RM::Execute(Binary_t& binary)
 {
     uint16_t src;
     if(frame.decoded.s == 0 && frame.decoded.w == 1)
@@ -352,19 +358,20 @@ void ADD_I2RM::Execute(Binary_t& binary, bool log)
               (frame.decoded.disp.d[0 + offset + 1] << 8);
     else
         src = frame.decoded.disp.d[0 + offset];
-    uint16_t dst = GetRM(binary, log);
+    uint16_t dst = GetRM(binary);
     int val;
     int16_t val16;
     int8_t val8;
 
     if(frame.decoded.s) { // signed
-        // printf("siema");
         val16 = val = (int16_t)dst + (int8_t)src;
         binary.ZF = (val16 == 0);
         binary.SF = (val16 < 0);
         binary.OF = (val16 != val);
         binary.CF = (dst + ((uint16_t)(int8_t)src)) >= 0x10000;
+        LOG = false;
         SetRM(binary, val16);
+        LOG = true;
     }
     else if(frame.decoded.w) { // 16-bit
         val16 = val = (int16_t)dst + (int16_t)src;
@@ -384,7 +391,7 @@ void ADD_I2RM::Execute(Binary_t& binary, bool log)
     }
 }
 
-void MOV_I2RM::Execute(Binary_t& binary, bool log)
+void MOV_I2RM::Execute(Binary_t& binary)
 {
     uint16_t src;
     if(frame.decoded.w == 1)
@@ -394,5 +401,5 @@ void MOV_I2RM::Execute(Binary_t& binary, bool log)
         src = frame.decoded.disp.d[0 + offset];
 
     // printf("!%x!", src);
-    SetRM(binary, src, log);
+    SetRM(binary, src);
 }

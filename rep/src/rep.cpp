@@ -13,7 +13,7 @@ void CMPS::Disassemble(size_t pos)
     std::cout << (frame.decoded.z == 0 ? 'b' : 'w');
 }
 
-// void REP_SCAS::Execute(Binary_t& binary, bool)
+// void REP_SCAS::Execute(Binary_t& binary)
 // {
 //     uint8_t dst, src;
 
