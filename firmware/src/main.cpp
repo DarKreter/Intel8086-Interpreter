@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char* argv[], char** envp)
 {
     uint8_t count = 1;
-    bool run = false;
+    bool run = true;
     LOG = false;
 
     if(argc < 2) {
@@ -16,8 +16,10 @@ int main(int argc, char* argv[], char** envp)
         exit(1);
     }
     while(argv[count][0] == '-') {
-        if(strcmp(argv[count], "-d") == 0)
+        if(strcmp(argv[count], "-d") == 0) {
             LOG = true;
+            run = false;
+        }
         else if(strcmp(argv[count], "-m") == 0)
             LOG = run = true;
         else {

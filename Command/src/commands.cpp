@@ -3,8 +3,8 @@
 
 #include "commands.hpp"
 #include "message.hpp"
+#include <cstring>
 #include <unistd.h>
-// #include <bitset>
 
 using namespace std;
 
@@ -164,7 +164,6 @@ void INT::Execute(Binary_t& binary)
         fd = mess->m_m1.m1i1;
         request = mess->m_m1.m1i3;
         addr = mess->m_m1.m1p5;
-
         if(LOG)
             printf("<ioctl(%d, 0x%04x, 0x%04x)>", fd, request, addr);
         errno = EINVAL;
@@ -175,7 +174,6 @@ void INT::Execute(Binary_t& binary)
         break;
     }
 }
-void INT::PrintStatus(Binary_t& bin) { Command_t::PrintStatus(bin); }
 void MOV_MwA::Disassemble(size_t pos)
 {
     Command_t::Disassemble(pos);
@@ -200,10 +198,22 @@ void Command_t::PrintStatus(Binary_t& binary)
 
 void Command_t::Disassemble(size_t pos)
 {
-    printf("%04lx: ", pos);
-    for(uint8_t i = 0; i < frame_length; i++)
-        printf("%02x", GetFramePart(i));
-    printf("\t\t%s ", name);
+    printf("%04lx: ", pos); // Print position
+
+    char hexBuffer[14];
+    hexBuffer[0] = '\0';
+    for(int i = 0; i < frame_length; i++)
+        sprintf(hexBuffer + strlen(hexBuffer), "%02x", GetFramePart(i));
+
+    printf("%-*s %s ", 13, hexBuffer, name);
+
+    // printf("%04lx:", pos);
+    // std::stringstream temp;
+    // for(uint8_t i = 0; i < frame_length; i++)
+    //     temp << std::hex << std::setfill('0') << std::setw(2)
+    //          << (int)GetFramePart(i);
+    // std::cout << std::left << std::setfill(' ') << std::setw(13) <<
+    // temp.str();
 }
 void Command_t::Read(uint8_t* tab)
 {

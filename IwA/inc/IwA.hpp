@@ -22,6 +22,7 @@ protected:
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
     IwA(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
     void PrintBase(size_t pos);
+    void Read(uint8_t*) override;
 
 public:
     void Disassemble(size_t) override;

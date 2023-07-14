@@ -25,7 +25,7 @@ public:
     virtual uint8_t GetFrameLength() { return frame_length; }
     virtual void Read(uint8_t*);
     virtual void Disassemble(size_t pos);
-    virtual void PrintStatus(Binary_t&);
+    void PrintStatus(Binary_t&);
     virtual void Execute(Binary_t&);
     virtual ~Command_t() = default;
 };
@@ -75,7 +75,6 @@ protected:
 
 public:
     INT() : Command_t(size_max, "int") { ; }
-    void PrintStatus(Binary_t&) override;
     void Execute(Binary_t&) override;
     void Disassemble(size_t) override;
     ~INT() = default;

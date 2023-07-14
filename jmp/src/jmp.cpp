@@ -36,7 +36,6 @@ void JMP_IS::Disassemble(size_t pos)
 void JMP_DS::Execute(Binary_t& binary)
 {
     uint16_t disp = (frame.decoded.disp_low + (frame.decoded.disp_high << 8));
-    // printf("!%x!", disp);
     uint8_t* start = binary.text - binary.textPos; // Start of allocated memory
     binary.textPos += (int)(disp);
     binary.text = start + binary.textPos;

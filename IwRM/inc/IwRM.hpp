@@ -28,7 +28,7 @@ protected:
 
     uint8_t& GetFramePart(uint8_t i) override { return frame.raw[i]; }
     void PrintRM();
-    void SetRM(Binary_t& binary, uint16_t val);
+    void SetRM(Binary_t& binary, uint16_t val, bool = true);
     uint16_t GetRM(Binary_t&);
     uint16_t GetRM_addr(Binary_t&);
 

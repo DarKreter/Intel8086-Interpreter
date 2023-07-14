@@ -36,13 +36,12 @@ void Execute(Binary_t& binary)
         if(cmd != nullptr)
             ;
         else {
-            // cout << hex << pos << ":\t" << std::bitset<8>(*tab) << "\n";
-            printf("%04x: %02x\t\t(undefined)", binary.textPos, *binary.text);
+            printf("%04x: %02x            (undefined)\n", binary.textPos,
+                   *binary.text);
             binary.textPos++, binary.text++;
             continue;
         }
         cmd->Read(binary.text);
-        // printf("!%x %x!", binary.stack[0xffba], binary.stack[0xffbb]);
         if(LOG)
             cmd->PrintStatus(binary);
         else
@@ -82,7 +81,8 @@ void Analyze(Binary_t& binary)
         if(cmd != nullptr)
             ;
         else {
-            printf("%04x: %02x\t\t(undefined)", binary.textPos, *binary.text);
+            printf("%04x: %02x            (undefined)\n", binary.textPos,
+                   *binary.text);
             binary.textPos++, binary.text++;
             continue;
         }
