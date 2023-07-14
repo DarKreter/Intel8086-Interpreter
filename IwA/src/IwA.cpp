@@ -14,70 +14,66 @@ void IwA::Disassemble(size_t pos) const
 {
     Command_t::Disassemble(pos);
 
-    if(frame.decoded.w == 0)
-        printf("al, ");
-    else
-        printf("ax, ");
-
     if(frame.decoded.w == 1)
-        printf("%02x%02x", frame.decoded.data[1], frame.decoded.data[0]);
+        printf("ax, %02x%02x", frame.decoded.data[1], frame.decoded.data[0]);
     else
-        printf("%x", frame.decoded.data[0]);
+        printf("al, %x", frame.decoded.data[0]);
+}
+
+int32_t CalculateDifference(int32_t value1, int32_t value2, bool is16bit)
+{
+    int32_t difference = value1 - value2;
+    if(is16bit)
+        return static_cast<int16_t>(difference);
+    else
+        return static_cast<int8_t>(difference);
+}
+
+void UpdateBinaryFlags(Binary_t& binary, int32_t difference, bool is16bit)
+{
+    if(is16bit) {
+        binary.ZF = (static_cast<int16_t>(difference) == 0);
+        binary.SF = (static_cast<int16_t>(difference) < 0);
+        binary.OF = (difference != static_cast<int16_t>(difference));
+        binary.CF = (binary.ax < static_cast<uint16_t>(difference));
+    }
+    else {
+        binary.ZF = (static_cast<int8_t>(difference) == 0);
+        binary.SF = (static_cast<int8_t>(difference) < 0);
+        binary.OF = (difference != static_cast<int8_t>(difference));
+        binary.CF = (binary.a.l < static_cast<uint8_t>(difference));
+    }
 }
 
 void CMP_IwA::Execute(Binary_t& binary)
 {
-    uint16_t data;
-    int32_t val;
-    int16_t val16;
-    int8_t val8;
-    if(frame.decoded.w)
-        data = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
-    else
-        data = frame.decoded.data[0];
+    uint16_t data = frame.decoded.data[0];
+    if(frame.decoded.w) {
+        data += (static_cast<uint16_t>(frame.decoded.data[1]) << 8);
+    }
 
-    if(frame.decoded.w == 0) {
-        val8 = val = (int8_t)binary.a.l - (int8_t)data;
-        binary.ZF = (val8 == 0);
-        binary.SF = (val8 < 0);
-        binary.OF = (val != val8);
-        binary.CF = binary.a.l < (data & 0xff);
-    }
-    else {
-        val16 = val = (int16_t)binary.ax - (int16_t)data;
-        binary.ZF = (val16 == 0);
-        binary.SF = (val16 < 0);
-        binary.OF = (val != val16);
-        binary.CF = binary.ax < data;
-    }
+    int32_t difference =
+        CalculateDifference(static_cast<int32_t>(binary.ax),
+                            static_cast<int32_t>(data), frame.decoded.w);
+    UpdateBinaryFlags(binary, difference, frame.decoded.w);
 }
 
 void SUB_IfA::Execute(Binary_t& binary)
 {
-    int32_t val;
-    int16_t val16;
-    int8_t val8;
+    uint16_t data = frame.decoded.data[0];
 
-    if(frame.decoded.w == 0) {
-        uint8_t al = binary.a.l;
-        uint8_t rm = frame.decoded.data[0];
-        val8 = val = (char)al - (char)rm;
-        binary.a.l = val8;
+    if(frame.decoded.w) {
+        data += (frame.decoded.data[1] << 8);
 
-        binary.ZF = (val8 == 0);
-        binary.SF = (val8 < 0);
-        binary.OF = (val != val8);
-        binary.CF = al < rm;
+        uint16_t ax = binary.ax;
+        int32_t difference = CalculateDifference(ax, data, true);
+        binary.ax = difference;
+        UpdateBinaryFlags(binary, difference, true);
     }
     else {
-        uint16_t ax = binary.ax;
-        uint16_t rm = frame.decoded.data[0] + (frame.decoded.data[1] << 8);
-        val16 = val = (int16_t)ax - (int16_t)rm;
-        binary.ax = val16;
-
-        binary.ZF = (val16 == 0);
-        binary.SF = (val16 < 0);
-        binary.OF = (val != val16);
-        binary.CF = ax < rm;
+        uint8_t al = binary.a.l;
+        int32_t difference = CalculateDifference(al, data, false);
+        binary.a.l = difference;
+        UpdateBinaryFlags(binary, difference, false);
     }
 }

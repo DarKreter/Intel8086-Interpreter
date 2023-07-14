@@ -25,8 +25,8 @@ protected:
 public:
     uint8_t GetFrameLength() { return frame_length; }
     void PrintStatus(const Binary_t&) const;
-
     virtual void Read(uint8_t*);
+
     virtual void Disassemble(size_t pos) const;
     virtual void Execute(Binary_t&);
 

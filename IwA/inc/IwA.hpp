@@ -21,11 +21,13 @@ protected:
 
     uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
+
     IwA(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
     void PrintBase(size_t pos);
-    void Read(uint8_t*) override;
 
 public:
+    void Read(uint8_t*) override;
+
     void Disassemble(size_t) const override;
     ~IwA() = default;
 };

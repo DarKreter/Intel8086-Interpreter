@@ -39,6 +39,7 @@ int main(int argc, char* argv[], char** envp)
     for(char** i = envp; *i != 0; i++)
         _envp.push_back(*i);
 
+    // comparing purpose
     _envp.clear();
     _envp.push_back("PATH=/usr:/usr/bin");
 
