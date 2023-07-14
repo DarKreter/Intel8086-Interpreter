@@ -2,17 +2,7 @@
 
 void RET::Execute(Binary_t& binary)
 {
-    uint16_t pos = binary.stack[binary.sp++];
-    pos += (binary.stack[binary.sp++] << 8);
-    pos--; // later we add 1 after RET
-
-    binary.text += pos - binary.textPos;
-    binary.textPos = pos;
-}
-
-void CLD::Execute(Binary_t&)
-{
-    // TODO
+    binary.JumpIS(binary.Pop() - frame_length);
 }
 
 void CBW::Execute(Binary_t& binary)

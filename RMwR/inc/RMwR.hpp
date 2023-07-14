@@ -28,15 +28,17 @@ protected:
 
     uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
-    void PrintRM() const;
     void Read(uint8_t*) override;
+
     uint16_t GetRM(const Binary_t&) const;
-    void SetRM(Binary_t&, uint16_t, bool = true);
     uint16_t GetRM_addr(const Binary_t&) const;
-    RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
+    void SetRM(Binary_t&, uint16_t, bool = true);
+    void PrintRM() const;
 
 public:
     void Disassemble(size_t) const override;
+
+    RMwR_BASIC(const char* _name) : Command_t(size_max, _name) { ; }
     ~RMwR_BASIC() = default;
 };
 
@@ -44,8 +46,8 @@ struct RMwR_BASIC_w : public RMwR_BASIC {
     // XXXXXXX w(1) mod(2) XXX r/m(3) disp(0/8/16)
     RMwR_BASIC_w(const char* _name) : RMwR_BASIC(_name) { ; }
 
-    void Read(uint8_t*) override;
     void Disassemble(size_t) const override;
+
     ~RMwR_BASIC_w() = default;
 };
 struct RMwR_BASIC_dw : public RMwR_BASIC_w {
@@ -53,7 +55,7 @@ struct RMwR_BASIC_dw : public RMwR_BASIC_w {
     RMwR_BASIC_dw(const char* _name) : RMwR_BASIC_w(_name) { ; }
 
     void Disassemble(size_t) const override;
-    void Read(uint8_t*) override;
+
     ~RMwR_BASIC_dw() = default;
 };
 
@@ -62,6 +64,7 @@ struct PUSH_RM : public RMwR_BASIC {
     constexpr static std::string_view pattern = "11111111XX110";
 
     void Execute(Binary_t&) override;
+
     PUSH_RM() : RMwR_BASIC("push") { ; }
     ~PUSH_RM() = default;
 };
@@ -70,6 +73,7 @@ struct DEC_RM : public RMwR_BASIC {
     constexpr static std::string_view pattern = "1111111XXX001";
 
     void Execute(Binary_t&) override;
+
     DEC_RM() : RMwR_BASIC("dec") { ; }
     ~DEC_RM() = default;
 };
@@ -78,6 +82,7 @@ struct INC_RM : public RMwR_BASIC {
     constexpr static std::string_view pattern = "1111111XXX000";
 
     void Execute(Binary_t&) override;
+
     INC_RM() : RMwR_BASIC("inc") { ; }
     ~INC_RM() = default;
 };
@@ -86,6 +91,7 @@ struct NEG : public RMwR_BASIC {
     constexpr static std::string_view pattern = "1111011XXX011";
 
     void Execute(Binary_t&) override;
+
     NEG() : RMwR_BASIC("neg") { ; }
     ~NEG() = default;
 };
@@ -95,6 +101,7 @@ struct XCHG_RMwR : public RMwR_BASIC_w {
     constexpr static std::string_view pattern = "1000011";
 
     void Execute(Binary_t&) override;
+
     XCHG_RMwR() : RMwR_BASIC_w("xchg") { ; }
     ~XCHG_RMwR() = default;
 };
@@ -110,6 +117,7 @@ struct TEST_RMwR : public RMwR_BASIC_w {
     constexpr static std::string_view pattern = "1000010";
 
     void Execute(Binary_t&) override;
+
     TEST_RMwR() : RMwR_BASIC_w("test") { ; }
     ~TEST_RMwR() = default;
 };
@@ -118,10 +126,10 @@ struct LEA : public RMwR_BASIC_w {
     // 10001101 mod(2)reg(3)r/m(3) disp(0/8/16)
     constexpr static std::string_view pattern = "10001101";
 
-    LEA() : RMwR_BASIC_w("lea") { ; }
-    void Read(uint8_t*) override;
-    void Execute(Binary_t&) override;
     void Disassemble(size_t) const override;
+    void Execute(Binary_t&) override;
+
+    LEA() : RMwR_BASIC_w("lea") { ; }
     ~LEA() = default;
 };
 
@@ -137,6 +145,7 @@ struct ADD_RMwR : public RMwR_BASIC_dw {
     constexpr static std::string_view pattern = "000000";
 
     void Execute(Binary_t&) override;
+
     ADD_RMwR() : RMwR_BASIC_dw("add") { ; }
     ~ADD_RMwR() = default;
 };
@@ -145,6 +154,7 @@ struct SUB_RM2R : public RMwR_BASIC_dw {
     constexpr static std::string_view pattern = "001010";
 
     void Execute(Binary_t&) override;
+
     SUB_RM2R() : RMwR_BASIC_dw("sub") { ; }
     ~SUB_RM2R() = default;
 };
@@ -153,6 +163,7 @@ struct CMP_RMaR : public RMwR_BASIC_dw {
     constexpr static std::string_view pattern = "001110";
 
     void Execute(Binary_t&) override;
+
     CMP_RMaR() : RMwR_BASIC_dw("cmp") { ; }
     ~CMP_RMaR() = default;
 };
@@ -161,6 +172,7 @@ struct XOR_RM2R : public RMwR_BASIC_dw {
     constexpr static std::string_view pattern = "001100";
 
     void Execute(Binary_t&) override;
+
     XOR_RM2R() : RMwR_BASIC_dw("xor") { ; }
     ~XOR_RM2R() = default;
 };
@@ -176,6 +188,7 @@ struct OR_RMaR : public RMwR_BASIC_dw {
     constexpr static std::string_view pattern = "000010";
 
     void Execute(Binary_t&) override;
+
     OR_RMaR() : RMwR_BASIC_dw("or") { ; }
     ~OR_RMaR() = default;
 };
@@ -184,6 +197,7 @@ struct MOV_RM2R : public RMwR_BASIC_dw {
     constexpr static std::string_view pattern = "100010";
 
     void Execute(Binary_t&) override;
+
     MOV_RM2R() : RMwR_BASIC_dw("mov") { ; }
     ~MOV_RM2R() = default;
 };
@@ -192,6 +206,7 @@ struct AND_RMaR : public RMwR_BASIC_dw {
     constexpr static std::string_view pattern = "001000";
 
     void Execute(Binary_t&) override;
+
     AND_RMaR() : RMwR_BASIC_dw("and") { ; }
     ~AND_RMaR() = default;
 };

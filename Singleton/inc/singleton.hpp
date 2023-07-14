@@ -15,10 +15,10 @@ protected:
 
     uint8_t GetFramePart(uint8_t i) const override { return frame.raw[i]; }
     void SetFramePart(uint8_t i, uint8_t val) override { frame.raw[i] = val; }
-    Singleton(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
     void PrintBase(size_t pos);
 
 public:
+    Singleton(const char* _n, size_t _s = size_max) : Command_t(_s, _n) { ; }
     ~Singleton() = default;
 };
 struct HLT : public Singleton {
@@ -40,7 +40,7 @@ struct CLD : public Singleton {
     // 11111100
     constexpr static std::string_view pattern = "11111100";
 
-    void Execute(Binary_t&) override;
+    void Execute(Binary_t&) override { ; };
     CLD() : Singleton("cld") { ; }
     ~CLD() = default;
 };
