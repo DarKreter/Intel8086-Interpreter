@@ -25,5 +25,5 @@ Example binary files compiled for dedicated architecture and OS are placed **bin
 <h2>Execution:</h2>
 
 - ` ` - To just execute
-- `-d` - For executing with logs
+- `-m` - For executing with logs
 - `-d` - For dissasembling 
